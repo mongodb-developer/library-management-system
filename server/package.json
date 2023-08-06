@@ -8,7 +8,9 @@
     "start": "npm run build && node dist/server.js",
     "build": "rimraf ./dist && tsc",
     "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix"
+    "lint:fix": "eslint src/ --fix",
+    "integration-test": "mocha dist/**/*.spec.js",
+    "test": "start-test start :5000 integration-test"
   },
   "keywords": [],
   "author": "",
@@ -22,10 +24,16 @@
   "devDependencies": {
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
+    "@types/mocha": "^10.0.1",
+    "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^6.2.1",
     "@typescript-eslint/parser": "^6.2.1",
+    "assert": "^2.0.0",
     "eslint": "^8.46.0",
+    "mocha": "^10.2.0",
     "rimraf": "^5.0.1",
+    "start-server-and-test": "^2.0.0",
+    "supertest": "^6.3.3",
     "ts-node": "^10.9.1",
     "tsc-watch": "^6.0.4",
     "typescript": "^5.1.6"

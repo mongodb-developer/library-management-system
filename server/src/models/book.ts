@@ -16,6 +16,7 @@ export interface Book {
     genres: Array<string>;
     year: number;
     pages: number;
+    synopsis: string;
 
     /**
      * Number of books in total.
