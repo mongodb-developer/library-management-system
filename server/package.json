@@ -5,9 +5,10 @@
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
+    "start": "npm run build && node dist/server.js",
     "build": "rimraf ./dist && tsc",
-    "dev": "nodemon",
-    "start": "npm run build && node dist/server.js"
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix"
   },
   "keywords": [],
   "author": "",
@@ -21,7 +22,9 @@
   "devDependencies": {
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
-    "nodemon": "^3.0.1",
+    "@typescript-eslint/eslint-plugin": "^6.2.1",
+    "@typescript-eslint/parser": "^6.2.1",
+    "eslint": "^8.46.0",
     "rimraf": "^5.0.1",
     "ts-node": "^10.9.1",
     "tsc-watch": "^6.0.4",

@@ -15,5 +15,5 @@ await connectToDatabase(process.env.DATABASE_URI);
 console.log('Connected to database!');
 
 app.listen(port, () => {
-  console.log(`Server is running on port: ${port}`);
+    console.log(`Server is running on port: ${port}`);
 });
