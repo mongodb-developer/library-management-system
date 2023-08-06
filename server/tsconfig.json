@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "skipLibCheck": true,
+      "target": "esnext",
+      "module": "esnext",
+      "moduleResolution": "node",
+      "allowJs": true,
+      "resolveJsonModule": true,
+      "esModuleInterop": true,
+      "outDir": "./dist",
+      "rootDir": "src"
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules"]
+  }
