@@ -5,6 +5,7 @@ export interface Author {
     name: string;
     sanitizedName: string;
     aliases: Array<string>;
+    bio?: string;
 
     /**
      * Array of ISBNs of books written by this author. Reference to the books collection.
