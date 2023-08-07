@@ -87,13 +87,20 @@ books.route('/:id').delete(async (req, res) => {
         return res.status(400).send('Book id is missing');
     }
 
-    const result = await collections?.books?.deleteOne({ _id: id });
+    try {
+        const result = await collections?.books?.deleteOne({ _id: id });
 
-    if (result?.deletedCount) {
-        return res.send(`Deleted book with id ${id}`);
+        if (result?.deletedCount) {
+            res.status(202).send(`Removed book with id ${id}`);
+        } else if (!result) {
+            res.status(400).send(`Book with id ${id} does not exist`);
+        } else if (!result.deletedCount) {
+            res.status(404).send(`Book with id ${id} was not found`);
+        }
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).send(`Failed to delete book with id ${id}`);
     }
-
-    return res.status(500).send(`Failed to delete book with id ${id}`);
 });
 
 books.route('/:id/reviews').get(async (req, res) => {
@@ -103,8 +110,13 @@ books.route('/:id/reviews').get(async (req, res) => {
         return res.status(400).send('Book id is missing');
     }
 
-    const reviews = await collections?.reviews?.find({ bookId: id }).toArray();
-    return res.json(reviews);
+    try {
+        const reviews = await collections?.reviews?.find({ bookId: id }).toArray();
+        return res.json(reviews);
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).send(`Failed to get reviews for book with id ${id}`);
+    }
 });
 
 books.route('/:id/reviews').post(async (req, res) => {
@@ -142,6 +154,7 @@ books.route('/:id/reviews/:reviewId').get(async (req, res) => {
     }
 
     const review = await collections?.reviews?.findOne({ _id: new ObjectId(reviewId), bookId: id });
+
 
     if (review) {
         return res.json(review);

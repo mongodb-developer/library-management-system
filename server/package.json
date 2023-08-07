@@ -9,8 +9,8 @@
     "build": "rimraf ./dist && tsc",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
-    "integration-test": "mocha dist/**/*.spec.js",
-    "test": "start-test start :5000 integration-test"
+    "api-test": "ts-mocha src/**/*.spec.ts",
+    "test": "start-test start http://127.0.0.1:5000 api-test"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +34,7 @@
     "rimraf": "^5.0.1",
     "start-server-and-test": "^2.0.0",
     "supertest": "^6.3.3",
+    "ts-mocha": "^10.0.0",
     "ts-node": "^10.9.1",
     "tsc-watch": "^6.0.4",
     "typescript": "^5.1.6"
