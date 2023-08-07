@@ -54,4 +54,17 @@ This is a library management system built with the MEAN (MongoDB, Express, Angul
 
 1. When both applications are built and running, open your browser on http://localhost:4200/.
 
+## Executing the tests
+
+Currently, the projecth has only API tests using `supertest` and `mocha`. To execute them, navigate to the `server/` directory and run:
+
+**library/server/**
+```
+npm test
+```
+
+## Pre-commit hook
+
+The project utilizes [Husky](https://typicode.github.io/husky/) to execute actions before every commit. The pre-commit hook, located in [.husky/pre-commit], lints the code and runs the API tests.
+
 Use at your own risk; not a supported MongoDB product
