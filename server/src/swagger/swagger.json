@@ -1,0 +1,260 @@
+{
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"ObjectId": {
+				"type": "string",
+				"description": "A class representation of the BSON ObjectId type."
+			},
+			"Pick_Review.Exclude_keyofReview._id-or-bookId__": {
+				"properties": {
+					"text": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"rating": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"text",
+					"name",
+					"rating"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Omit_Review._id-or-bookId_": {
+				"$ref": "#/components/schemas/Pick_Review.Exclude_keyofReview._id-or-bookId__",
+				"description": "Construct a type with the properties of T except for those in type K."
+			},
+			"Pick_Book.Exclude_keyofBook._id__": {
+				"properties": {
+					"cover": {
+						"type": "string",
+						"description": "URL to cover image."
+					},
+					"title": {
+						"type": "string"
+					},
+					"genres": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"year": {
+						"type": "number",
+						"format": "double"
+					},
+					"pages": {
+						"type": "number",
+						"format": "double"
+					},
+					"synopsis": {
+						"type": "string"
+					},
+					"totalInventory": {
+						"type": "number",
+						"format": "double",
+						"description": "Number of books in total."
+					},
+					"available": {
+						"type": "number",
+						"format": "double",
+						"description": "Number of books currently available.\nThis field is computed. See https://www.mongodb.com/blog/post/building-with-patterns-the-computed-pattern."
+					},
+					"authors": {
+						"items": {
+							"properties": {
+								"name": {
+									"type": "string"
+								},
+								"_id": {
+									"$ref": "#/components/schemas/ObjectId"
+								}
+							},
+							"required": [
+								"name",
+								"_id"
+							],
+							"type": "object"
+						},
+						"type": "array",
+						"description": "Array of author references following the extended reference pattern.\nSee https://www.mongodb.com/blog/post/building-with-patterns-the-extended-reference-pattern."
+					},
+					"attributes": {
+						"items": {
+							"properties": {
+								"value": {
+									"type": "string"
+								},
+								"key": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"value",
+								"key"
+							],
+							"type": "object"
+						},
+						"type": "array",
+						"description": "Array of attributes following the attribute pattern (key-value pairs). \nSee https://www.mongodb.com/blog/post/building-with-patterns-the-attribute-pattern."
+					},
+					"reviews": {
+						"items": {
+							"$ref": "#/components/schemas/Omit_Review._id-or-bookId_"
+						},
+						"type": "array",
+						"description": "Array of reviews following the subset pattern.\nSee https://www.mongodb.com/blog/post/building-with-patterns-the-subset-pattern."
+					}
+				},
+				"required": [
+					"cover",
+					"title",
+					"genres",
+					"year",
+					"pages",
+					"synopsis",
+					"totalInventory",
+					"available",
+					"authors",
+					"attributes",
+					"reviews"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Omit_Book._id_": {
+				"$ref": "#/components/schemas/Pick_Book.Exclude_keyofBook._id__",
+				"description": "Construct a type with the properties of T except for those in type K."
+			},
+			"InferIdType_TSchema_": {
+				"$ref": "#/components/schemas/InferIdType_TSchema_",
+				"description": "Given an object shaped type, return the type of the _id field or default to ObjectId @public"
+			},
+			"InferIdType_Document_": {
+				"$ref": "#/components/schemas/InferIdType_TSchema_",
+				"description": "Given an object shaped type, return the type of the _id field or default to ObjectId @public"
+			},
+			"InsertOneResult": {
+				"properties": {
+					"acknowledged": {
+						"type": "boolean",
+						"description": "Indicates whether this write result was acknowledged. If not, then all other members of this result will be undefined"
+					},
+					"insertedId": {
+						"$ref": "#/components/schemas/InferIdType_Document_",
+						"description": "The identifier that was inserted. If the server generated the identifier, this value will be null as the driver does not have access to that data"
+					}
+				},
+				"required": [
+					"acknowledged",
+					"insertedId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "server",
+		"version": "1.0.0",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"openapi": "3.0.0",
+	"paths": {
+		"/books": {
+			"get": {
+				"operationId": "GetBooks",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Omit_Book._id_"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "CreateBook",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/InsertOneResult"
+										},
+										{
+											"type": "string"
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Omit_Book._id_"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
