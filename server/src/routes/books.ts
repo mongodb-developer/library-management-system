@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { ObjectId } from 'mongodb';
+import { Filter, FindOptions, ObjectId } from 'mongodb';
+import { Book } from '../models/book.js';
 import { collections } from '../database.js';
 
 // The router will be added as a middleware and will take control of requests starting with /books.
@@ -13,18 +14,14 @@ books.route('/').get(async (req, res) => {
         limit = 100;
     }
 
-    const books = collections?.books?.aggregate([
-        {
-            $limit: limit
-        },
-        {
-            $project: {
-                _id: 0,
-            }
-        }
-    ]);
+    const skip = parseInt(req?.query?.skip as string) || 0;
+    const filter = {} as Filter<Book>;
+    const project = {_id: 0} as FindOptions<Book>;
 
-    return res.json(await books.toArray());
+    const bookCursor = await collections?.books?.find(filter, project);
+    const books = bookCursor.limit(limit).skip(skip).toArray();
+
+    return res.json(await books);
 });
 
 books.route('/').post(async (req, res) => {
