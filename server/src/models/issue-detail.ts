@@ -58,3 +58,7 @@ interface IssueDetailBase {
     }
 }
 
+export {
+    BorrowedBook,
+    Reservation
+};

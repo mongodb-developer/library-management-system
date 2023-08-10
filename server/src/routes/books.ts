@@ -109,6 +109,7 @@ books.delete('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
 
         if (result?.deletedCount) {
             await collections?.reviews?.deleteMany({ bookId });
+            await collections?.issueDetails?.deleteMany({ 'book._id': bookId });
             res.status(202).send({message: `Removed book with id ${bookId}`});
         } else if (!result) {
             res.status(400).send({message: `Book with id ${bookId} does not exist`});

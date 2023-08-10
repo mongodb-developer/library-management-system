@@ -59,12 +59,12 @@ describe('Reviews API', () => {
 
     it('Should let me add reviews', async () => {
         const createBookResponse = await request(baseUrl)
-            .post('/books/9780075536321/reviews')
+            .post(`/books/${book._id}/reviews`)
             .set('Authorization', `Bearer ${userJWT}`)
             .send(review)
             .expect(201);
 
-        assert(createBookResponse?.body?.message?.includes('Created a new review'), 'Book was not created');
+        assert(createBookResponse?.body?.message?.includes('Created a new review'), 'Review was not created');
 
         const getBooksResponse = await request(baseUrl)
             .get(`/books/${book._id}`)
@@ -77,7 +77,7 @@ describe('Reviews API', () => {
     it('Should not have more than 5 reviews', async () => {
         for (let i = 0; i < 10; i++) {
             const result = await request(baseUrl)
-                .post('/books/9780075536321/reviews')
+                .post(`/books/${book._id}/reviews`)
                 .set('Authorization', `Bearer ${userJWT}`)
                 .send(review)
                 .expect(201);

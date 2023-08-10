@@ -19,6 +19,7 @@ app.get('/', (_, res) => res.send(200));
 app.use('/books', (await import('./routes/books.js')).default);
 app.use('/users', (await import('./routes/users.js')).default);
 app.use('/books/:bookId/reviews', (await import('./routes/reviews.js')).default);
+app.use('/reservations', (await import('./routes/reservations.js')).default);
 
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);
