@@ -28,29 +28,32 @@ books.get('/', async (req, res) => {
 
 books.post('/', protectedRoute, async (req: IAuthRequest, res) => {
     if (req?.auth?.isAdmin !== true) {
-        return res.status(403).send('Only admins can create books');
+        return res.status(403).send({message: 'Only admins can create books'});
     }
 
     const book = req?.body;
 
     if (!book || Object.keys(book).length === 0) {
-        return res.status(400).send('Book details are missing');
+        return res.status(400).send({message: 'Book details are missing'});
     }
 
     const result = await collections?.books?.insertOne(book);
 
     if (result?.insertedId) {
-        return res.status(201).send(`Created a new book with id ${result.insertedId}`);
+        return res.status(201).send({
+            message: `Created a new book with id ${result.insertedId}`,
+            insertedId: result.insertedId
+        });
     }
 
-    return res.status(500).send('Failed to create a new book');
+    return res.status(500).send({message: 'Failed to create a new book'});
 });
 
 books.get('/:bookId', async (req, res) => {
     const bookId = req?.params?.bookId;
 
     if (!bookId) {
-        return res.status(400).send('Book id is missing');
+        return res.status(400).send({message: 'Book id is missing'});
     }
 
     const book = await collections?.books?.findOne({ _id: bookId });
@@ -59,43 +62,46 @@ books.get('/:bookId', async (req, res) => {
         return res.json(book);
     }
 
-    return res.status(404).send(`Book with id ${bookId} was not found`);
+    return res.status(404).send({message: `Book with id ${bookId} was not found`});
 });
 
 books.put('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
     if (req?.auth?.isAdmin !== true) {
-        return res.status(403).send('Only admins can update books');
+        return res.status(403).send({message: 'Only admins can update books'});
     }
 
     const bookId = req?.params?.bookId;
     const book = req?.body;
 
     if (!bookId) {
-        return res.status(400).send('Book id is missing');
+        return res.status(400).send({message: 'Book id is missing'});
     }
 
     if (!book || Object.keys(book).length === 0) {
-        return res.status(400).send('Book details are missing');
+        return res.status(400).send({message: 'Book details are missing'});
     }
 
     const result = await collections?.books?.updateOne({ _id: bookId }, { $set: book });
 
     if (result?.modifiedCount) {
-        return res.send(`Updated book with id ${bookId}`);
+        return res.send({
+            message: `Updated book with id ${bookId}`,
+            newBook: book
+        });
     }
 
-    return res.status(500).send(`Failed to update book with id ${bookId}`);
+    return res.status(500).send({message: `Failed to update book with id ${bookId}`});
 });
 
 books.delete('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
     if (req?.auth?.isAdmin !== true) {
-        return res.status(403).send('Only admins can delete books');
+        return res.status(403).send({message: 'Only admins can delete books'});
     }
 
     const bookId = req?.params?.bookId;
 
     if (!bookId) {
-        return res.status(400).send('Book id is missing');
+        return res.status(400).send({message: 'Book id is missing'});
     }
 
     try {
@@ -103,15 +109,15 @@ books.delete('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
 
         if (result?.deletedCount) {
             await collections?.reviews?.deleteMany({ bookId });
-            res.status(202).send(`Removed book with id ${bookId}`);
+            res.status(202).send({message: `Removed book with id ${bookId}`});
         } else if (!result) {
-            res.status(400).send(`Book with id ${bookId} does not exist`);
+            res.status(400).send({message: `Book with id ${bookId} does not exist`});
         } else if (!result.deletedCount) {
-            res.status(404).send(`Book with id ${bookId} was not found`);
+            res.status(404).send({message: `Book with id ${bookId} was not found`});
         }
     } catch (error) {
         console.error(error.message);
-        return res.status(500).send(`Failed to delete book with id ${bookId}`);
+        return res.status(500).send({message: `Failed to delete book with id ${bookId}`});
     }
 });
 

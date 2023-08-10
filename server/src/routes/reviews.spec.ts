@@ -39,6 +39,8 @@ describe('Reviews API', () => {
         text: 'Great book!'
     };
 
+    let reviewId;
+
     before(async () => {
         await request(baseUrl)
             .delete(`/books/${book._id}`)
@@ -62,7 +64,7 @@ describe('Reviews API', () => {
             .send(review)
             .expect(201);
 
-        assert(createBookResponse?.text?.includes('Created a new review'), 'Book was not created');
+        assert(createBookResponse?.body?.message?.includes('Created a new review'), 'Book was not created');
 
         const getBooksResponse = await request(baseUrl)
             .get(`/books/${book._id}`)
@@ -74,11 +76,12 @@ describe('Reviews API', () => {
 
     it('Should not have more than 5 reviews', async () => {
         for (let i = 0; i < 10; i++) {
-            await request(baseUrl)
+            const result = await request(baseUrl)
                 .post('/books/9780075536321/reviews')
                 .set('Authorization', `Bearer ${userJWT}`)
                 .send(review)
                 .expect(201);
+            reviewId = result?.body?.insertedId;
         }
 
         const getBooksResponse = await request(baseUrl)
@@ -105,10 +108,16 @@ describe('Reviews API', () => {
     });
 
     it('Should let me see a single review by id', async () => {
+        const reviewResponse = await request(baseUrl)
+            .get(`/books/${book._id}/reviews/${reviewId}`)
+            .expect(200);
 
+        assert(reviewResponse?.body?.text === review.text, 'Review text should match');
     });
 
     it('Should return 404 if the review doesn\'t exist', async () => {
-
+        await request(baseUrl)
+            .get(`/books/${book._id}/reviews/123456789012`)
+            .expect(404);
     });
 });

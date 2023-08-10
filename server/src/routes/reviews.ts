@@ -13,7 +13,7 @@ reviews.get('/', async (req: IAuthRequest, res) => {
     const bookId = req?.params?.bookId;
 
     if (!bookId) {
-        return res.status(400).send('Book id is missing');
+        return res.status(400).send({message: 'Book id is missing'});
     }
 
     try {
@@ -21,7 +21,7 @@ reviews.get('/', async (req: IAuthRequest, res) => {
         return res.json(reviews);
     } catch (error) {
         console.error(error.message);
-        return res.status(500).send(`Failed to get reviews for book with id ${bookId}`);
+        return res.status(500).send({message: `Failed to get reviews for book with id ${bookId}`});
     }
 });
 
@@ -31,15 +31,15 @@ reviews.post('/', protectedRoute, async (req: IAuthRequest, res) => {
     const userName = req?.auth?.name;
 
     if (!bookId) {
-        return res.status(400).send('Book id is missing');
+        return res.status(400).send({message: 'Book id is missing'});
     }
 
     if (!reviewBody) {
-        return res.status(400).send('Review details are missing');
+        return res.status(400).send({message: 'Review details are missing'});
     }
 
     if (!userName) {
-        return res.status(400).send('User name is missing');
+        return res.status(400).send({message: 'User name is missing'});
     }
 
     const review = {
@@ -67,10 +67,13 @@ reviews.post('/', protectedRoute, async (req: IAuthRequest, res) => {
     });
 
     if (insertResult?.insertedId && updateResult?.modifiedCount) {
-        return res.status(201).send(`Created a new review with id ${insertResult.insertedId}`);
+        return res.status(201).send({
+            message: `Created a new review with id ${insertResult.insertedId}`,
+            insertedId: insertResult.insertedId
+        });
     }
 
-    return res.status(500).send('Failed to create a new review');
+    return res.status(500).send({message: 'Failed to create a new review'});
 });
 
 reviews.get('/:reviewId', async (req: IAuthRequest, res) => {
@@ -78,11 +81,11 @@ reviews.get('/:reviewId', async (req: IAuthRequest, res) => {
     const reviewId = req?.params?.reviewId;
 
     if (!bookId) {
-        return res.status(400).send('Book id is missing');
+        return res.status(400).send({message: 'Book id is missing'});
     }
 
     if (!reviewId) {
-        return res.status(400).send('Review id is missing');
+        return res.status(400).send({message: 'Review id is missing'});
     }
 
     const review = await collections?.reviews?.findOne({ _id: new ObjectId(reviewId), bookId: bookId });
@@ -92,5 +95,5 @@ reviews.get('/:reviewId', async (req: IAuthRequest, res) => {
         return res.json(review);
     }
 
-    return res.status(404).send(`Review with id ${reviewId} was not found`);
+    return res.status(404).send({message: `Review with id ${reviewId} was not found`});
 });
