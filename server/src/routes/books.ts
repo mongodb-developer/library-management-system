@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { Filter, FindOptions, ObjectId } from 'mongodb';
 import { Book } from '../models/book.js';
+import { Review } from '../models/review.js';
 import { collections } from '../database.js';
 
 // The router will be added as a middleware and will take control of requests starting with /books.
@@ -117,22 +118,43 @@ books.route('/:id/reviews').get(async (req, res) => {
 });
 
 books.route('/:id/reviews').post(async (req, res) => {
-    const id = req?.params?.id;
-    const review = req?.body;
+    const bookId = req?.params?.id;
+    const reviewBody = req?.body;
 
-    if (!id) {
+    if (!bookId) {
         return res.status(400).send('Book id is missing');
     }
 
-    if (!review) {
+    if (!reviewBody) {
         return res.status(400).send('Review details are missing');
     }
 
-    review.bookId = id;
-    const result = await collections?.reviews?.insertOne(review);
+    const review = {
+        _id: null,
+        text: reviewBody?.text,
+        name: 'Anonymous',
+        rating: reviewBody?.rating,
+        timestamp: (new Date()).getTime(),
+        bookId
+    } as Review;
 
-    if (result?.insertedId) {
-        return res.status(201).send(`Created a new review with id ${result.insertedId}`);
+    const insertResult = await collections?.reviews?.insertOne(review);
+
+    review._id = insertResult?.insertedId;
+    delete review.bookId;
+
+    const updateResult = await collections?.books?.updateOne({ _id: bookId }, {
+        $push: {
+            reviews: {
+                $each: [ review ],
+                $sort: { timestamp: -1 },
+                $slice: 5
+            }
+        }
+    });
+
+    if (insertResult?.insertedId && updateResult?.modifiedCount) {
+        return res.status(201).send(`Created a new review with id ${insertResult.insertedId}`);
     }
 
     return res.status(500).send('Failed to create a new review');

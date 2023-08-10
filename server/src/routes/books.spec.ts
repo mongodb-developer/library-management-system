@@ -28,6 +28,7 @@ describe('Books API', () => {
             text: 'A masterpiece of world literature.',
             name: 'Amazon Customer',
             rating: 5,
+            timestamp: 1600000000000,
         }],
     };
 
@@ -101,7 +102,7 @@ describe('Books API', () => {
         const response = await request(baseUrl)
             .get(`/books/${book._id}`)
             .expect(404);
-        
+
         assert(response?.text?.includes(`Book with id ${book._id} was not found`), 'Invalid response for 404');
     });
 
