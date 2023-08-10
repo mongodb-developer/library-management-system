@@ -36,11 +36,15 @@ describe('Books API', () => {
     };
 
     before(async () => {
-        await request(baseUrl).delete(`/books/${book._id}`);
+        await request(baseUrl)
+            .delete(`/books/${book._id}`)
+            .set('Authorization', `Bearer ${adminJWT}`);
     });
 
     after(async () => {
-        await request(baseUrl).delete(`/books/${book._id}`);
+        await request(baseUrl)
+            .delete(`/books/${book._id}`)
+            .set('Authorization', `Bearer ${adminJWT}`);
     });
 
     it('Should persist documents for admins', async () => {

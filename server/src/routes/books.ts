@@ -1,20 +1,13 @@
 import { Router } from 'express';
-import { Filter, FindOptions, ObjectId } from 'mongodb';
-import { expressjwt as jwt } from 'express-jwt';
+import { Filter, FindOptions } from 'mongodb';
 import { Book } from '../models/book.js';
-import { Review } from '../models/review.js';
 import { collections } from '../database.js';
 import { IAuthRequest } from '../utils/typescript.js';
+import { protectedRoute } from '../utils/helpers.js';
 
 // The router will be added as a middleware and will take control of requests starting with /books.
 const books = Router();
 export default books;
-
-const secret = process.env.SECRET || 'secret';
-const protectedRoute = jwt({
-    secret,
-    algorithms: ['HS256']
-});
 
 books.get('/', async (req, res) => {
     let limit = parseInt(req?.query?.limit as string) || 12;
@@ -109,6 +102,7 @@ books.delete('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
         const result = await collections?.books?.deleteOne({ _id: bookId });
 
         if (result?.deletedCount) {
+            await collections?.reviews?.deleteMany({ bookId });
             res.status(202).send(`Removed book with id ${bookId}`);
         } else if (!result) {
             res.status(400).send(`Book with id ${bookId} does not exist`);
@@ -121,84 +115,3 @@ books.delete('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
     }
 });
 
-books.get('/:bookId/reviews', async (req, res) => {
-    const bookId = req?.params?.bookId;
-
-    if (!bookId) {
-        return res.status(400).send('Book id is missing');
-    }
-
-    try {
-        const reviews = await collections?.reviews?.find({ bookId: bookId }).toArray();
-        return res.json(reviews);
-    } catch (error) {
-        console.error(error.message);
-        return res.status(500).send(`Failed to get reviews for book with id ${bookId}`);
-    }
-});
-
-books.post('/:bookId/reviews', protectedRoute, async (req: IAuthRequest, res) => {
-    const bookId = req?.params?.bookId;
-    const reviewBody = req?.body;
-    const userName = req?.auth?.name;
-
-    if (!bookId) {
-        return res.status(400).send('Book id is missing');
-    }
-
-    if (!reviewBody) {
-        return res.status(400).send('Review details are missing');
-    }
-
-    const review = {
-        _id: null,
-        text: reviewBody?.text,
-        name: userName,
-        rating: reviewBody?.rating,
-        timestamp: (new Date()).getTime(),
-        bookId
-    } as Review;
-
-    const insertResult = await collections?.reviews?.insertOne(review);
-
-    review._id = insertResult?.insertedId;
-    delete review.bookId;
-
-    const updateResult = await collections?.books?.updateOne({ _id: bookId }, {
-        $push: {
-            reviews: {
-                $each: [ review ],
-                $sort: { timestamp: -1 },
-                $slice: 5
-            }
-        }
-    });
-
-    if (insertResult?.insertedId && updateResult?.modifiedCount) {
-        return res.status(201).send(`Created a new review with id ${insertResult.insertedId}`);
-    }
-
-    return res.status(500).send('Failed to create a new review');
-});
-
-books.get('/:bookId/reviews/:reviewId', async (req, res) => {
-    const bookId = req?.params?.bookId;
-    const reviewId = req?.params?.reviewId;
-
-    if (!bookId) {
-        return res.status(400).send('Book id is missing');
-    }
-
-    if (!reviewId) {
-        return res.status(400).send('Review id is missing');
-    }
-
-    const review = await collections?.reviews?.findOne({ _id: new ObjectId(reviewId), bookId: bookId });
-
-
-    if (review) {
-        return res.json(review);
-    }
-
-    return res.status(404).send(`Review with id ${reviewId} was not found`);
-});
