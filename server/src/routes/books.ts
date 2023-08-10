@@ -1,33 +1,22 @@
 import { Router } from 'express';
 import { Filter, FindOptions, ObjectId } from 'mongodb';
+import { expressjwt as jwt } from 'express-jwt';
 import { Book } from '../models/book.js';
 import { Review } from '../models/review.js';
 import { collections } from '../database.js';
-import { expressjwt as jwt } from 'express-jwt';
-
-import { Request } from 'express';
-interface IAuthRequest extends Request {
-  auth: {
-    sub: string,
-    name: string,
-    isAdmin: boolean,
-    iat: number,
-    exp: number
-  };
-}
+import { IAuthRequest } from '../utils/typescript.js';
 
 // The router will be added as a middleware and will take control of requests starting with /books.
 const books = Router();
 export default books;
 
 const secret = process.env.SECRET || 'secret';
-
 const protectedRoute = jwt({
     secret,
     algorithms: ['HS256']
 });
 
-books.route('/').get(async (req, res) => {
+books.get('/', async (req, res) => {
     let limit = parseInt(req?.query?.limit as string) || 12;
 
     if (limit > 100) {
@@ -44,7 +33,11 @@ books.route('/').get(async (req, res) => {
     return res.json(await books);
 });
 
-books.route('/').post(async (req, res) => {
+books.post('/', protectedRoute, async (req: IAuthRequest, res) => {
+    if (req?.auth?.isAdmin !== true) {
+        return res.status(403).send('Only admins can create books');
+    }
+
     const book = req?.body;
 
     if (!book || Object.keys(book).length === 0) {
@@ -60,27 +53,31 @@ books.route('/').post(async (req, res) => {
     return res.status(500).send('Failed to create a new book');
 });
 
-books.route('/:id').get(async (req, res) => {
-    const id = req?.params?.id;
+books.get('/:bookId', async (req, res) => {
+    const bookId = req?.params?.bookId;
 
-    if (!id) {
+    if (!bookId) {
         return res.status(400).send('Book id is missing');
     }
 
-    const book = await collections?.books?.findOne({ _id: id });
+    const book = await collections?.books?.findOne({ _id: bookId });
 
     if (book) {
         return res.json(book);
     }
 
-    return res.status(404).send(`Book with id ${id} was not found`);
+    return res.status(404).send(`Book with id ${bookId} was not found`);
 });
 
-books.route('/:id').put(async (req, res) => {
-    const id = req?.params?.id;
+books.put('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
+    if (req?.auth?.isAdmin !== true) {
+        return res.status(403).send('Only admins can update books');
+    }
+
+    const bookId = req?.params?.bookId;
     const book = req?.body;
 
-    if (!id) {
+    if (!bookId) {
         return res.status(400).send('Book id is missing');
     }
 
@@ -88,56 +85,60 @@ books.route('/:id').put(async (req, res) => {
         return res.status(400).send('Book details are missing');
     }
 
-    const result = await collections?.books?.updateOne({ _id: id }, { $set: book });
+    const result = await collections?.books?.updateOne({ _id: bookId }, { $set: book });
 
     if (result?.modifiedCount) {
-        return res.send(`Updated book with id ${id}`);
+        return res.send(`Updated book with id ${bookId}`);
     }
 
-    return res.status(500).send(`Failed to update book with id ${id}`);
+    return res.status(500).send(`Failed to update book with id ${bookId}`);
 });
 
-books.route('/:id').delete(async (req, res) => {
-    const id = req?.params?.id;
+books.delete('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
+    if (req?.auth?.isAdmin !== true) {
+        return res.status(403).send('Only admins can delete books');
+    }
 
-    if (!id) {
+    const bookId = req?.params?.bookId;
+
+    if (!bookId) {
         return res.status(400).send('Book id is missing');
     }
 
     try {
-        const result = await collections?.books?.deleteOne({ _id: id });
+        const result = await collections?.books?.deleteOne({ _id: bookId });
 
         if (result?.deletedCount) {
-            res.status(202).send(`Removed book with id ${id}`);
+            res.status(202).send(`Removed book with id ${bookId}`);
         } else if (!result) {
-            res.status(400).send(`Book with id ${id} does not exist`);
+            res.status(400).send(`Book with id ${bookId} does not exist`);
         } else if (!result.deletedCount) {
-            res.status(404).send(`Book with id ${id} was not found`);
+            res.status(404).send(`Book with id ${bookId} was not found`);
         }
     } catch (error) {
         console.error(error.message);
-        return res.status(500).send(`Failed to delete book with id ${id}`);
+        return res.status(500).send(`Failed to delete book with id ${bookId}`);
     }
 });
 
-books.route('/:id/reviews').get(async (req, res) => {
-    const id = req?.params?.id;
+books.get('/:bookId/reviews', async (req, res) => {
+    const bookId = req?.params?.bookId;
 
-    if (!id) {
+    if (!bookId) {
         return res.status(400).send('Book id is missing');
     }
 
     try {
-        const reviews = await collections?.reviews?.find({ bookId: id }).toArray();
+        const reviews = await collections?.reviews?.find({ bookId: bookId }).toArray();
         return res.json(reviews);
     } catch (error) {
         console.error(error.message);
-        return res.status(500).send(`Failed to get reviews for book with id ${id}`);
+        return res.status(500).send(`Failed to get reviews for book with id ${bookId}`);
     }
 });
 
-books.post('/:id/reviews', protectedRoute, async (req: IAuthRequest, res) => {
-    const bookId = req?.params?.id;
+books.post('/:bookId/reviews', protectedRoute, async (req: IAuthRequest, res) => {
+    const bookId = req?.params?.bookId;
     const reviewBody = req?.body;
     const userName = req?.auth?.name;
 
@@ -180,11 +181,11 @@ books.post('/:id/reviews', protectedRoute, async (req: IAuthRequest, res) => {
     return res.status(500).send('Failed to create a new review');
 });
 
-books.route('/:id/reviews/:reviewId').get(async (req, res) => {
-    const id = req?.params?.id;
+books.get('/:bookId/reviews/:reviewId', async (req, res) => {
+    const bookId = req?.params?.bookId;
     const reviewId = req?.params?.reviewId;
 
-    if (!id) {
+    if (!bookId) {
         return res.status(400).send('Book id is missing');
     }
 
@@ -192,7 +193,7 @@ books.route('/:id/reviews/:reviewId').get(async (req, res) => {
         return res.status(400).send('Review id is missing');
     }
 
-    const review = await collections?.reviews?.findOne({ _id: new ObjectId(reviewId), bookId: id });
+    const review = await collections?.reviews?.findOne({ _id: new ObjectId(reviewId), bookId: bookId });
 
 
     if (review) {

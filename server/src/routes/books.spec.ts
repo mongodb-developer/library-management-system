@@ -5,6 +5,9 @@ import { Book } from '../models/book';
 
 const baseUrl = 'http://localhost:5000';
 
+const adminJWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NGQ0Yzk2NGYwZDA1NmVhNmJmMGYzZDgiLCJuYW1lIjoiT2xkU2Nob29sIEFsbGlnYXRvciIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY5MTY2Njc4OCwiZXhwIjoxNzIzMjAyNzg4fQ.0ycGXmrPBBJC9f1_nhJ7Ypi0C1DjzcZ6NpQVvpDAnJM';
+const userJWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NGQ0Yzc1MDViZDQ4MzEwNWM0ODk5MWQiLCJuYW1lIjoiUm93ZHkgSHllbmEiLCJpYXQiOjE2OTE2NjY3ODgsImV4cCI6MTcyMzIwMjc4OH0.YCFLMDhF4R009QT3bOy_H90ocgpKRhIMdbtpOvO-s-c';
+
 describe('Books API', () => {
     const book: Book = {
         _id: '9780075536321',
@@ -40,9 +43,10 @@ describe('Books API', () => {
         await request(baseUrl).delete(`/books/${book._id}`);
     });
 
-    it('Should persist documents', async () => {
+    it('Should persist documents for admins', async () => {
         const createBookResponse = await request(baseUrl)
             .post('/books')
+            .set('Authorization', `Bearer ${adminJWT}`)
             .send(book)
             .expect(201);
 
@@ -56,6 +60,14 @@ describe('Books API', () => {
         assert(getBooksResponse?.body?.title === book.title, 'Book was not persisted');
     });
 
+    it('Should not persist documents for users', async () => {
+        await request(baseUrl)
+            .post('/books')
+            .set('Authorization', `Bearer ${userJWT}`)
+            .send(book)
+            .expect(403);
+    });
+
     it('Should retrieve documents', async () => {
         const response = await request(baseUrl)
             .get(`/books/${book._id}`)
@@ -65,9 +77,10 @@ describe('Books API', () => {
         assert(response?.body?.title === book.title, 'Book was not retrieved');
     });
 
-    it('Should update documents', async () => {
+    it('Should update documents for admins', async () => {
         const updateReponse = await request(baseUrl)
             .put(`/books/${book._id}`)
+            .set('Authorization', `Bearer ${adminJWT}`)
             .send({
                 ...book,
                 title: 'War and Peace',
@@ -84,9 +97,21 @@ describe('Books API', () => {
         assert(getResponse?.body?.title === 'War and Peace', 'Book was not updated');
     });
 
-    it('Should delete documents', async () => {
+    it('Should not let users update books', async () => {
+        await request(baseUrl)
+            .put(`/books/${book._id}`)
+            .set('Authorization', `Bearer ${userJWT}`)
+            .send({
+                ...book,
+                title: 'War and Peace',
+            })
+            .expect(403);
+    });
+
+    it('Should delete documents for admins', async () => {
         const response = await request(baseUrl)
             .delete(`/books/${book._id}`)
+            .set('Authorization', `Bearer ${adminJWT}`)
             .expect(202);
 
         assert(response?.text?.includes('Removed book with id'), 'Book was not deleted');
@@ -96,6 +121,13 @@ describe('Books API', () => {
             .expect(404);
 
         assert(getBookReponse?.text?.includes(`Book with id ${book._id} was not found`), 'Book was not deleted');
+    });
+
+    it('Should not let users delete books; only admins', async () => {
+        await request(baseUrl)
+            .delete(`/books/${book._id}`)
+            .set('Authorization', `Bearer ${userJWT}`)
+            .expect(403);
     });
 
     it('Should return 404 for non-existent documents', async () => {
@@ -109,6 +141,7 @@ describe('Books API', () => {
     it('Should return 400 for missing body', async () => {
         const response = await request(baseUrl)
             .post('/books')
+            .set('Authorization', `Bearer ${adminJWT}`)
             .expect(400);
 
         assert(response?.text?.includes('Book details are missing'), 'Invalid response for 400');
@@ -117,6 +150,7 @@ describe('Books API', () => {
     it('Should return 400 for missing update data', async () => {
         const response = await request(baseUrl)
             .put(`/books/${book._id}`)
+            .set('Authorization', `Bearer ${adminJWT}`)
             .expect(400);
 
         assert(response?.text?.includes('Book details are missing'), 'Invalid response for 400');
