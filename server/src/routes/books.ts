@@ -3,10 +3,29 @@ import { Filter, FindOptions, ObjectId } from 'mongodb';
 import { Book } from '../models/book.js';
 import { Review } from '../models/review.js';
 import { collections } from '../database.js';
+import { expressjwt as jwt } from 'express-jwt';
+
+import { Request } from 'express';
+interface IAuthRequest extends Request {
+  auth: {
+    sub: string,
+    name: string,
+    isAdmin: boolean,
+    iat: number,
+    exp: number
+  };
+}
 
 // The router will be added as a middleware and will take control of requests starting with /books.
 const books = Router();
 export default books;
+
+const secret = process.env.SECRET || 'secret';
+
+const protectedRoute = jwt({
+    secret,
+    algorithms: ['HS256']
+});
 
 books.route('/').get(async (req, res) => {
     let limit = parseInt(req?.query?.limit as string) || 12;
@@ -117,9 +136,10 @@ books.route('/:id/reviews').get(async (req, res) => {
     }
 });
 
-books.route('/:id/reviews').post(async (req, res) => {
+books.post('/:id/reviews', protectedRoute, async (req: IAuthRequest, res) => {
     const bookId = req?.params?.id;
     const reviewBody = req?.body;
+    const userName = req?.auth?.name;
 
     if (!bookId) {
         return res.status(400).send('Book id is missing');
@@ -132,7 +152,7 @@ books.route('/:id/reviews').post(async (req, res) => {
     const review = {
         _id: null,
         text: reviewBody?.text,
-        name: 'Anonymous',
+        name: userName,
         rating: reviewBody?.rating,
         timestamp: (new Date()).getTime(),
         bookId
