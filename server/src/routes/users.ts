@@ -1,6 +1,8 @@
 import { Router } from 'express';
-import { collections } from '../database.js';
 import jsonwebtoken from 'jsonwebtoken';
+import UserController from '../controllers/user.js';
+
+const userController = new UserController();
 
 const secret = process.env.SECRET || 'secret';
 
@@ -8,20 +10,12 @@ const secret = process.env.SECRET || 'secret';
 const users = Router();
 export default users;
 
-users.get('/login', async (req, res) => {
-    // Generate a random username from a list of 20 adjectives and 20 animals
-    const adjectives = ['Abrasive', 'Brash', 'Callous', 'Daft', 'Eccentric', 'Fiesty', 'Golden', 'Holy', 'Ignominious', 'Joltin', 'Killer', 'Luscious', 'Mushy', 'Nasty', 'OldSchool', 'Pompous', 'Quiet', 'Rowdy', 'Sneaky', 'Tawdry'];
-    const animals = ['Alligator', 'Barracuda', 'Cheetah', 'Dingo', 'Elephant', 'Falcon', 'Gorilla', 'Hyena', 'Iguana', 'Jaguar', 'Koala', 'Lemur', 'Mongoose', 'Narwhal', 'Orangutan', 'Platypus', 'Quetzal', 'Rhino', 'Scorpion', 'Tarantula'];
-    const randomUsername = `${adjectives[Math.floor(Math.random() * 20)]} ${animals[Math.floor(Math.random() * 20)]}`;
+users.get('/login/:username', async (req, res) => {
+    const username = req?.params?.username;
+    let user = null;
 
-    // Get the user from the database
-    let user = await collections?.users?.findOne({ name: randomUsername });
-
-    // If user doesn't exist, create it
-    if (!user) {
-        const result = await collections?.users?.insertOne({ name: randomUsername });
-        user = { _id: result.insertedId, name: randomUsername };
-    }
+    if (username) user = userController.getUser(username);
+    if (!user) user = userController.createNewUser();
 
     // Generate a JWT with algorithm none
     const jwt = jsonwebtoken.sign({

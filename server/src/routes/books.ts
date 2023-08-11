@@ -1,124 +1,95 @@
 import { Router } from 'express';
-import { Filter, FindOptions } from 'mongodb';
-import { Book } from '../models/book.js';
 import { collections } from '../database.js';
 import { IAuthRequest } from '../utils/typescript.js';
 import { protectedRoute } from '../utils/helpers.js';
+import BookController from '../controllers/books.js';
 
 // The router will be added as a middleware and will take control of requests starting with /books.
 const books = Router();
 export default books;
 
+const bookController = new BookController();
+
 books.get('/', async (req, res) => {
-    let limit = parseInt(req?.query?.limit as string) || 12;
-
-    if (limit > 100) {
-        limit = 100;
-    }
-
-    const skip = parseInt(req?.query?.skip as string) || 0;
-    const filter = {} as Filter<Book>;
-    const project = {_id: 0} as FindOptions<Book>;
-
-    const bookCursor = await collections?.books?.find(filter, project);
-    const books = bookCursor.limit(limit).skip(skip).toArray();
-
-    return res.json(await books);
+    return res.json(await bookController.getBooks(req?.query?.limit, req?.query?.skip));
 });
 
 books.post('/', protectedRoute, async (req: IAuthRequest, res) => {
     if (req?.auth?.isAdmin !== true) {
-        return res.status(403).send({message: 'Only admins can create books'});
+        return res.status(403).send({message: bookController.errors.ADMIN_ONLY});
     }
 
     const book = req?.body;
 
     if (!book || Object.keys(book).length === 0) {
-        return res.status(400).send({message: 'Book details are missing'});
+        return res.status(400).send({message: bookController.errors.DETAILS_MISSING});
     }
 
-    const result = await collections?.books?.insertOne(book);
-
-    if (result?.insertedId) {
-        return res.status(201).send({
-            message: `Created a new book with id ${result.insertedId}`,
-            insertedId: result.insertedId
-        });
+    try {
+        const result = await bookController.createBook(req?.body);
+        return res.status(201).send({ result, message: bookController.success.CREATED });
+    } catch (error) {
+        return res.status(500).send({message: error});
     }
-
-    return res.status(500).send({message: 'Failed to create a new book'});
 });
 
 books.get('/:bookId', async (req, res) => {
     const bookId = req?.params?.bookId;
 
     if (!bookId) {
-        return res.status(400).send({message: 'Book id is missing'});
+        return res.status(400).send({message: bookController.errors.BOOK_ID_MISSING});
     }
 
-    const book = await collections?.books?.findOne({ _id: bookId });
+    const book = await bookController.getBook(bookId);
 
-    if (book) {
-        return res.json(book);
+    if (!book){
+        return res.status(404).send({message: bookController.errors.NOT_FOUND});
     }
 
-    return res.status(404).send({message: `Book with id ${bookId} was not found`});
+    return res.json(book);
 });
 
 books.put('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
     if (req?.auth?.isAdmin !== true) {
-        return res.status(403).send({message: 'Only admins can update books'});
+        return res.status(403).send({message: bookController.errors.ADMIN_ONLY});
     }
 
     const bookId = req?.params?.bookId;
     const book = req?.body;
 
     if (!bookId) {
-        return res.status(400).send({message: 'Book id is missing'});
+        return res.status(400).send({message: bookController.errors.BOOK_ID_MISSING});
     }
 
     if (!book || Object.keys(book).length === 0) {
-        return res.status(400).send({message: 'Book details are missing'});
+        return res.status(400).send({message: bookController.errors.DETAILS_MISSING});
     }
 
-    const result = await collections?.books?.updateOne({ _id: bookId }, { $set: book });
-
-    if (result?.modifiedCount) {
-        return res.send({
-            message: `Updated book with id ${bookId}`,
-            newBook: book
-        });
+    try {
+        const result = await collections?.books?.updateOne({ _id: bookId }, { $set: book });
+        return res.status(200).send({result, message: bookController.success.UPDATED});
+    } catch(error) {
+        return res.status(500).send({message: error});
     }
-
-    return res.status(500).send({message: `Failed to update book with id ${bookId}`});
 });
 
 books.delete('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
     if (req?.auth?.isAdmin !== true) {
-        return res.status(403).send({message: 'Only admins can delete books'});
+        return res.status(403).send({message: bookController.errors.ADMIN_ONLY});
     }
 
     const bookId = req?.params?.bookId;
 
     if (!bookId) {
-        return res.status(400).send({message: 'Book id is missing'});
+        return res.status(400).send({message: bookController.errors.BOOK_ID_MISSING});
     }
 
     try {
         const result = await collections?.books?.deleteOne({ _id: bookId });
-
-        if (result?.deletedCount) {
-            await collections?.reviews?.deleteMany({ bookId });
-            await collections?.issueDetails?.deleteMany({ 'book._id': bookId });
-            res.status(202).send({message: `Removed book with id ${bookId}`});
-        } else if (!result) {
-            res.status(400).send({message: `Book with id ${bookId} does not exist`});
-        } else if (!result.deletedCount) {
-            res.status(404).send({message: `Book with id ${bookId} was not found`});
-        }
+        return res.status(202).send({result, message: bookController.success.DELETED});
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).send({message: `Failed to delete book with id ${bookId}`});
+        if (error === bookController.errors.NOT_FOUND) return res.status(404).send({ message: error });
+        return res.status(500).send({message: error});
     }
 });
 

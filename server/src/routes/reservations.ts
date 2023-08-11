@@ -2,13 +2,15 @@ import { Router } from 'express';
 import { ObjectId } from 'mongodb';
 import { protectedRoute } from '../utils/helpers.js';
 import { IAuthRequest } from '../utils/typescript.js';
-import { collections } from '../database.js';
-import { Reservation } from '../models/issue-detail';
+import ReservationsController from '../controllers/reservations.js';
+import BookController from '../controllers/books.js';
 
 // The router will be added as a middleware and will take control of requests starting with /reservations.
 const reservations = Router({mergeParams: true});
 export default reservations;
 
+const reservationController = new ReservationsController();
+const bookController = new BookController();
 /**
  * Routes
  *
@@ -20,60 +22,37 @@ export default reservations;
  *
  */
 
-async function computeAvailableBooks(bookId) {
-    const updatePipeline = [
-        { $match: { _id: bookId } },
-        { $lookup: {
-            from: 'issueDetails',
-            localField: '_id',
-            foreignField: 'book._id',
-            as: 'details' },
-        },
-        { $set: { available: { $subtract: ['$totalInventory', {$size: '$details'}] } } },
-        { $unset: 'details' },
-        { $merge: { into: 'books', on: '_id', whenMatched: 'replace' } }
-    ];
-    const result = await collections?.books?.aggregate(updatePipeline);
-
-    return result.toArray();
-}
-
-async function computeReservedBooks(userId) {
-    const reservedCount = await collections?.issueDetails?.countDocuments({ '_id': new RegExp(`^${userId}R`) });
-    const updateResult = await collections?.users?.updateOne({ _id: userId }, { $set: { reserved: reservedCount } });
-    return updateResult;
-}
-
 reservations.get('/', protectedRoute, async (req: IAuthRequest, res) => {
     const userId = req?.auth?.sub;
 
-    const reservations = await collections?.issueDetails?.find({ '_id': new RegExp(`^${userId}R`)}).toArray();
-
-    return res.json(reservations).status(200);
+    const reservations = await reservationController.getReservations(userId);
+    return res.status(200).json(reservations);
 });
 
 reservations.get('/:reservationId', async (req, res) => {
     const reservationId = req?.params?.reservationId;
 
     if (!reservationId) {
-        return res.send({message: 'Reservation id is missing'}).status(400);
+        return res.status(400).send({message: reservationController.errors.MISSING_ID});
     }
 
-    const reservation = await collections?.issueDetails?.findOne({ _id: reservationId });
-
-    if (reservation) {
-        return res.json(reservation).status(200);
+    try {
+        const reservation = await reservationController.getReservation(reservationId);
+        return res.status(200).send(reservation);
+    } catch (error) {
+        if (error === reservationController.errors.NOT_FOUND) {
+            return res.status(404).send({message: reservationController.errors.NOT_FOUND});
+        }
+        return res.status(500).send({message: error});
     }
-
-    return res.status(404).send({message: 'Reservation not found'});
 });
 
-reservations.post('/:bookId', protectedRoute, async (req: IAuthRequest, res, next) => {
+reservations.post('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
     const username = req?.auth?.name;
     const bookId = req?.params?.bookId;
 
     if (!username || !bookId) {
-        return res.send({message: 'User name or book id is missing'}).status(400);
+        return res.send({message: reservationController.errors.MISSING_DETAILS}).status(400);
     }
 
     const user = {
@@ -81,45 +60,19 @@ reservations.post('/:bookId', protectedRoute, async (req: IAuthRequest, res, nex
         name: username
     };
 
-    const bookData = await collections?.books?.findOne({ _id: bookId });
-
-    if (!bookData) {
-        res.status(404).json({message: 'Book not found'});
-        return next();
-    }
-
-    if (bookData?.available <= 0) {
-        return res.status(400).json({message: 'Book is not available'});
-    }
-
-
-    const book = {
-        _id: bookData?._id,
-        title: bookData?.title,
-    };
-
-    const RESERVATION_DURATION = 12; // hours
-
-    const reservation = {
-        _id: `${user._id}R${book._id}`,
-        book,
-        user,
-        recordType: 'reservation',
-        expirationDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * RESERVATION_DURATION)
-    } as Reservation;
-
-    const insertResult = await collections?.issueDetails?.insertOne(reservation);
-    await computeAvailableBooks(book._id);
-    await computeReservedBooks(user._id);
-
-    if (insertResult?.insertedId) {
+    try {
+        const insertResult = await reservationController.createReservation(user, bookId);
         return res.status(201).send({
-            message: `Created a new reservation with id ${insertResult.insertedId}`,
+            message: reservationController.success.CREATED,
             insertedId: insertResult.insertedId
         });
+    } catch (error) {
+        if (error.message == bookController.errors.NOT_FOUND) return res.status(404).send({ message: error.message });
+        if (error.message == bookController.errors.NOT_AVAILABLE) {
+            return res.status(400).send({message: bookController.errors.NOT_AVAILABLE});
+        }
+        return res.status(500).send({message: error});
     }
-
-    return res.status(500).send({message: 'Failed to create a new reservation'});
 });
 
 reservations.delete('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
@@ -127,21 +80,18 @@ reservations.delete('/:bookId', protectedRoute, async (req: IAuthRequest, res) =
     const bookId = req?.params?.bookId;
 
     if (!userId || !bookId) {
-        return res.send({message: 'User id or book id is missing'}).status(400);
+        return res.send({message: reservationController.errors.MISSING_DETAILS}).status(400);
     }
 
-    const deleteResult = await collections?.issueDetails?.deleteOne({ _id: `${userId}R${bookId}` });
-    await computeAvailableBooks(bookId);
-    await computeReservedBooks(userId);
-
-    if(deleteResult?.deletedCount) {
-        return res.json({
-            message: `Deleted ${deleteResult.deletedCount} reservation(s)`,
-            deletedCount: deleteResult.deletedCount
-        }).status(200);
+    try {
+        reservationController.cancelReservation(bookId, userId);
+        res.status(200).send({message: reservationController.success.CANCELLED});
+    } catch(error) {
+        if (error === reservationController.errors.NOT_FOUND) {
+            return res.status(404).send({message: reservationController.errors.NOT_FOUND});
+        }
+        return res.status(500).send({message: error});
     }
-
-    return res.status(500).send({message: 'Failed to delete reservation'});
 });
 
 reservations.get('/user/:userId', protectedRoute, async (req: IAuthRequest, res) => {
@@ -149,14 +99,14 @@ reservations.get('/user/:userId', protectedRoute, async (req: IAuthRequest, res)
     const userId = req?.params?.userId;
 
     if (!isAdmin) {
-        return res.status(403).send({message: 'Only administrators can see reservation lists'});
+        return res.status(403).send({message: reservationController.errors.ADMIN_ONLY});
     }
 
     if (!userId) {
-        return res.status(400).send({message: 'User id is missing'});
+        return res.status(400).send({message: reservationController.errors.MISSING_DETAILS});
     }
 
-    const reservations = await collections?.issueDetails?.find({ '_id': new RegExp(`^${userId}R`)}).toArray();
+    const reservations = await reservationController.getReservations(userId);
 
     return res.status(200).json(reservations);
 });

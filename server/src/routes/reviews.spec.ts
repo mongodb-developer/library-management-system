@@ -2,9 +2,12 @@ import request from 'supertest';
 import assert from 'assert';
 import { Book } from '../models/book';
 import { baseUrl, users, books } from '../utils/testingShared.js';
+import ReviewsController from '../controllers/reviews.js';
 
 const adminJWT = users.admin.jwt;
 const userJWT = users.user1.jwt;
+
+const reviewsController = new ReviewsController();
 
 describe('Reviews API', () => {
     const book: Book = books.sample;
@@ -12,8 +15,6 @@ describe('Reviews API', () => {
     const review = {
         text: 'Great book!'
     };
-
-    let reviewId;
 
     before(async () => {
         await request(baseUrl)
@@ -38,7 +39,7 @@ describe('Reviews API', () => {
             .send(review)
             .expect(201);
 
-        assert(createBookResponse?.body?.message?.includes('Created a new review'), 'Review was not created');
+        assert(createBookResponse?.body?.message?.includes(reviewsController.success.CREATED), 'Review was not created');
 
         const getBooksResponse = await request(baseUrl)
             .get(`/books/${book._id}`)
@@ -50,12 +51,12 @@ describe('Reviews API', () => {
 
     it('Should not have more than 5 reviews', async () => {
         for (let i = 0; i < 10; i++) {
-            const result = await request(baseUrl)
+            await request(baseUrl)
                 .post(`/books/${book._id}/reviews`)
                 .set('Authorization', `Bearer ${userJWT}`)
                 .send(review)
                 .expect(201);
-            reviewId = result?.body?.insertedId;
+
         }
 
         const getBooksResponse = await request(baseUrl)
@@ -76,12 +77,19 @@ describe('Reviews API', () => {
 
     it('Should not let me add reviews if I am not logged in', async () => {
         await request(baseUrl)
-            .post('/books/9780075536321/reviews')
+            .post(`/books/${book._id}/reviews`)
             .send(review)
             .expect(401);
     });
 
     it('Should let me see a single review by id', async () => {
+        const insertResponse = await request(baseUrl)
+            .post(`/books/${book._id}/reviews`)
+            .set('Authorization', `Bearer ${userJWT}`)
+            .send(review);
+
+        const reviewId = insertResponse?.body?.insertResult?.insertedId;
+
         const reviewResponse = await request(baseUrl)
             .get(`/books/${book._id}/reviews/${reviewId}`)
             .expect(200);

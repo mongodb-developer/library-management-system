@@ -8,6 +8,16 @@ import { ObjectId } from 'mongodb';
  */
 export type IssueDetail = BorrowedBook | Reservation;
 
+interface ReservationUser {
+    _id: ObjectId;
+    name: string;
+}
+
+interface ReservationBook {
+    _id: string;
+    title: string;
+}
+
 interface BorrowedBook extends IssueDetailBase {
     /**
      * Date when the book was borrowed.
@@ -43,22 +53,18 @@ interface IssueDetailBase {
      * Reference to the book collection following the extended reference pattern.
      * See https://www.mongodb.com/blog/post/building-with-patterns-the-extended-reference-pattern.
      */
-    book: {
-        _id: string;
-        title: string;
-    }
+    book: ReservationBook;
 
     /**
      * Reference to the user collection following the extended reference pattern.
      * See https://www.mongodb.com/blog/post/building-with-patterns-the-extended-reference-pattern.
      */
-    user: {
-        _id: ObjectId;
-        name: string;
-    }
+    user: ReservationUser;
 }
 
 export {
     BorrowedBook,
-    Reservation
+    Reservation,
+    ReservationBook,
+    ReservationUser
 };

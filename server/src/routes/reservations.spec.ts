@@ -2,10 +2,15 @@ import request from 'supertest';
 import assert from 'assert';
 import { Book } from '../models/book';
 import { baseUrl, users, books } from '../utils/testingShared.js';
+import ReservationsController from '../controllers/reservations.js';
+import BookController from '../controllers/books.js';
 
 const adminJWT = users.admin.jwt;
 const userJWT = users.user1.jwt;
 const userId = users.user1._id;
+
+const reservationController = new ReservationsController();
+const bookController = new BookController();
 
 describe('Reservation API', () => {
     const book: Book = books.oneCopy;
@@ -32,7 +37,7 @@ describe('Reservation API', () => {
             .set('Authorization', `Bearer ${userJWT}`)
             .expect(201);
 
-        assert(createReservationResponse?.body?.message?.includes('new reservation'), 'Book was not created');
+        assert(createReservationResponse?.body?.message?.includes(reservationController.success.CREATED), 'Book was not created');
 
         const getBooksResponse = await request(baseUrl)
             .get(`/books/${book._id}`)
@@ -48,7 +53,7 @@ describe('Reservation API', () => {
             .set('Authorization', `Bearer ${userJWT}`)
             .expect(404);
 
-        assert(createReservationResponse?.body?.message?.includes('not found'), 'Book should not exist');
+        assert(createReservationResponse?.body?.message?.includes(bookController.errors.NOT_FOUND), 'Book should not exist');
     });
 
     it('Should return 400 if the book is not available', async () => {
@@ -57,7 +62,7 @@ describe('Reservation API', () => {
             .set('Authorization', `Bearer ${userJWT}`)
             .expect(400);
 
-        assert(createReservationResponse?.body?.message?.includes('not available'), 'Book should not be available');
+        assert(createReservationResponse?.body?.message?.includes(bookController.errors.NOT_AVAILABLE), 'Book should not be available');
     });
 
     it('Should not let me reserve a book if I am not logged in', async () => {
@@ -81,7 +86,7 @@ describe('Reservation API', () => {
             .get(`/reservations/user/${userId}`)
             .set('Authorization', `Bearer ${adminJWT}`)
             .expect(200);
-
+            
         assert(getReservationsResponse?.body?.length === 1, 'There should be 1 reservation');
         assert(getReservationsResponse?.body?.[0]?.book?._id === book._id, 'The reservation should be for the correct book');
     });
@@ -96,7 +101,7 @@ describe('Reservation API', () => {
             .set('Authorization', `Bearer ${userJWT}`)
             .expect(200);
 
-        assert(cancelReservationResponse?.body?.message?.includes('Deleted'), 'Reservation should be cancelled');
+        assert(cancelReservationResponse?.body?.message?.includes(reservationController.success.CANCELLED), 'Reservation should be cancelled');
 
         const newBook = await request(baseUrl)
             .get(`/books/${book._id}`)
