@@ -120,4 +120,8 @@ describe('Reviews API', () => {
             .get(`/books/${book._id}/reviews/123456789012`)
             .expect(404);
     });
+
+    it('Should prevent a user from borrowing and reserving more than 10 books', async () => {
+        // TODO
+    });
 });

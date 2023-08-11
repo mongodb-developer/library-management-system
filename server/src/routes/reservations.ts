@@ -38,6 +38,12 @@ async function computeAvailableBooks(bookId) {
     return result.toArray();
 }
 
+async function computeReservedBooks(userId) {
+    const reservedCount = await collections?.issueDetails?.countDocuments({ '_id': new RegExp(`^${userId}R`) });
+    const updateResult = await collections?.users?.updateOne({ _id: userId }, { $set: { reserved: reservedCount } });
+    return updateResult;
+}
+
 reservations.get('/', protectedRoute, async (req: IAuthRequest, res) => {
     const userId = req?.auth?.sub;
 
@@ -104,6 +110,7 @@ reservations.post('/:bookId', protectedRoute, async (req: IAuthRequest, res, nex
 
     const insertResult = await collections?.issueDetails?.insertOne(reservation);
     await computeAvailableBooks(book._id);
+    await computeReservedBooks(user._id);
 
     if (insertResult?.insertedId) {
         return res.status(201).send({
@@ -125,6 +132,7 @@ reservations.delete('/:bookId', protectedRoute, async (req: IAuthRequest, res) =
 
     const deleteResult = await collections?.issueDetails?.deleteOne({ _id: `${userId}R${bookId}` });
     await computeAvailableBooks(bookId);
+    await computeReservedBooks(user._id);
 
     if(deleteResult?.deletedCount) {
         return res.json({
