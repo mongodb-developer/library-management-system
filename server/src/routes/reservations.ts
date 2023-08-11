@@ -132,7 +132,7 @@ reservations.delete('/:bookId', protectedRoute, async (req: IAuthRequest, res) =
 
     const deleteResult = await collections?.issueDetails?.deleteOne({ _id: `${userId}R${bookId}` });
     await computeAvailableBooks(bookId);
-    await computeReservedBooks(user._id);
+    await computeReservedBooks(userId);
 
     if(deleteResult?.deletedCount) {
         return res.json({
