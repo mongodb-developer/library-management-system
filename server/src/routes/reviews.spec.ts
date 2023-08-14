@@ -1,7 +1,7 @@
 import request from 'supertest';
 import assert from 'assert';
 import { Book } from '../models/book';
-import { baseUrl, users, books } from '../utils/testingShared.js';
+import { baseUrl, users, books, cleanDatabase, closeDatabase } from '../utils/testingShared.js';
 import ReviewsController from '../controllers/reviews.js';
 
 const adminJWT = users.admin.jwt;
@@ -17,9 +17,7 @@ describe('Reviews API', () => {
     };
 
     before(async () => {
-        await request(baseUrl)
-            .delete(`/books/${book._id}`)
-            .set('Authorization', `Bearer ${adminJWT}`);
+        await cleanDatabase();
         await request(baseUrl)
             .post('/books')
             .set('Authorization', `Bearer ${adminJWT}`)
@@ -27,9 +25,8 @@ describe('Reviews API', () => {
     });
 
     after(async () => {
-        await request(baseUrl)
-            .delete(`/books/${book._id}`)
-            .set('Authorization', `Bearer ${adminJWT}`);
+        await cleanDatabase();
+        closeDatabase();
     });
 
     it('Should let me add reviews', async () => {

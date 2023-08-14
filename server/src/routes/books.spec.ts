@@ -1,7 +1,7 @@
 import request from 'supertest';
 import assert from 'assert';
 import { Book } from '../models/book';
-import { baseUrl, users, books } from '../utils/testingShared.js';
+import { baseUrl, users, books, cleanDatabase } from '../utils/testingShared.js';
 import BookController from '../controllers/books.js';
 
 const adminJWT = users.admin.jwt;
@@ -13,15 +13,11 @@ describe('Books API', () => {
     const book: Book = books.sample;
 
     before(async () => {
-        await request(baseUrl)
-            .delete(`/books/${book._id}`)
-            .set('Authorization', `Bearer ${adminJWT}`);
+        await cleanDatabase();
     });
 
     after(async () => {
-        await request(baseUrl)
-            .delete(`/books/${book._id}`)
-            .set('Authorization', `Bearer ${adminJWT}`);
+        await cleanDatabase();
     });
 
     it('Should persist documents for admins', async () => {

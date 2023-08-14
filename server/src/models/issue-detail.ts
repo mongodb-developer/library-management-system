@@ -18,6 +18,8 @@ interface ReservationBook {
     title: string;
 }
 
+type BookType = 'borrowedBook' | 'reservation';
+
 interface BorrowedBook extends IssueDetailBase {
     /**
      * Date when the book was borrowed.
@@ -26,7 +28,16 @@ interface BorrowedBook extends IssueDetailBase {
     /**
      * Date when the book is due to be returned.
      */
-    returnDate: Date;
+    dueDate: Date;
+    /**
+     * Date when the book was returned.
+     * (optional) set when the book is returned.
+     */
+    returnedDate?: Date;
+    /**
+     * Boolean indicating if the book was returned.
+     */
+    returned: boolean;
 }
 
 interface Reservation extends IssueDetailBase {
@@ -64,6 +75,7 @@ interface IssueDetailBase {
 
 export {
     BorrowedBook,
+    BookType,
     Reservation,
     ReservationBook,
     ReservationUser

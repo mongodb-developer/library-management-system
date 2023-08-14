@@ -2,14 +2,14 @@ import { Router } from 'express';
 import { ObjectId } from 'mongodb';
 import { protectedRoute } from '../utils/helpers.js';
 import { IAuthRequest } from '../utils/typescript.js';
-import ReservationsController from '../controllers/reservations.js';
+import IssueDetailsController from '../controllers/issueDetails.js';
 import BookController from '../controllers/books.js';
 
 // The router will be added as a middleware and will take control of requests starting with /reservations.
 const reservations = Router({mergeParams: true});
 export default reservations;
 
-const reservationController = new ReservationsController();
+const issueDetailsController = new IssueDetailsController();
 const bookController = new BookController();
 /**
  * Routes
@@ -25,7 +25,7 @@ const bookController = new BookController();
 reservations.get('/', protectedRoute, async (req: IAuthRequest, res) => {
     const userId = req?.auth?.sub;
 
-    const reservations = await reservationController.getReservations(userId);
+    const reservations = await issueDetailsController.getReservations(userId);
     return res.status(200).json(reservations);
 });
 
@@ -33,15 +33,15 @@ reservations.get('/:reservationId', async (req, res) => {
     const reservationId = req?.params?.reservationId;
 
     if (!reservationId) {
-        return res.status(400).send({message: reservationController.errors.MISSING_ID});
+        return res.status(400).send({message: issueDetailsController.errors.MISSING_ID});
     }
 
     try {
-        const reservation = await reservationController.getReservation(reservationId);
+        const reservation = await issueDetailsController.getReservation(reservationId);
         return res.status(200).send(reservation);
     } catch (error) {
-        if (error === reservationController.errors.NOT_FOUND) {
-            return res.status(404).send({message: reservationController.errors.NOT_FOUND});
+        if (error.message == issueDetailsController.errors.NOT_FOUND) {
+            return res.status(404).send({message: issueDetailsController.errors.NOT_FOUND});
         }
         return res.status(500).send({message: error});
     }
@@ -52,7 +52,7 @@ reservations.post('/:bookId', protectedRoute, async (req: IAuthRequest, res) => 
     const bookId = req?.params?.bookId;
 
     if (!username || !bookId) {
-        return res.send({message: reservationController.errors.MISSING_DETAILS}).status(400);
+        return res.send({message: issueDetailsController.errors.MISSING_DETAILS}).status(400);
     }
 
     const user = {
@@ -61,10 +61,11 @@ reservations.post('/:bookId', protectedRoute, async (req: IAuthRequest, res) => 
     };
 
     try {
-        const insertResult = await reservationController.createReservation(user, bookId);
+        const result = await issueDetailsController.createReservation(user, bookId);
+
         return res.status(201).send({
-            message: reservationController.success.CREATED,
-            insertedId: insertResult.insertedId
+            message: issueDetailsController.success.CREATED,
+            insertedId: result.insertedId
         });
     } catch (error) {
         if (error.message == bookController.errors.NOT_FOUND) return res.status(404).send({ message: error.message });
@@ -80,15 +81,15 @@ reservations.delete('/:bookId', protectedRoute, async (req: IAuthRequest, res) =
     const bookId = req?.params?.bookId;
 
     if (!userId || !bookId) {
-        return res.send({message: reservationController.errors.MISSING_DETAILS}).status(400);
+        return res.send({message: issueDetailsController.errors.MISSING_DETAILS}).status(400);
     }
 
     try {
-        reservationController.cancelReservation(bookId, userId);
-        res.status(200).send({message: reservationController.success.CANCELLED});
+        await issueDetailsController.cancelReservation(bookId, userId);
+        res.status(200).send({message: issueDetailsController.success.CANCELLED});
     } catch(error) {
-        if (error === reservationController.errors.NOT_FOUND) {
-            return res.status(404).send({message: reservationController.errors.NOT_FOUND});
+        if (error === issueDetailsController.errors.NOT_FOUND) {
+            return res.status(404).send({message: issueDetailsController.errors.NOT_FOUND});
         }
         return res.status(500).send({message: error});
     }
@@ -99,14 +100,14 @@ reservations.get('/user/:userId', protectedRoute, async (req: IAuthRequest, res)
     const userId = req?.params?.userId;
 
     if (!isAdmin) {
-        return res.status(403).send({message: reservationController.errors.ADMIN_ONLY});
+        return res.status(403).send({message: issueDetailsController.errors.ADMIN_ONLY});
     }
 
     if (!userId) {
-        return res.status(400).send({message: reservationController.errors.MISSING_DETAILS});
+        return res.status(400).send({message: issueDetailsController.errors.MISSING_DETAILS});
     }
 
-    const reservations = await reservationController.getReservations(userId);
+    const reservations = await issueDetailsController.getReservations(userId);
 
     return res.status(200).json(reservations);
 });

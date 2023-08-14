@@ -1,5 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { Book } from '../models/book';
+import { collections, connectToDatabase } from '../database.js';
+import '../load-env-vars.js';
 
 const baseUrl = 'http://localhost:5000';
 
@@ -13,6 +15,7 @@ const users = {
     },
     user1: {
         jwt: userJWT,
+        name: 'Rowdy Hyena',
         _id: '64d4c7505bd483105c48991d'
     }
 };
@@ -77,13 +80,67 @@ const bookOneCopy: Book = {
     }],
 };
 
+const notAvailable: Book = {
+    _id: '1239876543210',
+    title: 'The Enigma Chronicles',
+    authors: [{
+        _id: new ObjectId(),
+        name: 'Sophia Harper',
+    }],
+    cover: 'https://m.media-amazon.com/images/I/81PM6jgJz3L._AC_UF1000,1000_QL80_.jpg',
+    genres: ['Mystery', 'Thriller'],
+    year: 2022,
+    pages: 520,
+    synopsis: 'In "The Enigma Chronicles," renowned detective Alex Sinclair faces his most baffling case yet. A series of seemingly unrelated puzzles and crimes unfold across the city, leading Alex down a twisted path of secrets and deception. As he races against time to decipher the enigma behind these incidents, he uncovers a hidden conspiracy that threatens to shake the foundations of society. The line between friend and foe blurs as Alex navigates a web of intrigue and danger, determined to uncover the truth before it\'s too late.',
+    totalInventory: 2,
+    available: 0,
+    attributes: [{
+        key: 'language',
+        value: 'English',
+    }, {
+        key: 'format',
+        value: 'Paperback',
+    }],
+    reviews: [{
+        text: 'A gripping mystery that keeps you guessing until the very end.',
+        name: 'ThrillerFanatic',
+        rating: 5,
+        timestamp: 1685624400000,
+    }, {
+        text: 'Sophia Harper is a master of suspense.',
+        name: 'MysteryEnthusiast',
+        rating: 4,
+        timestamp: 1685818800000,
+    }],
+};
+
+
 const books = {
     sample: book,
     oneCopy: bookOneCopy,
+    notAvailable,
 };
+
+const client = await connectToDatabase(process.env.DATABASE_URI);
+
+async function cleanDatabase() {
+    return await Promise.all([
+        collections?.books?.deleteOne({_id: books.sample._id}),
+        collections?.books?.deleteOne({_id: books.oneCopy._id}),
+        collections?.books?.deleteOne({_id: books.notAvailable._id}),
+        collections.issueDetails?.deleteMany({_id: new RegExp(`^${users.user1._id}`)}),
+        collections.reviews?.deleteMany({name: users.user1.name})
+    ]);
+}
+
+function closeDatabase() {
+    return client.close();
+}
 
 export {
     baseUrl,
     users,
-    books
+    books,
+    cleanDatabase,
+    closeDatabase
 };

@@ -1,4 +1,4 @@
-import { Filter, FindOptions } from 'mongodb';
+import { DeleteResult, Filter, FindOptions, InsertOneResult, UpdateResult } from 'mongodb';
 import { Book } from '../models/book';
 import { collections } from '../database.js';
 
@@ -21,7 +21,7 @@ class BookController {
     };
 
     // Returns a set of books
-    public async getBooks(limit, skip) {
+    public async getBooks(limit, skip): Promise<Book[]> {
         if (!limit) limit = 12;
         if (typeof limit !== 'number') {
             limit = parseInt(limit);
@@ -43,13 +43,13 @@ class BookController {
     }
 
     // Return a single book
-    public async getBook(bookId: string) {
+    public async getBook(bookId: string): Promise<Book> {
         const book = await collections?.books?.findOne({ _id: bookId });
         return book;
     }
 
     // Create a new book
-    public async createBook(book: Book) {
+    public async createBook(book: Book): Promise<InsertOneResult> {
         const result = await collections?.books?.insertOne(book);
 
         if (!result?.insertedId) {
@@ -60,7 +60,7 @@ class BookController {
     }
 
     // Update a book
-    public async updateBook(bookId: string, book: Book) {
+    public async updateBook(bookId: string, book: Book): Promise<UpdateResult> {
         const result = await collections?.books?.updateOne({ _id: bookId }, { $set: book });
 
         if (result.modifiedCount === 0) throw new Error(this.errors.UNKNOWN_UPDATE_ERROR);
@@ -69,7 +69,7 @@ class BookController {
     }
 
     // Delete a book
-    public async deleteBook(bookId: string) {
+    public async deleteBook(bookId: string): Promise<DeleteResult> {
         const result = await collections?.books?.deleteOne({ _id: bookId });
 
         if (result.deletedCount === 0) throw new Error(this.errors.UNKNOWN_UPDATE_ERROR);
@@ -85,6 +85,12 @@ class BookController {
                 from: 'issueDetails',
                 localField: '_id',
                 foreignField: 'book._id',
+                pipeline: [ { $match: {
+                    $or: [
+                        {recordType: 'reservation'},
+                        {recordType: 'borrowedBook', returned: false}
+                    ]
+                } } ],
                 as: 'details' },
             },
             { $set: { available: { $subtract: ['$totalInventory', {$size: '$details'}] } } },
@@ -94,6 +100,14 @@ class BookController {
         const result = await collections?.books?.aggregate(updatePipeline);
 
         return result.toArray();
+    }
+
+    public async isBookAvailable(bookId: string): Promise<Book> {
+        const bookData = await this.getBook(bookId);
+        if (!bookData) throw new Error(this.errors.NOT_FOUND);
+        if (bookData?.available <= 0) throw new Error(this.errors.NOT_AVAILABLE);
+
+        return bookData;
     }
 }
 

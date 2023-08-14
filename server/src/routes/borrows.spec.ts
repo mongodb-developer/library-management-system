@@ -2,60 +2,152 @@ import request from 'supertest';
 // import assert from 'assert';
 import { Book } from '../models/book';
 import { baseUrl, users, books } from '../utils/testingShared.js';
+import { cleanDatabase } from '../utils/testingShared.js';
+import IssueDetailsController from '../controllers/issueDetails.js';
+import assert from 'assert';
 
 const adminJWT = users.admin.jwt;
-// const userJWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NGQ0Yzc1MDViZDQ4MzEwNWM0ODk5MWQiLCJuYW1lIjoiUm93ZHkgSHllbmEiLCJpYXQiOjE2OTE2NjY3ODgsImV4cCI6MTcyMzIwMjc4OH0.YCFLMDhF4R009QT3bOy_H90ocgpKRhIMdbtpOvO-s-c';
+const userJWT = users.user1.jwt;
+
+const issueDetailsController = new IssueDetailsController();
 
 describe('Borrows API', () => {
     const book: Book = books.sample;
+    const unavailableBook: Book = books.notAvailable;
+    const bookWithOneCopy: Book = books.oneCopy;
 
     before(async () => {
+        await cleanDatabase();
         await request(baseUrl)
-            .delete(`/books/${book._id}`)
-            .set('Authorization', `Bearer ${adminJWT}`);
+            .post('/books')
+            .set('Authorization', `Bearer ${adminJWT}`)
+            .send(book);
+        await request(baseUrl)
+            .post('/books')
+            .set('Authorization', `Bearer ${adminJWT}`)
+            .send(unavailableBook);
+        await request(baseUrl)
+            .post('/books')
+            .set('Authorization', `Bearer ${adminJWT}`)
+            .send(bookWithOneCopy);
     });
 
     after(async () => {
-        await request(baseUrl)
-            .delete(`/books/${book._id}`)
-            .set('Authorization', `Bearer ${adminJWT}`);
+        await cleanDatabase();
     });
 
     it('Should let a user with a reservation borrow a book', async () => {
         // Reserve a book
+        await request(baseUrl)
+            .post(`/reservations/${book._id}`)
+            .set('Authorization', `Bearer ${userJWT}`)
+            .expect(201);
 
         // Borrow the same book
+        await request(baseUrl)
+            .post(`/borrow/${book._id}/${users.user1._id}`)
+            .set('Authorization', `Bearer ${adminJWT}`)
+            .expect(201);
 
         // Check the there is one less available book
+        const response = await request(baseUrl)
+            .get(`/books/${book._id}`)
+            .set('Authorization', `Bearer ${userJWT}`)
+            .expect(200);
+        const avail = response.body.available;
+        const expectedAvail = book.available - 1;
+        assert(avail == expectedAvail, 'There should be one less available book');
 
         // Check that the reservation is deleted
+        const reservationResponse = await request(baseUrl)
+            .get(`/reservations/${users.user1._id}R${book._id}`)
+            .set('Authorization', `Bearer ${userJWT}`)
+            .expect(404);
+        assert(reservationResponse?.body?.message === issueDetailsController.errors.NOT_FOUND, 'The reservation should be deleted');
 
         // Check that the user has the book in their borrowed books
+        const borrowedBooks = await request(baseUrl)
+            .get('/borrow')
+            .set('Authorization', `Bearer ${userJWT}`)
+            .expect(200);
 
+        assert(borrowedBooks?.body?.length === 1, 'The user should have one borrowed book');
+        assert(borrowedBooks?.body?.[0]?.book._id === book._id, 'The user should have the borrowed book with matching id');
+    });
 
+    it('Should let a user return a book', async () => {
+        // Return the book
+        await request(baseUrl)
+            .post(`/borrow/${book._id}/${users.user1._id}/return`)
+            .set('Authorization', `Bearer ${adminJWT}`)
+            .expect(200);
+
+        // Check that the book is available
+        const response = await request(baseUrl)
+            .get(`/books/${book._id}`)
+            .set('Authorization', `Bearer ${userJWT}`)
+            .expect(200);
+        assert(response?.body?.available === book.available, 'There should be one more available book');
+
+        // // Check that the user does not have the book in their borrowed books
+        const borrowedBooks = await request(baseUrl)
+            .get('/borrow')
+            .set('Authorization', `Bearer ${userJWT}`)
+            .expect(200);
+        assert(borrowedBooks?.body?.length === 0, 'The user should not have any borrowed books');
+
+        // // Check that the user has the book in their history of borrowed books
+        const borrowedHistory = await request(baseUrl)
+            .get('/borrow/history')
+            .set('Authorization', `Bearer ${userJWT}`)
+            .expect(200);
+        assert(borrowedHistory?.body?.length === 1, 'The user should have one borrowed book in their history');
     });
 
     it('Should let a user without a reservation borrow a book', async () => {
         // Borrow a book
+        await request(baseUrl)
+            .post(`/borrow/${bookWithOneCopy._id}/${users.user1._id}`)
+            .set('Authorization', `Bearer ${adminJWT}`)
+            .expect(201);
 
         // Check the there is one less available book
+        const finalBook = await request(baseUrl)
+            .get(`/books/${bookWithOneCopy._id}`)
+            .set('Authorization', `Bearer ${userJWT}`)
+            .expect(200);
+        assert(finalBook?.body?.available === 0, 'There should be one less available book');
 
         // Check that the user has the book in their borrowed books
-
+        const borrowedBooks = await request(baseUrl)
+            .get('/borrow')
+            .set('Authorization', `Bearer ${userJWT}`)
+            .expect(200);
+        assert(borrowedBooks?.body?.length === 1, 'The user should have one borrowed book');
     });
 
     it('Should not let a user borrow an unavailable book', async () => {
-        // Create book with 0 available
-
-        // Borrow the book
+        // Borrow the unavailable book
+        await request(baseUrl)
+            .post(`/borrow/${unavailableBook._id}/${users.user1._id}`)
+            .set('Authorization', `Bearer ${adminJWT}`)
+            .expect(400);
 
         // Expect error
     });
 
     it('Should not let a user borrow a book if they already borrowed the book', async () => {
         // Borrow a book
+        await request(baseUrl)
+            .post(`/borrow/${book._id}/${users.user1._id}`)
+            .set('Authorization', `Bearer ${adminJWT}`)
+            .expect(201);
 
         // Borrow the same book
+        await request(baseUrl)
+            .post(`/borrow/${book._id}/${users.user1._id}`)
+            .set('Authorization', `Bearer ${adminJWT}`)
+            .expect(400);
 
         // Expect error
 
@@ -70,18 +162,6 @@ describe('Borrows API', () => {
 
         // Expect error
 
-    });
-
-    it('Should let a user return a book', async () => {
-        // Borrow a book
-
-        // Return the book
-
-        // Check that the book is available
-
-        // Check that the user does not have the book in their borrowed books
-
-        // Check that the user has the book in their history of borrowed books
     });
 
     it('Should not let a user return a book they have not borrowed', async () => {
