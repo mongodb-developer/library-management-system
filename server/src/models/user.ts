@@ -6,4 +6,5 @@ export interface User {
     isAdmin?: boolean;
     reserved?: number;
     borrowed?: number;
+    totalInHand?: number;
 }

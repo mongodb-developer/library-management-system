@@ -18,7 +18,10 @@ interface ReservationBook {
     title: string;
 }
 
-type BookType = 'borrowedBook' | 'reservation';
+enum IssueDetailType {
+    Reservation = 'R',
+    BorrowedBook = 'B'
+}
 
 interface BorrowedBook extends IssueDetailBase {
     /**
@@ -75,7 +78,7 @@ interface IssueDetailBase {
 
 export {
     BorrowedBook,
-    BookType,
+    IssueDetailType,
     Reservation,
     ReservationBook,
     ReservationUser

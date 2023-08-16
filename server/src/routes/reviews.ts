@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { IAuthRequest } from '../utils/typescript.js';
+import { AuthRequest } from '../utils/typescript.js';
 import { protectedRoute } from '../utils/helpers.js';
 import BookController from '../controllers/books.js';
 import ReviewsController from '../controllers/reviews.js';
@@ -11,7 +11,7 @@ export default reviews;
 const booksController = new BookController();
 const reviewsController = new ReviewsController();
 
-reviews.get('/', async (req: IAuthRequest, res) => {
+reviews.get('/', async (req: AuthRequest, res) => {
     const bookId = req?.params?.bookId;
 
     if (!bookId) {
@@ -27,7 +27,7 @@ reviews.get('/', async (req: IAuthRequest, res) => {
     }
 });
 
-reviews.post('/', protectedRoute, async (req: IAuthRequest, res) => {
+reviews.post('/', protectedRoute, async (req: AuthRequest, res) => {
     const bookId = req?.params?.bookId;
     const reviewBody = req?.body;
     const userName = req?.auth?.name;
@@ -52,7 +52,7 @@ reviews.post('/', protectedRoute, async (req: IAuthRequest, res) => {
     }
 });
 
-reviews.get('/:reviewId', async (req: IAuthRequest, res) => {
+reviews.get('/:reviewId', async (req: AuthRequest, res) => {
     const bookId = req?.params?.bookId;
     const reviewId = req?.params?.reviewId;
 

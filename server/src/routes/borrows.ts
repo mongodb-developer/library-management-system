@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
 import { protectedRoute } from '../utils/helpers.js';
-import { IAuthRequest } from '../utils/typescript.js';
-import IssueDetailsController from '../controllers/issueDetails.js';
+import { AuthRequest } from '../utils/typescript.js';
+import IssueDetailsController from '../controllers/issue-details.js';
 import BookController from '../controllers/books.js';
 
 
@@ -23,7 +23,7 @@ const bookController = new BookController();
  *
  */
 
-borrows.post('/:bookId/:userId/return', protectedRoute, async (req: IAuthRequest, res) => {
+borrows.post('/:bookId/:userId/return', protectedRoute, async (req: AuthRequest, res) => {
     // curl command to his this endpoint
     // curl -X POST
     if (!req?.auth?.isAdmin) return res.status(403).json({ message: issueDetailsController.errors.ADMIN_ONLY });
@@ -42,7 +42,7 @@ borrows.post('/:bookId/:userId/return', protectedRoute, async (req: IAuthRequest
     }
 });
 
-borrows.post('/:bookId/:userId', protectedRoute, async (req: IAuthRequest, res) => {
+borrows.post('/:bookId/:userId', protectedRoute, async (req: AuthRequest, res) => {
     // curl command to his this endpoint
     // curl -X POST http://localhost:5000/borrow/0195153448/64d4c7505bd483105c48991d -H "Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NGQ0Yzk2NGYwZDA1NmVhNmJmMGYzZDgiLCJuYW1lIjoiT2xkU2Nob29sIEFsbGlnYXRvciIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY5MTY2Njc4OCwiZXhwIjoxNzIzMjAyNzg4fQ.0ycGXmrPBBJC9f1_nhJ7Ypi0C1DjzcZ6NpQVvpDAnJM'"
     if (!req?.auth?.isAdmin) return res.status(403).json({ message: issueDetailsController.errors.ADMIN_ONLY });
@@ -65,7 +65,7 @@ borrows.post('/:bookId/:userId', protectedRoute, async (req: IAuthRequest, res) 
     }
 });
 
-borrows.get('/', protectedRoute, async (req: IAuthRequest, res) => {
+borrows.get('/', protectedRoute, async (req: AuthRequest, res) => {
     const userId = req?.auth?.sub;
 
     try {
@@ -76,7 +76,7 @@ borrows.get('/', protectedRoute, async (req: IAuthRequest, res) => {
     }
 });
 
-borrows.get('/history', protectedRoute, async (req: IAuthRequest, res) => {
+borrows.get('/history', protectedRoute, async (req: AuthRequest, res) => {
     const userId = req?.auth?.sub;
 
     try {

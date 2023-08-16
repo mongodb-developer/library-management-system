@@ -1,7 +1,7 @@
 import request from 'supertest';
 import assert from 'assert';
 import { Book } from '../models/book';
-import { baseUrl, users, books, cleanDatabase, closeDatabase } from '../utils/testingShared.js';
+import { baseUrl, users, books, cleanDatabase, closeDatabase } from '../utils/testing-shared.js';
 import ReviewsController from '../controllers/reviews.js';
 
 const adminJWT = users.admin.jwt;

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { collections } from '../database.js';
-import { IAuthRequest } from '../utils/typescript.js';
+import { AuthRequest } from '../utils/typescript.js';
 import { protectedRoute } from '../utils/helpers.js';
 import BookController from '../controllers/books.js';
 
@@ -11,10 +11,10 @@ export default books;
 const bookController = new BookController();
 
 books.get('/', async (req, res) => {
-    return res.json(await bookController.getBooks(req?.query?.limit, req?.query?.skip));
+    return res.json(await bookController.getBooks(parseInt(req?.query?.limit as string), parseInt(req?.query?.skip as string)));
 });
 
-books.post('/', protectedRoute, async (req: IAuthRequest, res) => {
+books.post('/', protectedRoute, async (req: AuthRequest, res) => {
     if (req?.auth?.isAdmin !== true) {
         return res.status(403).send({message: bookController.errors.ADMIN_ONLY});
     }
@@ -49,7 +49,7 @@ books.get('/:bookId', async (req, res) => {
     return res.json(book);
 });
 
-books.put('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
+books.put('/:bookId', protectedRoute, async (req: AuthRequest, res) => {
     if (req?.auth?.isAdmin !== true) {
         return res.status(403).send({message: bookController.errors.ADMIN_ONLY});
     }
@@ -73,7 +73,7 @@ books.put('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
     }
 });
 
-books.delete('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
+books.delete('/:bookId', protectedRoute, async (req: AuthRequest, res) => {
     if (req?.auth?.isAdmin !== true) {
         return res.status(403).send({message: bookController.errors.ADMIN_ONLY});
     }

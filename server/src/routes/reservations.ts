@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
 import { protectedRoute } from '../utils/helpers.js';
-import { IAuthRequest } from '../utils/typescript.js';
-import IssueDetailsController from '../controllers/issueDetails.js';
+import { AuthRequest } from '../utils/typescript.js';
+import IssueDetailsController from '../controllers/issue-details.js';
 import BookController from '../controllers/books.js';
 
 // The router will be added as a middleware and will take control of requests starting with /reservations.
@@ -22,7 +22,7 @@ const bookController = new BookController();
  *
  */
 
-reservations.get('/', protectedRoute, async (req: IAuthRequest, res) => {
+reservations.get('/', protectedRoute, async (req: AuthRequest, res) => {
     const userId = req?.auth?.sub;
 
     const reservations = await issueDetailsController.getReservations(userId);
@@ -47,7 +47,7 @@ reservations.get('/:reservationId', async (req, res) => {
     }
 });
 
-reservations.post('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
+reservations.post('/:bookId', protectedRoute, async (req: AuthRequest, res) => {
     const username = req?.auth?.name;
     const bookId = req?.params?.bookId;
 
@@ -76,7 +76,7 @@ reservations.post('/:bookId', protectedRoute, async (req: IAuthRequest, res) => 
     }
 });
 
-reservations.delete('/:bookId', protectedRoute, async (req: IAuthRequest, res) => {
+reservations.delete('/:bookId', protectedRoute, async (req: AuthRequest, res) => {
     const userId = req?.auth?.sub;
     const bookId = req?.params?.bookId;
 
@@ -95,7 +95,7 @@ reservations.delete('/:bookId', protectedRoute, async (req: IAuthRequest, res) =
     }
 });
 
-reservations.get('/user/:userId', protectedRoute, async (req: IAuthRequest, res) => {
+reservations.get('/user/:userId', protectedRoute, async (req: AuthRequest, res) => {
     const isAdmin = req?.auth?.isAdmin;
     const userId = req?.params?.userId;
 

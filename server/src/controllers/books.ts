@@ -21,17 +21,8 @@ class BookController {
     };
 
     // Returns a set of books
-    public async getBooks(limit, skip): Promise<Book[]> {
-        if (!limit) limit = 12;
-        if (typeof limit !== 'number') {
-            limit = parseInt(limit);
-        }
+    public async getBooks(limit: number = 12, skip: number = 0): Promise<Book[]> {
         if (limit > 100) limit = 100;
-
-        if (!skip) skip = 0;
-        if (typeof skip !== 'number') {
-            skip = parseInt(skip);
-        }
 
         const filter = {} as Filter<Book>;
         const project = {_id: 0} as FindOptions<Book>;

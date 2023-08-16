@@ -1,5 +1,5 @@
 import { Request } from 'express';
-interface IAuthRequest extends Request {
+interface AuthRequest extends Request {
   auth: {
     sub: string,
     name: string,
@@ -10,5 +10,5 @@ interface IAuthRequest extends Request {
 }
 
 export {
-    IAuthRequest
+    AuthRequest
 };
