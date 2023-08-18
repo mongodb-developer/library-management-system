@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { AuthRequest } from '../utils/typescript.js';
+import { Request as AuthRequest } from 'express-jwt';
 import { protectedRoute } from '../utils/middlewares.js';
 import BookController from '../controllers/books.js';
 import ReviewsController from '../controllers/reviews.js';

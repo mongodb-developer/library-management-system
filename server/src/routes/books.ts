@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { collections } from '../database.js';
-import { AuthRequest } from '../utils/typescript.js';
+import { Request as AuthRequest } from 'express-jwt';
 import { protectedRoute, adminRoute } from '../utils/middlewares.js';
 import BookController from '../controllers/books.js';
 

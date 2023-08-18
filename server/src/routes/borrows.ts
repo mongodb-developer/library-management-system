@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
 import { protectedRoute, adminRoute } from '../utils/middlewares.js';
-import { AuthRequest } from '../utils/typescript.js';
+import { Request as AuthRequest } from 'express-jwt';
 import IssueDetailsController from '../controllers/issue-details.js';
 import BookController from '../controllers/books.js';
 
