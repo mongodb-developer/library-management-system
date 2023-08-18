@@ -136,7 +136,7 @@ describe('Borrows API', () => {
         // Expect error
     });
 
-    it('Should not let a user borrow a book if they already borrowed the book', async () => {
+    it('Should let a user renew a borrowed book if they already borrowed the book', async () => {
         // Borrow a book
         await request(baseUrl)
             .post(`/borrow/${book._id}/${users.user1._id}`)
@@ -147,9 +147,7 @@ describe('Borrows API', () => {
         await request(baseUrl)
             .post(`/borrow/${book._id}/${users.user1._id}`)
             .set('Authorization', `Bearer ${adminJWT}`)
-            .expect(400);
-
-        // Expect error
+            .expect(201);
 
     });
 

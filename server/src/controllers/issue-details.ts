@@ -162,26 +162,9 @@ class ReservationsController {
 
         let result;
         try {
-            result = await collections?.issueDetails?.insertOne(borrow);
+            result = await collections?.issueDetails?.updateOne({ _id: borrow._id }, { $set: borrow }, { upsert: true });
         } catch (e) {
-            if (e.code === 11000) {
-                // Duplicate key, book was previously borrowed
-                // Check if the user still has the book
-                const existingBorrow = await collections?.issueDetails?.findOne({ _id: this.getBorrowedBookId(bookId, user._id.toString()) }) as BorrowedBook;
-                if (existingBorrow?.returned === false) throw new Error(this.errors.ALREADY_BOOKED);
-                // For the sake of simplicity, we update the booking when the user re-borrows the book
-                result = await collections?.issueDetails?.updateOne({
-                    _id: this.getBorrowedBookId(bookId, user._id.toString())
-                }, {
-                    $set: {
-                        returned: false,
-                        dueDate: borrow.dueDate,
-                        borrowDate: borrow.borrowDate
-                    }
-                });
-            } else {
-                throw new Error(e);
-            }
+            throw new Error(e.message);
         }
         // Delete matching reservation if one then re-compute computed fields
         const reservationId = this.getReservationId(bookId, user._id.toString());
