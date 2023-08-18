@@ -20,7 +20,6 @@ class BookController {
         DELETED: 'Book deleted'
     };
 
-    // Returns a set of books
     public async getBooks(limit: number = 12, skip: number = 0): Promise<Book[]> {
         if (limit > 100) limit = 100;
 
@@ -33,13 +32,11 @@ class BookController {
         return books;
     }
 
-    // Return a single book
     public async getBook(bookId: string): Promise<Book> {
         const book = await collections?.books?.findOne({ _id: bookId });
         return book;
     }
 
-    // Create a new book
     public async createBook(book: Book): Promise<InsertOneResult> {
         const result = await collections?.books?.insertOne(book);
 
@@ -50,21 +47,25 @@ class BookController {
         return result;
     }
 
-    // Update a book
     public async updateBook(bookId: string, book: Book): Promise<UpdateResult> {
         const result = await collections?.books?.updateOne({ _id: bookId }, { $set: book });
 
-        if (result.modifiedCount === 0) throw new Error(this.errors.UNKNOWN_UPDATE_ERROR);
+        if (result.modifiedCount === 0) {
+            throw new Error(this.errors.UNKNOWN_UPDATE_ERROR);
+        }
 
         return result;
     }
 
-    // Delete a book
     public async deleteBook(bookId: string): Promise<DeleteResult> {
         const result = await collections?.books?.deleteOne({ _id: bookId });
 
-        if (result.deletedCount === 0) throw new Error(this.errors.UNKNOWN_UPDATE_ERROR);
-        if (!result) throw new Error(this.errors.UNKNOWN_DELETE_ERROR);
+        if (result.deletedCount === 0) {
+            throw new Error(this.errors.UNKNOWN_UPDATE_ERROR);
+        }
+        if (!result) {
+            throw new Error(this.errors.UNKNOWN_DELETE_ERROR);
+        }
 
         return result;
     }

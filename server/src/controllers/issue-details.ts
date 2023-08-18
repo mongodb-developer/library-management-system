@@ -51,19 +51,16 @@ class ReservationsController {
         return this.getIssueDetailsId(bookId, userId, IssueDetailType.BorrowedBook);
     }
 
-    // Get all reservations for a given user
     public async getReservations(userId: string) {
         return this.getIssueDetailsForUser(userId, IssueDetailType.Reservation);
     }
 
-    // Get a reservation by id
     public async getReservation(reservationId: string) {
         const reservation = await collections?.issueDetails?.findOne({ _id: reservationId });
         if (!reservation) throw new Error(this.errors.NOT_FOUND);
         return reservation;
     }
 
-    // Create a new reservation
     public async createReservation(user: ReservationUser, bookId: string) {
         const bookData = await bookController.isBookAvailable(bookId);
         const book = {

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { ObjectId } from 'mongodb';
-import { protectedRoute } from '../utils/helpers.js';
+import { protectedRoute, adminRoute } from '../utils/middlewares.js';
 import { AuthRequest } from '../utils/typescript.js';
 import IssueDetailsController from '../controllers/issue-details.js';
 import BookController from '../controllers/books.js';
@@ -95,13 +95,8 @@ reservations.delete('/:bookId', protectedRoute, async (req: AuthRequest, res) =>
     }
 });
 
-reservations.get('/user/:userId', protectedRoute, async (req: AuthRequest, res) => {
-    const isAdmin = req?.auth?.isAdmin;
+reservations.get('/user/:userId', protectedRoute, adminRoute, async (req: AuthRequest, res) => {
     const userId = req?.params?.userId;
-
-    if (!isAdmin) {
-        return res.status(403).send({message: issueDetailsController.errors.ADMIN_ONLY});
-    }
 
     if (!userId) {
         return res.status(400).send({message: issueDetailsController.errors.MISSING_DETAILS});

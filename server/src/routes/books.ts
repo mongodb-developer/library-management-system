@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { collections } from '../database.js';
 import { AuthRequest } from '../utils/typescript.js';
-import { protectedRoute } from '../utils/helpers.js';
+import { protectedRoute, adminRoute } from '../utils/middlewares.js';
 import BookController from '../controllers/books.js';
 
 // The router will be added as a middleware and will take control of requests starting with /books.
@@ -14,11 +14,7 @@ books.get('/', async (req, res) => {
     return res.json(await bookController.getBooks(parseInt(req?.query?.limit as string), parseInt(req?.query?.skip as string)));
 });
 
-books.post('/', protectedRoute, async (req: AuthRequest, res) => {
-    if (req?.auth?.isAdmin !== true) {
-        return res.status(403).send({message: bookController.errors.ADMIN_ONLY});
-    }
-
+books.post('/', protectedRoute, adminRoute, async (req: AuthRequest, res) => {
     const book = req?.body;
 
     if (!book || Object.keys(book).length === 0) {
@@ -49,11 +45,7 @@ books.get('/:bookId', async (req, res) => {
     return res.json(book);
 });
 
-books.put('/:bookId', protectedRoute, async (req: AuthRequest, res) => {
-    if (req?.auth?.isAdmin !== true) {
-        return res.status(403).send({message: bookController.errors.ADMIN_ONLY});
-    }
-
+books.put('/:bookId', protectedRoute, adminRoute, async (req: AuthRequest, res) => {
     const bookId = req?.params?.bookId;
     const book = req?.body;
 
@@ -73,11 +65,7 @@ books.put('/:bookId', protectedRoute, async (req: AuthRequest, res) => {
     }
 });
 
-books.delete('/:bookId', protectedRoute, async (req: AuthRequest, res) => {
-    if (req?.auth?.isAdmin !== true) {
-        return res.status(403).send({message: bookController.errors.ADMIN_ONLY});
-    }
-
+books.delete('/:bookId', protectedRoute, adminRoute, async (req: AuthRequest, res) => {
     const bookId = req?.params?.bookId;
 
     if (!bookId) {
