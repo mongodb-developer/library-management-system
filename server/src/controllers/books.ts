@@ -88,9 +88,11 @@ class BookController {
             { $unset: 'details' },
             { $merge: { into: 'books', on: '_id', whenMatched: 'replace' } }
         ];
-        const result = await collections?.books?.aggregate(updatePipeline);
+        const result = collections?.books?.aggregate(updatePipeline);
 
-        return result.toArray();
+        const items = await result.toArray();
+
+        return items;
     }
 
     public async isBookAvailable(bookId: string): Promise<Book> {
