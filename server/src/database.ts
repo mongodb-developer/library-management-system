@@ -34,4 +34,6 @@ export async function connectToDatabase(uri?: string) {
     collections.reviews = reviewsCollection;
     collections.users = usersCollection;
     collections.issueDetails = issueDetailCollection;
+
+    return client;
 }

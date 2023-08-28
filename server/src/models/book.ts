@@ -39,13 +39,13 @@ export interface Book {
     }>;
 
     /**
-     * Array of attributes following the attribute pattern (key-value pairs). 
+     * Array of attributes following the attribute pattern (key-value pairs).
      * See https://www.mongodb.com/blog/post/building-with-patterns-the-attribute-pattern.
      */
     attributes: Array<{
         key: string;
         value: string;
-    }>; 
+    }>;
 
     /**
      * Array of reviews following the subset pattern.

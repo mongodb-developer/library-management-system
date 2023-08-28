@@ -5,12 +5,14 @@
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
-    "start": "npm run build && node dist/server.js",
+    "start": "npm run start:dev",
+    "start:dev": "nodemon --watch './src/**/*.ts' --ext 'ts,js,mjs,json' --exec 'npm run start:prod'",
+    "start:prod": "npm run build && node dist/server.js",
     "build": "rimraf ./dist && tsc",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
-    "api-test": "ts-mocha src/**/*.spec.ts",
-    "test": "start-test start http://127.0.0.1:5000 api-test"
+    "api-test": "ts-mocha --timeout 10000 src/**/*.spec.ts",
+    "test": "DATABASE_NAME='testLibrary' && start-test start http://127.0.0.1:5000 api-test"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +21,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "express-jwt": "^8.4.1",
+    "jsonwebtoken": "^9.0.1",
     "mongodb": "^5.7.0"
   },
   "devDependencies": {
@@ -31,6 +35,8 @@
     "assert": "^2.0.0",
     "eslint": "^8.46.0",
     "mocha": "^10.2.0",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.0.1",
     "rimraf": "^5.0.1",
     "start-server-and-test": "^2.0.0",
     "supertest": "^6.3.3",

@@ -1,6 +1,10 @@
 import { ObjectId } from 'mongodb';
 
 export interface User {
-    _id: ObjectId;
-    name: string; 
+    _id?: ObjectId;
+    name: string;
+    isAdmin?: boolean;
+    reserved?: number;
+    borrowed?: number;
+    totalInHand?: number;
 }
