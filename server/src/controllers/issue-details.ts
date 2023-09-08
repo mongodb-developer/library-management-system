@@ -78,7 +78,7 @@ class ReservationsController {
 
         const result = await collections?.issueDetails?.insertOne(reservation);
         await Promise.all([
-            bookController.computeAvailableBooks(book._id),
+            bookController.decrementBookInventory(book._id),
             this.computeUserInHand(user._id)
         ]);
 
@@ -111,7 +111,7 @@ class ReservationsController {
         if (deleteResult.deletedCount === 0) throw new Error(this.errors.NOT_FOUND);
 
         await Promise.all([
-            bookController.computeAvailableBooks(bookId),
+            bookController.incrementBookInventory(bookId),
             this.computeUserInHand(new ObjectId(userId))
         ]);
 
@@ -160,21 +160,24 @@ class ReservationsController {
             returned: false
         } as BorrowedBook;
 
-        let result;
+        let upsertResult;
         try {
-            result = await collections?.issueDetails?.updateOne({ _id: borrow._id }, { $set: borrow }, { upsert: true });
+            upsertResult = await collections?.issueDetails?.updateOne({ _id: borrow._id }, { $set: borrow }, { upsert: true });
         } catch (e) {
             throw new Error(e.message);
         }
         // Delete matching reservation if one then re-compute computed fields
         const reservationId = this.getReservationId(bookId, user._id.toString());
-        await collections?.issueDetails?.deleteOne({ _id: reservationId });
-        await Promise.all([
-            bookController.computeAvailableBooks(book._id),
-            this.computeUserInHand(user._id)
-        ]);
+        const deleteResult = await collections?.issueDetails?.deleteOne({ _id: reservationId });
+        const computes = [this.computeUserInHand(user._id)];
+        const borrowReplacesReservation = deleteResult.deletedCount === 1;
+        const borrowIsRenewal = upsertResult.modifiedCount === 1;
+        if (!borrowReplacesReservation && !borrowIsRenewal) {
+            computes.push(bookController.decrementBookInventory(book._id));
+        }
+        await Promise.all(computes);
 
-        return result;
+        return upsertResult;
     }
 
     public async getBorrows(userId: string) {
@@ -190,7 +193,7 @@ class ReservationsController {
 
         const result = await collections?.issueDetails?.updateOne({ _id: borrowId }, { $set: { returned: true, returnedDate: new Date() } });
         await Promise.all([
-            bookController.computeAvailableBooks(bookId),
+            bookController.incrementBookInventory(bookId),
             this.computeUserInHand(new ObjectId(userId))
         ]);
 
