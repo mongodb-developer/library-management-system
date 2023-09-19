@@ -96,6 +96,22 @@ class BookController {
         return items;
     }
 
+    public updateBookInventory(bookId: string, count: number): Promise<UpdateResult> {
+        const result = collections?.books?.updateOne(
+            { _id: bookId },
+            { $inc: { available: count } }
+        );
+        return result;
+    }
+
+    public incrementBookInventory(bookId: string, count: number = 1): Promise<UpdateResult> {
+        return this.updateBookInventory(bookId, count);
+    }
+
+    public decrementBookInventory(bookId: string, count: number = 1): Promise<UpdateResult> {
+        return this.updateBookInventory(bookId, -count);
+    }
+
     public async isBookAvailable(bookId: string): Promise<Book> {
         const bookData = await this.getBook(bookId);
         if (!bookData) throw new Error(this.errors.NOT_FOUND);
