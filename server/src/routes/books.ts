@@ -11,7 +11,9 @@ export default books;
 const bookController = new BookController();
 
 books.get('/', async (req, res) => {
-    return res.json(await bookController.getBooks(parseInt(req?.query?.limit as string), parseInt(req?.query?.skip as string)));
+    const limit = parseInt(req?.query?.limit as string) || undefined;
+    const skip = parseInt(req?.query?.skip as string) || undefined;
+    return res.json(await bookController.getBooks(limit, skip));
 });
 
 books.post('/', protectedRoute, adminRoute, async (req: AuthRequest, res) => {
