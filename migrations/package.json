@@ -1,0 +1,7 @@
+{
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "mongodb": "^6.1.0"
+  }
+}
