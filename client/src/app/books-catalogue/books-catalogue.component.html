@@ -1,0 +1,27 @@
+<lms-search-bar (itemsFound)="updateItems($event)"></lms-search-bar>
+
+<div class="book-card-wrapper">
+    <mat-card class="book-card" *ngFor="let book of books$ | async">
+        <img class="img-link cropped book-thumbnail"
+            onerror="this.onerror=null; this.src='http://lgimages.s3.amazonaws.com/gc-md.gif'"
+            width="128" height="216" mat-card-image [src]="book.cover" [alt]="book.title" />
+
+        <mat-card-header class="book-card-header">
+            <mat-card-title class="book-card-title">
+              <span class="book-title">{{ book.title }}</span>
+              <span class="book-authors">by {{ book.authors }}</span>
+            </mat-card-title>
+        </mat-card-header>
+
+
+        <mat-card-content class="book-card-content">
+          <div class="book-details">
+            <span *ngIf="book.genres">{{ book.genres }}</span>
+          </div>
+
+          <div>
+              <p class="book-description">{{ book.synopsis }}</p>
+          </div>
+        </mat-card-content>
+    </mat-card>
+</div>

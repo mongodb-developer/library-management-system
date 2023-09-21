@@ -1,0 +1,31 @@
+import { Book } from "./book";
+import { Review } from "./review";
+
+/**
+ * Book model as displayed in the UI.
+ */
+export class BookView {
+    isbn: string;
+    title: string;
+    year: number | 'N/A';
+    cover?: string;
+    available: number;
+    totalInventory: number;
+    reviews: Array<Omit<Review, '_id' | 'bookId'>>;
+    authors: string;
+    genres: string;
+    synopsis: string;
+
+    constructor(book: Book) {
+        this.isbn = book._id;
+        this.title = book.title;
+        this.year = book.year || 'N/A';
+        this.cover = book.cover;
+        this.available = book.available;
+        this.totalInventory = book.totalInventory;
+        this.reviews = book.reviews || [];
+        this.authors = book.authors?.map(a => a.name).join(', ') || '';
+        this.genres = book.genres?.join(', ') || '';
+        this.synopsis = book.synopsis || '';
+    }
+}
