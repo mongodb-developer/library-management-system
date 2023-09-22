@@ -13,17 +13,17 @@
   "customizations": {
     "codespaces": {
       "openFiles": [
-        "src/App.js"
+        "server/src/controllers/books.ts"
       ]
     }
   },
   "portsAttributes": {
     "4200": {
-      "label": "Application",
+      "label": "Client",
       "onAutoForward": "openPreview"
     },
     "5000": {
-      "label": "API"
+      "label": "Server"
     }
   },
   "forwardPorts": [4200, 5000]
