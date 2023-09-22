@@ -1,0 +1,30 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "hostRequirements": {
+    "cpus": 2
+  },
+  "waitFor": "onCreateCommand",
+  "updateContentCommand": "bash scripts/updateContent.sh",
+  "postCreateCommand": "",
+  "postAttachCommand": {
+    "server": "cd server && npm start",
+    "client": "cd client && npm start"
+  },
+  "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "server/src/controllers/books.ts"
+      ]
+    }
+  },
+  "portsAttributes": {
+    "4200": {
+      "label": "Client",
+      "onAutoForward": "openPreview"
+    },
+    "5000": {
+      "label": "Server"
+    }
+  },
+  "forwardPorts": [4200, 5000]
+}
