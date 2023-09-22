@@ -1,4 +1,4 @@
-export NG_CLI_ANALYTICS=ci
+export NG_CLI_ANALYTICS="false"
 cd client
 npm install
 cd ../server
