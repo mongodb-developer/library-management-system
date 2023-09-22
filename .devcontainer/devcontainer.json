@@ -8,7 +8,7 @@
   "postCreateCommand": "",
   "postAttachCommand": {
     "server": "cd server && npm start",
-    "client": "cd client && npm start"
+    "client": "export NG_CLI_ANALYTICS=\"false\"; cd client && npm start"
   },
   "customizations": {
     "codespaces": {
