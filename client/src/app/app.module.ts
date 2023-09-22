@@ -18,12 +18,14 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 
 import { BooksCatalogueComponent } from './books-catalogue/books-catalogue.component';
 import { SearchBarComponent } from './search-bar/search-bar.component';
+import { HeaderComponent } from './header/header.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BooksCatalogueComponent,
     SearchBarComponent,
+    HeaderComponent,
   ],
   imports: [
     AppRoutingModule,

@@ -71,7 +71,7 @@ $lms-typography: mat.define-typography-config(
 );
 
 // Light Theme Text
-$dark-text: #000000;
+$dark-text: #023430;
 $dark-primary-text: rgba($dark-text, 0.87);
 $dark-accent-text: rgba($dark-primary-text, 0.54);
 $dark-disabled-text: rgba($dark-primary-text, 0.38);
@@ -184,19 +184,55 @@ $mat-dark-theme-background: (
 
 // Theme Config
 body {
-  --primary-color: #492d06;
-  --primary-lighter-color: #c8c0b4;
-  --primary-darker-color: #311c03;
+  --primary-color: #F9EBFF;
+  --primary-lighter-color: #F2C5EE;
+  --primary-darker-color: #B45AF2;
   --text-primary-color: #{$light-primary-text};
   --text-primary-lighter-color: #{$dark-primary-text};
   --text-primary-darker-color: #{$light-primary-text};
 }  
-$theme-primary: mat.define-palette(mat.$brown-palette, 500);
+
+$black-87-opacity: rgba(black, 0.87);
+
+$lms-brand: (
+  50: #fefdff,
+  100: #fdf9ff,
+  200: #fcf5ff,
+  300: #fbf1ff,
+  400: #faeeff,
+  500: #f9ebff,
+  600: #f8e9ff,
+  700: #f7e5ff,
+  800: #f6e2ff,
+  900: #f5ddff,
+  A100: #ffffff,
+  A200: #ffffff,
+  A400: #ffffff,
+  A700: #ffffff,
+    contrast: (
+        50: $black-87-opacity,
+        100: $black-87-opacity,
+        200: $black-87-opacity,
+        300: $black-87-opacity,
+        400: $black-87-opacity,
+        500: white,
+        600: white,
+        700: white,
+        800: white,
+        900: white,
+        A100: $black-87-opacity,
+        A200: $black-87-opacity,
+        A400: $black-87-opacity,
+        A700: white,
+    )
+);
+
+$theme-primary: mat.define-palette($lms-brand, 500);
 
 body {
-  --accent-color: #dea249;
-  --accent-lighter-color: #f5e3c8;
-  --accent-darker-color: #d18631;
+  --accent-color: #00ED64;
+  --accent-lighter-color: #E9FF99;
+  --accent-darker-color: #00684A;
   --text-accent-color: #{$dark-primary-text};
   --text-accent-lighter-color: #{$dark-primary-text};
   --text-accent-darker-color: #{$dark-primary-text};
@@ -204,9 +240,9 @@ body {
 $theme-accent: mat.define-palette(mat.$orange-palette, A200, A100, A400);
 
 body {
-  --warn-color: #ed932f;
-  --warn-lighter-color: #fadfc1;
-  --warn-darker-color: #e5761d;
+  --warn-color: #FFC010;
+  --warn-lighter-color: #FFEEA9;
+  --warn-darker-color: #FF9F10;
   --text-warn-color: #{$dark-primary-text};
   --text-warn-lighter-color: #{$dark-primary-text};
   --text-warn-darker-color: #{$dark-primary-text};
