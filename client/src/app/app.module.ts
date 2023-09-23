@@ -19,6 +19,11 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { BooksCatalogueComponent } from './books-catalogue/books-catalogue.component';
 import { SearchBarComponent } from './search-bar/search-bar.component';
 import { HeaderComponent } from './header/header.component';
+import { JwtModule } from '@auth0/angular-jwt';
+
+export function tokenGetter() {
+  return localStorage.getItem('access_token');
+}
 
 @NgModule({
   declarations: [
@@ -42,8 +47,13 @@ import { HeaderComponent } from './header/header.component';
     MatInputModule,
     MatToolbarModule,
     MatPaginatorModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter,
+        allowedDomains: ['http://localhost:5000']
+      },
+    }),
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

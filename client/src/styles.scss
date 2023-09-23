@@ -227,7 +227,7 @@ $lms-brand: (
     )
 );
 
-$theme-primary: mat.define-palette($lms-brand, 500);
+$theme-primary: mat.define-palette($lms-brand, 900);
 
 body {
   --accent-color: #00ED64;
