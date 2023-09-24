@@ -20,6 +20,9 @@ import { BooksCatalogueComponent } from './books-catalogue/books-catalogue.compo
 import { SearchBarComponent } from './search-bar/search-bar.component';
 import { HeaderComponent } from './header/header.component';
 import { JwtModule } from '@auth0/angular-jwt';
+import { ProfileComponent } from './profile/profile.component';
+import { BookComponent } from './book/book.component';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -31,6 +34,9 @@ export function tokenGetter() {
     BooksCatalogueComponent,
     SearchBarComponent,
     HeaderComponent,
+    ProfileComponent,
+    BookComponent,
+    NotFoundComponent,
   ],
   imports: [
     AppRoutingModule,

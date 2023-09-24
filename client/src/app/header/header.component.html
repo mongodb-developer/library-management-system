@@ -3,7 +3,7 @@
         Library Management System
     </a>
 
-    <a *ngIf="user$ | async as user" [routerLink]="['user']" class="user-profile">
+    <a *ngIf="user$ | async as user" [routerLink]="['profile/', user.name]" class="user-profile">
         <span>{{ user.name }} </span>
         <img src="./assets/avatar.png" alt="User Avatar" width="36px" height="36px" />
     </a>

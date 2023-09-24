@@ -57,11 +57,11 @@ export class UserService {
     this.user = null;
   }
 
-  private getLoggedInUser() {
+  getLoggedInUser() {
     const token = localStorage.getItem('access_token');
     if (!token || this.isTokenExpired(token)) {
       this.clearSession();
-      return;
+      return null;
     }
 
     const decoded = jwt_decode(token) as JWTDecodeResult;
