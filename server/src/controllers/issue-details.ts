@@ -61,6 +61,12 @@ class ReservationsController {
         return reservation;
     }
 
+    public async getBookReservationByUser(bookId: string, userId: string) {
+        const reservation = await collections?.issueDetails?.findOne({ _id: this.getReservationId(bookId, userId) });
+
+        return reservation;
+    }
+
     public async createReservation(user: ReservationUser, bookId: string) {
         const bookData = await bookController.isBookAvailable(bookId);
         const book = {

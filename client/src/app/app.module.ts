@@ -23,6 +23,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { ProfileComponent } from './profile/profile.component';
 import { BookComponent } from './book/book.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { CountDownComponent } from './count-down/count-down.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -37,6 +38,7 @@ export function tokenGetter() {
     ProfileComponent,
     BookComponent,
     NotFoundComponent,
+    CountDownComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -56,7 +58,7 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter,
-        allowedDomains: ['http://localhost:5000']
+        allowedDomains: ['localhost:5000']
       },
     }),
   ],

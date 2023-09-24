@@ -4,15 +4,15 @@
     <mat-card class="book-card" *ngFor="let book of books$ | async">
         <img class="img-link cropped book-thumbnail"
             onerror="this.onerror=null; this.src='http://lgimages.s3.amazonaws.com/gc-md.gif'"
+            (click)="goToBook(book)"
             width="128" height="216" mat-card-image [src]="book.cover" [alt]="book.title" />
 
         <mat-card-header class="book-card-header">
             <mat-card-title class="book-card-title">
-              <h3 class="book-title">{{ book.title }}</h3>
+              <h3 class="book-title" (click)="goToBook(book)">{{ book.title }}</h3>
               <span class="book-authors">by {{ book.authors }}</span>
             </mat-card-title>
         </mat-card-header>
-
 
         <mat-card-content class="book-card-content">
           <div class="book-details">

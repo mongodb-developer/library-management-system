@@ -3,6 +3,7 @@ import { BookService } from '../book.service';
 import { Observable, map, of } from 'rxjs';
 import { Book } from '../models/book';
 import { BookView } from '../models/book-view';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'lms-books-catalogue',
@@ -12,14 +13,14 @@ import { BookView } from '../models/book-view';
 export class BooksCatalogueComponent implements OnInit {
   books$: Observable<BookView[]>;
 
-  constructor(private bookService: BookService) {
+  constructor(
+    private bookService: BookService,
+    private router: Router
+  ) {
   }
 
   ngOnInit(): void {
-    this.books$ = this.bookService.list()
-      .pipe(
-        map(books => books.map(book => new BookView(book)))
-      );
+    this.books$ = this.bookService.list();
   }
 
   updateItems(items: Book[]) {
@@ -27,5 +28,9 @@ export class BooksCatalogueComponent implements OnInit {
       .pipe(
         map(books => books.map(book => new BookView(book)))
       );
+  }
+
+  goToBook(book: BookView) {
+    this.router.navigate(['/books', book.isbn]);
   }
 }

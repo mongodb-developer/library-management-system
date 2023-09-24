@@ -8,6 +8,7 @@ import { userResolver } from './user.resolver';
 import { BookComponent } from './book/book.component';
 import { bookResolver } from './book.resolver';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { reservationsResolver } from './reservations.resolver';
 
 const routes: Routes = [
   {
@@ -24,9 +25,12 @@ const routes: Routes = [
     resolve: { user: userResolver },
   },
   {
-    path: 'book/:id',
+    path: 'books/:isbn',
     component: BookComponent,
-    resolve: { book: bookResolver },
+    resolve: {
+      book: bookResolver,
+      reservations: reservationsResolver,
+    },
   },
   { path: '', redirectTo: 'catalogue', pathMatch: 'full' },
   { path: '404', component: NotFoundComponent },

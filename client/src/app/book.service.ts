@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Book } from './models/book';
-import { Observable, of } from 'rxjs';
+import { Observable, map, of } from 'rxjs';
+import { BookView } from './models/book-view';
 
 const URL = 'http://localhost:5000';
 
@@ -16,7 +17,21 @@ export class BookService {
       limit = 100;
     }
 
-    return this.http.get<Book[]>(`${URL}/books?limit=${limit}?skip=${skip}`);
+    return this.http.get<Book[]>(`${URL}/books?limit=${limit}?skip=${skip}`)
+      .pipe(
+        map(books => books.map(book => new BookView(book)))
+      )
+  }
+
+  getBook(isbn: string) {
+    return this.http.get<Book>(`${URL}/books/${isbn}`)
+      .pipe(
+        map(book => new BookView(book))
+      );
+  }
+
+  reserve(isbn: string) {
+    return this.http.post(`${URL}/reservations/${isbn}`, {});
   }
 
   search(query: string, limit = 12): Observable<Book[]> {
