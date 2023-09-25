@@ -4,11 +4,12 @@
     "cpus": 2
   },
   "waitFor": "onCreateCommand",
-  "updateContentCommand": "bash scripts/updateContent.sh",
+  "updateContentCommand": "bash .devcontainer/updateContent.sh",
   "postCreateCommand": "",
   "postAttachCommand": {
     "server": "cd server && npm start",
-    "client": "cd client && npm start"
+    "client": "cd client && npm start",
+    "portsetup": "/bin/bash .devcontainer/setup.sh"
   },
   "customizations": {
     "codespaces": {
