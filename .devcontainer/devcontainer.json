@@ -1,11 +1,12 @@
 {
   "image": "mcr.microsoft.com/devcontainers/universal:2",
   "waitFor": "onCreateCommand",
-  "updateContentCommand": "bash scripts/updateContent.sh",
+  "updateContentCommand": "/bin/bash .devcontainers/updateContent.sh",
   "postCreateCommand": "",
   "postAttachCommand": {
     "server": "cd server && npm start",
-    "client": "export NG_CLI_ANALYTICS=\"false\"; cd client && npm start"
+    "client": "export NG_CLI_ANALYTICS=\"false\"; cd client && npm start",
+    "portSetup": "/bin/bash .devcontainers/portSetup.sh"
   },
   "customizations": {
     "codespaces": {
