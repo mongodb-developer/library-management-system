@@ -21,7 +21,7 @@ class ReservationsController {
         CANCELLED: 'Reservation cancelled'
     };
 
-    RESERVATION_DURATION = 12; // hours
+    RESERVATION_DURATION = 0.5; // 0.5 days -> 12 hours
     BORROWED_DURATION = 21; // days
 
     private async getIssueDetailsForUser(userId: string, type: IssueDetailType) {
