@@ -3,7 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Book } from './models/book';
 import { Observable, of } from 'rxjs';
 
-const URL = 'http://localhost:5000';
+const backendPort = "5000";
+const URL = `${location.protocol}//${location.hostname.replace('-4200', `-${backendPort}`)}${location.port ? `:${backendPort}` : ""}`;
 
 @Injectable({
   providedIn: 'root'
