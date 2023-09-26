@@ -25,7 +25,7 @@ import { BookComponent } from './book/book.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { CountDownComponent } from './count-down/count-down.component';
 import { ReviewFormComponent } from './review-form/review-form.component';
-import { StarRatingComponent } from './models/star-rating/star-rating.component';
+import { StarRatingComponent } from './star-rating/star-rating.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ReviewComponent } from './review/review.component';
 

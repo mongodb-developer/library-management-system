@@ -32,5 +32,6 @@ users.get('/login/:username?', async (req, res) => {
     }, secret, { algorithm: 'HS256' });
 
     const response = { jwt };
+
     res.send(response).status(200);
 });

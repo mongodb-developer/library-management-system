@@ -7,6 +7,13 @@
     padding: 50px 100px;
 }
 
+.toolbar > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+}
+
 .toolbar a {
     text-decoration: none;
     color: styles.$dark-text;

@@ -9,7 +9,7 @@ const URL = 'http://localhost:5000';
 interface JWTDecodeResult {
   name: string;
   sub: string;
-  isAdmin: string;
+  isAdmin: boolean;
   iat: number;
   exp: number;
 }
@@ -84,7 +84,7 @@ export class UserService {
     this.user = {
       _id: decodedToken?.sub,
       name: decodedToken?.name,
-      isAdmin: decodedToken?.isAdmin === 'true'
+      isAdmin: !!decodedToken?.isAdmin
     };
   }
 

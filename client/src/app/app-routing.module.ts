@@ -9,6 +9,7 @@ import { BookComponent } from './book/book.component';
 import { bookResolver } from './book.resolver';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { reservationsResolver } from './reservations.resolver';
+import { isAdminGuard } from './is-admin.guard';
 
 const routes: Routes = [
   {
@@ -31,6 +32,11 @@ const routes: Routes = [
       book: bookResolver,
       reservations: reservationsResolver,
     },
+  },
+  {
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
+    canMatch: [isAdminGuard],
   },
   { path: '', redirectTo: 'catalogue', pathMatch: 'full' },
   { path: '404', component: NotFoundComponent },
