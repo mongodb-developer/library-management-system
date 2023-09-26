@@ -247,7 +247,7 @@ body {
   --text-warn-lighter-color: #{$dark-primary-text};
   --text-warn-darker-color: #{$dark-primary-text};
 }   
-$theme-warn: mat.define-palette(mat.$red-palette);
+$theme-warn: mat.define-palette(mat.$red-palette, A200);
 
 $lms-theme: mat.define-light-theme((
  color: (

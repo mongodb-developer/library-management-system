@@ -34,6 +34,10 @@ export class BookService {
     return this.http.post(`${URL}/reservations/${isbn}`, {});
   }
 
+  cancelReservation(isbn: string) {
+    return this.http.delete(`${URL}/reservations/${isbn}`);
+  }
+
   search(query: string, limit = 12): Observable<Book[]> {
     if (limit > 100) {
       limit = 100;

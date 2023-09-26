@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { BookService } from '../book.service';
 import { BookView } from '../models/book-view';
 import { Reservation } from '../models/reservation';
+import { ReservationService } from '../reservation.service';
 
 @Component({
   selector: 'lms-book',
@@ -15,6 +16,7 @@ export class BookComponent implements OnInit {
 
   constructor(
     private bookService: BookService,
+    private reservationService: ReservationService,
     private activatedRoute: ActivatedRoute
   ) {}
 
@@ -29,7 +31,27 @@ export class BookComponent implements OnInit {
 
   reserve() {
     this.bookService.reserve(this.book.isbn)
-      .subscribe(response => console.dir(response));
+      .subscribe(response => {
+        console.dir(response);
+
+        this.reservationService.getLoggedInUserReservations()
+          .subscribe(reservations => this.setUserReservation(reservations)
+        );
+      });
+  }
+
+  cancelReservation() {
+    this.bookService.cancelReservation(this.book.isbn)
+      .subscribe(response => {
+        console.dir(response);
+
+        this.bookService.getBook(this.book.isbn)
+          .subscribe(book => this.book = book);
+
+        this.reservationService.getLoggedInUserReservations()
+          .subscribe(reservations => this.setUserReservation(reservations)
+        );
+      });
   }
 
   setUserReservation(reservations: Reservation[]) {

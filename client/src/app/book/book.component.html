@@ -1,12 +1,31 @@
 <div class="book-details-wrapper">
     <section class="book-details-header">
-        <img class="img-link cropped book-thumbnail"
-            onerror="this.onerror=null; this.src='http://lgimages.s3.amazonaws.com/gc-md.gif'" mat-card-image
+        <img class="cropped book-thumbnail"
+            onerror="this.onerror=null; this.src='http://lgimages.s3.amazonaws.com/gc-md.gif'"
+            mat-card-image
             [src]="book.cover" [alt]="book.title" />
 
         <div class="book-header-details">
             <h2 class="book-title">{{ book.title }}</h2>
             <h3 class="book-authors">{{ book.authors }}</h3>
+
+            <div class="reservation-wrapper">
+                <div *ngIf="reservation; else reserveBlock">
+                    <lms-count-down [endDate]="reservation.expirationDate"></lms-count-down>
+                    <button mat-raised-button color="warn" (click)="cancelReservation()">
+                        Cancel Reservation
+                    </button>
+                </div>
+
+                <ng-template #reserveBlock>
+                    <div>
+                        <div>{{ book.available }} available {{ book.available > 1 ? "copies" : "copy" }}</div>
+                        <button mat-raised-button color="primary" (click)="reserve()" [disabled]="!book.available">
+                            Reserve
+                        </button>
+                    </div>
+                </ng-template>
+            </div>
         </div>
     </section>
 
@@ -14,7 +33,7 @@
         <mat-card-content class="book-card-content">
             <div *ngIf="book.synopsis" class="book-synopsis">
                 <h3>Description</h3>
-                <p>{{ book.synopsis }}</p>
+                <div [innerHtml]="book.synopsis"></div>
             </div>
 
             <div class="book-additional-details">
@@ -36,18 +55,5 @@
                 </div>
             </div>
         </mat-card-content>
-
-        <mat-card-footer>
-            <p *ngIf="reservation; else reserveBlock">
-                <lms-count-down [endDate]="reservation.expirationDate"></lms-count-down>
-            </p>
-
-            <ng-template #reserveBlock>
-                {{ book.available }} available copies
-                <mat-card-actions>
-                    <button mat-raised-button color="primary" (click)="reserve()" [disabled]="!book.available">Reserve</button>
-                </mat-card-actions>
-            </ng-template>
-        </mat-card-footer>
     </mat-card>
 </div>

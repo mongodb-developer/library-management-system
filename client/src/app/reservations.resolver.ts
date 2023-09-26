@@ -4,7 +4,7 @@ import { UserService } from './user.service';
 import { ReservationService } from './reservation.service';
 import { Reservation } from './models/reservation';
 
-export const reservationsResolver: ResolveFn<Reservation> = (route, state) => {
+export const reservationsResolver: ResolveFn<Reservation[]> = (route, state) => {
   const reservationService = inject(ReservationService);
 
   return reservationService.getLoggedInUserReservations();
