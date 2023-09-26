@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "npm run start:dev",
-    "start:dev": "nodemon --watch './src/**/*.ts' --ext 'ts,js,mjs,json' --exec 'npm run start:prod'",
+    "start:dev": "nodemon --config nodemon.json",
     "start:prod": "npm run build && node dist/server.js",
     "build": "rimraf ./dist && tsc",
     "lint": "eslint src/",
