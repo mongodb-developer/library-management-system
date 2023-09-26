@@ -24,6 +24,10 @@ import { ProfileComponent } from './profile/profile.component';
 import { BookComponent } from './book/book.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { CountDownComponent } from './count-down/count-down.component';
+import { ReviewFormComponent } from './review-form/review-form.component';
+import { StarRatingComponent } from './models/star-rating/star-rating.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ReviewComponent } from './review/review.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -39,6 +43,9 @@ export function tokenGetter() {
     BookComponent,
     NotFoundComponent,
     CountDownComponent,
+    ReviewFormComponent,
+    StarRatingComponent,
+    ReviewComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -54,6 +61,7 @@ export function tokenGetter() {
     MatIconModule,
     MatInputModule,
     MatToolbarModule,
+    MatTooltipModule,
     MatPaginatorModule,
     JwtModule.forRoot({
       config: {

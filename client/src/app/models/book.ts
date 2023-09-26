@@ -56,5 +56,5 @@ export interface Book {
      * Array of reviews following the subset pattern.
      * See https://www.mongodb.com/blog/post/building-with-patterns-the-subset-pattern.
      */
-    reviews: Array<Omit<Review, '_id' | 'bookId'>>;
+    reviews: Array<Review>;
 }

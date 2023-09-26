@@ -56,4 +56,21 @@
             </div>
         </mat-card-content>
     </mat-card>
+
+    <mat-card class="book-reviews">
+        <h3>Reviews from Readers</h3>
+
+        <div *ngIf="book.reviews.length; else noReviews">
+            <lms-review *ngFor="let review of book.reviews" [review]="review"></lms-review>
+        </div>
+
+        <ng-template #noReviews>
+            <p>No reviews yet. Be the first to write one!</p>
+        </ng-template>
+    </mat-card>
+
+    <mat-card class="write-review">
+        <h3>Write a Review</h3>
+        <lms-review-form [bookId]="book.isbn" (reviewAdded)="refetchBook()"></lms-review-form>
+    </mat-card>
 </div>

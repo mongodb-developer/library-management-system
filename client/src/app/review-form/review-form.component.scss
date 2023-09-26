@@ -1,0 +1,16 @@
+.review-form {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+}
+
+.review-form .submit-button {
+    align-self: start;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    margin: 20px 0 15px 0; 
+    font-size: 16px;
+}

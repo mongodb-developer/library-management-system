@@ -19,7 +19,7 @@
     width: 256px;
     height: 432px;
     box-shadow: -13px 19px 15px 5px rgba(0, 0, 0, 0.25);
-    border-radius: 3px !important;
+    border-radius: 2px !important;
 }
 
 .book-header-details {
@@ -39,15 +39,22 @@
     margin-top: 30px;
 }
 
+.book-details-content, .book-reviews, .write-review {
+    padding: 6rem 5rem 3rem 5rem;
+    max-width: 1400px;
+    justify-content: center;
+}
+
+.book-reviews, .write-review {
+    margin: 20px auto;
+}
+
 .book-details-content {
     z-index: 1;
-    justify-content: center;
     display: flex;
     flex-direction: column;
     gap: 2rem;
     margin: -5rem auto 5rem auto;
-    max-width: 1400px;
-    padding: 6rem 5rem 3rem 5rem;
 }
 
 .book-card-header, .book-card-content {

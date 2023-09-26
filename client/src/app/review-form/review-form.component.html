@@ -1,0 +1,16 @@
+<div class="form-wrapper">
+    <form [formGroup]="reviewForm" class="review-form" (ngSubmit)="submit()">
+        <div class="rating">
+            <label>Your rating:</label>
+            <lms-star-rating [rating]="1" (ratingUpdated)="updateRating($event)"></lms-star-rating>
+        </div>
+
+        <mat-form-field class="field-full-width" appearance="outline">
+            <mat-label>Enter your review...</mat-label>
+            <textarea matInput formControlName="text"></textarea>
+        </mat-form-field>
+
+
+        <button class="submit-button" mat-raised-button color="primary" type="submit" [disabled]="!reviewForm.valid">Submit</button>
+    </form>
+</div>
