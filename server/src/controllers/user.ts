@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { collections } from '../database.js';
 
 class UserController {
@@ -15,6 +16,13 @@ class UserController {
 
     public async getUser(username: string) {
         const user = await collections?.users?.findOne({ name: username });
+        return user;
+    }
+
+    public async getUserById(userId: string) {
+        const objectId = new ObjectId(userId);
+        const user = await collections?.users?.findOne({ _id: objectId });
+
         return user;
     }
 }

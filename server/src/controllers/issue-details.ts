@@ -1,9 +1,13 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, UpdateResult } from 'mongodb';
 import { collections } from '../database.js';
-import { BorrowedBook, IssueDetailType, Reservation, ReservationBook, ReservationUser } from '../models/issue-detail.js';
+import { BorrowedBook, IssueDetail, IssueDetailType, Reservation, ReservationBook, ReservationUser } from '../models/issue-detail.js';
 import BookController from './books.js';
+import UserController from './user.js';
+import { User } from '../models/user.js';
+import { Book } from '../models/book.js';
 
 const bookController = new BookController();
+const userController = new UserController();
 
 class ReservationsController {
     errors = {
@@ -14,6 +18,8 @@ class ReservationsController {
         INVALID_TYPE: 'Invalid type',
         ALREADY_RETURNED: 'Book is already returned',
         ALREADY_BOOKED: 'Book is already booked',
+        INVALID_USER_ID: 'Invalid user id',
+        INVALID_BOOK_ID: 'Invalid book id',
     };
 
     success = {
@@ -24,10 +30,31 @@ class ReservationsController {
     RESERVATION_DURATION = 0.5; // 0.5 days -> 12 hours
     BORROWED_DURATION = 21; // days
 
+    private async getRecentIssueDetails(type: IssueDetailType, limit = 50, skip = 0) {
+        const filter = {
+            recordType: (type === IssueDetailType.BorrowedBook) ? 'borrowedBook' : 'reservation',
+        };
+
+        const sortField = (type === IssueDetailType.BorrowedBook) ? 'borrowDate' : 'expirationDate';
+
+        return await collections?.issueDetails?.find(filter)
+            .sort(sortField, 'descending')
+            .limit(limit)
+            .skip(skip)
+            .toArray();
+    }
+
     private async getIssueDetailsForUser(userId: string, type: IssueDetailType) {
-        const filter =  { '_id': new RegExp(`^${userId}${type}`)};
-        if (type === IssueDetailType.BorrowedBook) filter['returned'] = false;
+        const filter =  {
+            '_id': new RegExp(`^${userId}${type}`)
+        };
+
+        if (type === IssueDetailType.BorrowedBook) {
+            filter['returned'] = false;
+        }
+
         const issueDetails = await collections?.issueDetails?.find(filter).toArray();
+
         return issueDetails;
     }
 
@@ -59,6 +86,18 @@ class ReservationsController {
         const reservation = await collections?.issueDetails?.findOne({ _id: reservationId });
         if (!reservation) throw new Error(this.errors.NOT_FOUND);
         return reservation;
+    }
+
+    public async getRecentReservations(limit = 50, skip = 0) {
+        if (limit > 100) {
+            limit = 100;
+        }
+
+        if (skip < 0) {
+            skip = 0;
+        }
+
+        return this.getRecentIssueDetails(IssueDetailType.Reservation, limit, skip);
     }
 
     public async getBookReservationByUser(bookId: string, userId: string) {
@@ -144,20 +183,45 @@ class ReservationsController {
         return result;
     }
 
-    public async borrowBook(bookId: string, user: ReservationUser) {
-        let bookData;
+    public async borrowBook(bookId: string, userId: string) {
+        let bookData: Book | null;
         try {
-            bookData = await bookController.isBookAvailable(bookId);
+            bookData = await bookController.getBook(bookId);
         } catch (e) {
-            throw new Error(e.message);
+            console.error(e);
+            throw new Error(this.errors.INVALID_BOOK_ID);
         }
+
+        if (!bookData) {
+            console.error(`Book with id ${bookId} not found`);
+            throw new Error(this.errors.INVALID_BOOK_ID);
+        }
+
         const book = {
-            _id: bookData?._id,
-            title: bookData?.title,
+            _id: bookData._id,
+            title: bookData.title,
         } as ReservationBook;
 
+        let userData: User | null;
+        try {
+            userData = await userController.getUserById(userId);
+        } catch (e) {
+            console.error(e);
+            throw new Error(this.errors.INVALID_USER_ID);
+        }
+
+        if (!userData) {
+            console.error(`User with id ${userId} not found`);
+            throw new Error(this.errors.INVALID_USER_ID);
+        }
+
+        const user = {
+            _id: userData._id,
+            name: userData.name
+        } as ReservationUser;
+
         const borrow = {
-            _id: this.getBorrowedBookId(book._id, user._id.toString()),
+            _id: this.getBorrowedBookId(book._id, userId),
             book,
             user,
             recordType: 'borrowedBook',
@@ -166,21 +230,24 @@ class ReservationsController {
             returned: false
         } as BorrowedBook;
 
-        let upsertResult;
+        let upsertResult: UpdateResult<IssueDetail>;
         try {
             upsertResult = await collections?.issueDetails?.updateOne({ _id: borrow._id }, { $set: borrow }, { upsert: true });
         } catch (e) {
             throw new Error(e.message);
         }
+
         // Delete matching reservation if one then re-compute computed fields
-        const reservationId = this.getReservationId(bookId, user._id.toString());
+        const reservationId = this.getReservationId(bookId, userId);
         const deleteResult = await collections?.issueDetails?.deleteOne({ _id: reservationId });
+
         const computes = [this.computeUserInHand(user._id)];
         const borrowReplacesReservation = deleteResult.deletedCount === 1;
         const borrowIsRenewal = upsertResult.modifiedCount === 1;
         if (!borrowReplacesReservation && !borrowIsRenewal) {
             computes.push(bookController.decrementBookInventory(book._id));
         }
+
         await Promise.all(computes);
 
         return upsertResult;
@@ -188,6 +255,18 @@ class ReservationsController {
 
     public async getBorrows(userId: string) {
         return this.getIssueDetailsForUser(userId, IssueDetailType.BorrowedBook);
+    }
+
+    public async getRecentBorrows(limit = 50, skip = 0) {
+        if (limit > 100) {
+            limit = 100;
+        }
+
+        if (skip < 0) {
+            skip = 0;
+        }
+
+        return this.getRecentIssueDetails(IssueDetailType.BorrowedBook, limit, skip);
     }
 
     public async returnBook(userId: string, bookId: string) {

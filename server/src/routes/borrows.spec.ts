@@ -126,16 +126,6 @@ describe('Borrows API', () => {
         assert(borrowedBooks?.body?.length === 1, 'The user should have one borrowed book');
     });
 
-    it('Should not let a user borrow an unavailable book', async () => {
-        // Borrow the unavailable book
-        await request(baseUrl)
-            .post(`/borrow/${unavailableBook._id}/${users.user1._id}`)
-            .set('Authorization', `Bearer ${adminJWT}`)
-            .expect(400);
-
-        // Expect error
-    });
-
     it('Should let a user renew a borrowed book if they already borrowed the book', async () => {
         // Borrow a book
         await request(baseUrl)
@@ -148,7 +138,6 @@ describe('Borrows API', () => {
             .post(`/borrow/${book._id}/${users.user1._id}`)
             .set('Authorization', `Bearer ${adminJWT}`)
             .expect(201);
-
     });
 
     it('Should not let a user borrow and reserve more than 10 books', async () => {

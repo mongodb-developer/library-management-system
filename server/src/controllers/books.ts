@@ -26,8 +26,8 @@ class BookController {
         const filter = {} as Filter<Book>;
         const project = {_id: 0} as FindOptions<Book>;
 
-        const bookCursor = await collections?.books?.find(filter, project);
-        const books = bookCursor.limit(limit).skip(skip).toArray();
+        const bookCursor = collections?.books?.find(filter, project);
+        const books = await bookCursor.limit(limit).skip(skip).toArray();
 
         return books;
     }
