@@ -273,10 +273,24 @@ class ReservationsController {
         const borrowId = this.getBorrowedBookId(bookId, userId);
         const borrow = await collections?.issueDetails?.findOne({ _id: borrowId }) as BorrowedBook;
 
-        if (!borrow) throw new Error(this.errors.NOT_FOUND);
-        if (borrow.returned) throw new Error(this.errors.ALREADY_RETURNED);
+        if (!borrow) {
+            console.error(this.errors.NOT_FOUND);
+            throw new Error(this.errors.NOT_FOUND);
+        }
 
-        const result = await collections?.issueDetails?.updateOne({ _id: borrowId }, { $set: { returned: true, returnedDate: new Date() } });
+        console.dir(borrow);
+        if (borrow.returned) {
+            console.error(this.errors.ALREADY_RETURNED);
+            throw new Error(this.errors.ALREADY_RETURNED);
+        }
+
+        const result = await collections?.issueDetails?.updateOne(
+            { _id: borrowId },
+            {
+                $set: { returned: true, returnedDate: new Date()}
+            }
+        );
+
         await Promise.all([
             bookController.incrementBookInventory(bookId),
             this.computeUserInHand(new ObjectId(userId))

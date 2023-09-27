@@ -29,7 +29,7 @@ export class BookComponent implements OnInit {
   }
 
   reserve() {
-    this.bookService.reserve(this.book.isbn)
+    this.reservationService.createReservation(this.book.isbn)
       .subscribe(response => {
         this.reservationService.getLoggedInUserReservations()
           .subscribe(reservations => this.setUserReservation(reservations)
@@ -38,7 +38,7 @@ export class BookComponent implements OnInit {
   }
 
   cancelReservation() {
-    this.bookService.cancelReservation(this.book.isbn)
+    this.reservationService.cancelReservation(this.book.isbn)
       .subscribe(response => {
         this.refetchBook();
         this.reservationService.getLoggedInUserReservations()

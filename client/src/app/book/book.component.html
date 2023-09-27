@@ -19,7 +19,7 @@
 
                 <ng-template #reserveBlock>
                     <div>
-                        <div>{{ book.available }} available {{ book.available > 1 ? "copies" : "copy" }}</div>
+                        <div>{{ book.available }} available {{ book.available > 1 || book.available === 0 ? "copies" : "copy" }}</div>
                         <button mat-raised-button color="primary" (click)="reserve()" [disabled]="!book.available">
                             Reserve
                         </button>

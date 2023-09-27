@@ -18,7 +18,7 @@ const bookController = new BookController();
  * GET /borrow/admin: Returns a list of borrowed books
  * POST /borrow/:bookId/:userId: Creates a new borrowed book for a user
  * GET /borrow: Returns all borrowed books for the logged in user
- * POST /borrow/:bookId/:userId/return: Returns a borrowed book for the logged in user
+ * POST /borrow/:bookId/:userId/return: Returns a borrowed book
  * GET /borrow/history: Returns the history of borrowed books for the logged in user
  *
  */

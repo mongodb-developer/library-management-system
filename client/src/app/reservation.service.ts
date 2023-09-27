@@ -29,4 +29,16 @@ export class ReservationService {
         })
       );
   }
+
+  getReservations() {
+    return this.http.get<Reservation[]>(`${URL}/reservations/admin`);
+  }
+
+  createReservation(isbn: string) {
+    return this.http.post(`${URL}/reservations/${isbn}`, {});
+  }
+
+  cancelReservation(isbn: string) {
+    return this.http.delete(`${URL}/reservations/${isbn}`);
+  }
 }
