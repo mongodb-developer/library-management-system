@@ -183,26 +183,6 @@ class ReservationsController {
         return deleteResult;
     }
 
-    public async computeUserInHand_deprecated(userId: ObjectId) {
-        let counts;
-        try {
-            counts = await Promise.all([
-                this.countReservationsForUser(userId),
-                this.countBorrowedBooksForUser(userId),
-                this.countReservationsAndBorrowedBooksForUser(userId)
-            ]);
-        } catch (error) {
-            throw new Error(error);
-        }
-        const set = {
-            reserved: counts[0],
-            borrowed: counts[1],
-            totalInHand: counts[2]
-        };
-        const result = await collections?.users?.updateOne({ _id: userId }, { $set: set });
-        return result;
-    }
-
     public async borrowBook(bookId: string, userId: string) {
         let bookData: Book | null;
         try {
