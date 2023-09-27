@@ -10,6 +10,8 @@ import { bookResolver } from './book.resolver';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { reservationsResolver } from './reservations.resolver';
 import { isAdminGuard } from './is-admin.guard';
+import { userReservationsResolver } from './user-reservations.resolver';
+import { userBorrowedBooksResolver } from './user-borrowed-books.resolver';
 
 const routes: Routes = [
   {
@@ -23,7 +25,11 @@ const routes: Routes = [
       isAuthenticatedGuard,
       canLoadProfileGuard,
     ],
-    resolve: { user: userResolver },
+    resolve: {
+      user: userResolver,
+      reservations: userReservationsResolver,
+      borrowedBooks: userBorrowedBooksResolver,
+    },
   },
   {
     path: 'books/:isbn',

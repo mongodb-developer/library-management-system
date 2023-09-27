@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BorrowedBook } from './models/borrowed-book';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { PAGE_SIZE, Page } from './models/page-view';
+import { UserService } from './user.service';
 
 const URL = 'http://localhost:5000';
 
@@ -11,7 +12,24 @@ const URL = 'http://localhost:5000';
 })
 export class BorrowedBookService {
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private userService: UserService
+  ) { }
+
+  getLoggedInUserBorrowedBooks() {
+    const user = this.userService.getLoggedInUser();
+    if (user) {
+      return this.http.get<BorrowedBook[]>(`${URL}/borrow`);
+    }
+
+    return this.userService.login()
+      .pipe(
+        switchMap(user => {
+          return this.http.get<BorrowedBook[]>(`${URL}/borrow`);
+        })
+      );
+  }
 
   getBorrowedBooksPage(limit = PAGE_SIZE, skip = 0) {
     return this.http.get<Page<BorrowedBook>>(`${URL}/borrow/page?limit=${limit}&skip=${skip}`);

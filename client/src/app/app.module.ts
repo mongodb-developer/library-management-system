@@ -28,6 +28,7 @@ import { ReviewFormComponent } from './review-form/review-form.component';
 import { StarRatingComponent } from './star-rating/star-rating.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ReviewComponent } from './review/review.component';
+import { MatTableModule } from '@angular/material/table';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -63,6 +64,7 @@ export function tokenGetter() {
     MatToolbarModule,
     MatTooltipModule,
     MatPaginatorModule,
+    MatTableModule,
     JwtModule.forRoot({
       config: {
         tokenGetter,
