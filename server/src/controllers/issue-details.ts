@@ -131,9 +131,10 @@ class ReservationsController {
             _id: bookData?._id,
             title: bookData?.title,
         } as ReservationBook;
+        const userId = user._id.toString();
 
         const reservation = {
-            _id: this.getReservationId(book._id, user._id.toString()),
+            _id: this.getReservationId(book._id, userId),
             book,
             user,
             recordType: 'reservation',
@@ -143,7 +144,7 @@ class ReservationsController {
         const result = await collections?.issueDetails?.insertOne(reservation);
         await Promise.all([
             bookController.decrementBookInventory(book._id),
-            this.computeUserInHand(user._id)
+            userController.incrementUserReservationCount(userId)
         ]);
 
         return result;
@@ -176,13 +177,13 @@ class ReservationsController {
 
         await Promise.all([
             bookController.incrementBookInventory(bookId),
-            this.computeUserInHand(new ObjectId(userId))
+            userController.decrementUserReservationCount(userId)
         ]);
 
         return deleteResult;
     }
 
-    public async computeUserInHand(userId: ObjectId) {
+    public async computeUserInHand_deprecated(userId: ObjectId) {
         let counts;
         try {
             counts = await Promise.all([
@@ -260,7 +261,7 @@ class ReservationsController {
         const reservationId = this.getReservationId(bookId, userId);
         const deleteResult = await collections?.issueDetails?.deleteOne({ _id: reservationId });
 
-        const computes = [this.computeUserInHand(user._id)];
+        const computes = [userController.incrementUserBorrowedCount(userId)]
         const borrowReplacesReservation = deleteResult.deletedCount === 1;
         const borrowIsRenewal = upsertResult.modifiedCount === 1;
         if (!borrowReplacesReservation && !borrowIsRenewal) {
@@ -311,7 +312,7 @@ class ReservationsController {
 
         await Promise.all([
             bookController.incrementBookInventory(bookId),
-            this.computeUserInHand(new ObjectId(userId))
+            userController.decrementUserBorrowedCount(userId)
         ]);
 
         return result;

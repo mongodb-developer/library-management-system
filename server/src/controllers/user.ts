@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { collections } from '../database.js';
+import { IssueDetailType } from '../models/issue-detail.js';
 
 class UserController {
     public async createNewUser() {
@@ -25,6 +26,35 @@ class UserController {
 
         return user;
     }
+
+    private async updateUserCount(userId: string, value: number, borrowedOrReserved: IssueDetailType) {
+        const objectId = new ObjectId(userId);
+        const result = await collections?.users?.updateOne({ _id: objectId }, {
+            $inc: {
+                reserved: value,
+                totalInHand: value
+            }
+        });
+
+        return result;
+    }
+
+    public async incrementUserReservationCount(userId: string) {
+        return this.updateUserCount(userId, 1, IssueDetailType.Reservation);
+    }
+
+    public async decrementUserReservationCount(userId: string) {
+        return this.updateUserCount(userId, -1, IssueDetailType.Reservation);
+    }
+
+    public async incrementUserBorrowedCount(userId: string) {
+        return this.updateUserCount(userId, 1, IssueDetailType.BorrowedBook);
+    }
+
+    public async decrementUserBorrowedCount(userId: string) {
+        return this.updateUserCount(userId, -1, IssueDetailType.BorrowedBook);
+    }
+
 }
 
 export default UserController;
