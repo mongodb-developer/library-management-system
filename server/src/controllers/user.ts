@@ -9,8 +9,12 @@ class UserController {
         const animals = ['Alligator', 'Barracuda', 'Cheetah', 'Dingo', 'Elephant', 'Falcon', 'Gorilla', 'Hyena', 'Iguana', 'Jaguar', 'Koala', 'Lemur', 'Mongoose', 'Narwhal', 'Orangutan', 'Platypus', 'Quetzal', 'Rhino', 'Scorpion', 'Tarantula'];
         const randomUsername = `${adjectives[Math.floor(Math.random() * 20)]} ${animals[Math.floor(Math.random() * 20)]}`;
 
-        const result = await collections?.users?.insertOne({ name: randomUsername });
-        const user = { _id: result.insertedId, name: randomUsername };
+        let user = await collections?.users?.findOne({ name: randomUsername });
+        if (!user) {
+            let tempUser = { name: randomUsername, isAdmin: true };
+            let result = await collections?.users?.insertOne(tempUser);
+            user = Object.assign({}, tempUser, {_id: result?.insertedId});
+        }
 
         return user;
     }
@@ -26,35 +30,6 @@ class UserController {
 
         return user;
     }
-
-    private async updateUserCount(userId: string, value: number, borrowedOrReserved: IssueDetailType) {
-        const objectId = new ObjectId(userId);
-        const result = await collections?.users?.updateOne({ _id: objectId }, {
-            $inc: {
-                reserved: value,
-                totalInHand: value
-            }
-        });
-
-        return result;
-    }
-
-    public async incrementUserReservationCount(userId: string) {
-        return this.updateUserCount(userId, 1, IssueDetailType.Reservation);
-    }
-
-    public async decrementUserReservationCount(userId: string) {
-        return this.updateUserCount(userId, -1, IssueDetailType.Reservation);
-    }
-
-    public async incrementUserBorrowedCount(userId: string) {
-        return this.updateUserCount(userId, 1, IssueDetailType.BorrowedBook);
-    }
-
-    public async decrementUserBorrowedCount(userId: string) {
-        return this.updateUserCount(userId, -1, IssueDetailType.BorrowedBook);
-    }
-
 }
 
 export default UserController;
