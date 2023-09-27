@@ -1,23 +1,37 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { ReservationService } from '../reservation.service';
 import { Reservation } from '../models/reservation';
 import { BorrowedBookService } from '../borrowed-book.service';
 import { BorrowedBook } from '../models/borrowed-book';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
+import { PAGE_SIZE } from '../models/page-view';
 
 @Component({
   selector: 'lms-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
-  displayedColumns: string[] = [
+export class DashboardComponent implements OnInit, AfterViewInit {
+  pageSize = PAGE_SIZE;
+
+  @ViewChild('reservationsPaginator') reservationsPaginator: MatPaginator;
+  reservationsTotalCount = 0;
+  reservations = new MatTableDataSource<Reservation>();
+
+  reservationsDisplayedColumns: string[] = [
     'book',
     'user',
     'expirationDate',
     'actions'
   ];
 
-  displayedColumnsBorrows: string[] = [
+  @ViewChild('borrowedBooksPaginator') borrowedBooksPaginator: MatPaginator;
+  borrowedBooksTotalCount = 0;
+  borrowedBooks = new MatTableDataSource<BorrowedBook>();
+
+  borrowsDisplayedColumns: string[] = [
     'book',
     'user',
     'borrowDate',
@@ -27,18 +41,32 @@ export class DashboardComponent implements OnInit {
     'actions'
   ];
 
-  reservations: Reservation[] = [];
-  borrowedBooks: BorrowedBook[] = [];
-
   constructor(
     private reservationService: ReservationService,
     private borrowedBookService: BorrowedBookService,
+    private activatedRoute: ActivatedRoute,
   ) {
   }
 
   ngOnInit() {
-    this.fetchReservations();
-    this.fetchBorrowedBooks();
+    this.activatedRoute.data.subscribe(
+      ({ borrowedBooksPage, reservationsPage }) => {
+        this.borrowedBooksTotalCount = borrowedBooksPage.totalCount;
+        this.borrowedBooks.data = borrowedBooksPage.data;
+
+        this.reservationsTotalCount = reservationsPage.totalCount;
+        this.reservations.data = reservationsPage.data;
+      });
+  }
+
+  ngAfterViewInit() {
+    this.borrowedBooksPaginator?.page.subscribe(() => {
+      this.fetchBorrowedBooks();
+    });
+
+    this.reservationsPaginator?.page.subscribe(() => {
+      this.fetchReservations();
+    });
   }
 
   cancelReservation(reservation: Reservation) {
@@ -47,7 +75,6 @@ export class DashboardComponent implements OnInit {
   }
 
   lendBook(reservation: Reservation) {
-    console.dir(reservation);
     this.borrowedBookService.borrowBook(reservation.book._id, reservation.user._id)
       .subscribe(() => {
         this.fetchBorrowedBooks();
@@ -64,17 +91,22 @@ export class DashboardComponent implements OnInit {
   }
 
   private fetchReservations() {
-    this.reservationService.getReservations()
+    const limit = this.reservationsPaginator?.pageSize || PAGE_SIZE;
+    const skip = (this.reservationsPaginator?.pageIndex * this.reservationsPaginator?.pageSize) || 0;
+
+    this.reservationService.getReservationsPage(limit, skip)
       .subscribe(reservations => {
-        this.reservations = reservations;
+        this.reservations.data = reservations.data;
       });
   }
 
   private fetchBorrowedBooks() {
-    this.borrowedBookService.getBorrowedBooks()
-      .subscribe(borrowedBooks => {
-        console.log(borrowedBooks);
-        this.borrowedBooks = borrowedBooks;
+    const limit = this.borrowedBooksPaginator?.pageSize || PAGE_SIZE;
+    const skip = (this.borrowedBooksPaginator?.pageIndex * this.borrowedBooksPaginator?.pageSize) || 0;
+
+    this.borrowedBookService.getBorrowedBooksPage(limit, skip)
+      .subscribe(response => {
+        this.borrowedBooks.data = response.data;
       });
   }
 }

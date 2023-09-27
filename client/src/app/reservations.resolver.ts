@@ -1,6 +1,5 @@
 import { inject } from '@angular/core';
 import { ResolveFn } from '@angular/router';
-import { UserService } from './user.service';
 import { ReservationService } from './reservation.service';
 import { Reservation } from './models/reservation';
 

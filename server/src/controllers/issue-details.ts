@@ -30,22 +30,41 @@ class ReservationsController {
     RESERVATION_DURATION = 0.5; // 0.5 days -> 12 hours
     BORROWED_DURATION = 21; // days
 
-    private async getRecentIssueDetails(type: IssueDetailType, limit = 50, skip = 0) {
+    private async getPagedIssueDetails(type: IssueDetailType, limit = 50, skip = 0) {
         const filter = {
             recordType: (type === IssueDetailType.BorrowedBook) ? 'borrowedBook' : 'reservation',
         };
 
         const sortField = (type === IssueDetailType.BorrowedBook) ? 'borrowDate' : 'expirationDate';
 
-        return await collections?.issueDetails?.find(filter)
-            .sort(sortField, 'descending')
-            .limit(limit)
-            .skip(skip)
-            .toArray();
+        const aggregationResult = await collections?.issueDetails?.aggregate([
+            {
+                $match: filter
+            },
+            {
+                $facet: {
+                    metadata: [{ $count: 'totalCount' }],
+                    data: [
+                        { $sort: { [sortField]: -1 } },
+                        { $skip: skip },
+                        { $limit: limit }
+                    ],
+                },
+            },
+        ]).toArray();
+
+        if (!aggregationResult || aggregationResult.length === 0) {
+            return [];
+        } else {
+            return {
+                data: aggregationResult[0]?.data,
+                totalCount: aggregationResult[0]?.metadata[0]?.totalCount
+            };
+        }
     }
 
     private async getIssueDetailsForUser(userId: string, type: IssueDetailType) {
-        const filter =  {
+        const filter = {
             '_id': new RegExp(`^${userId}${type}`)
         };
 
@@ -88,7 +107,7 @@ class ReservationsController {
         return reservation;
     }
 
-    public async getRecentReservations(limit = 50, skip = 0) {
+    public async getPagedReservations(limit = 50, skip = 0) {
         if (limit > 100) {
             limit = 100;
         }
@@ -97,7 +116,7 @@ class ReservationsController {
             skip = 0;
         }
 
-        return this.getRecentIssueDetails(IssueDetailType.Reservation, limit, skip);
+        return this.getPagedIssueDetails(IssueDetailType.Reservation, limit, skip);
     }
 
     public async getBookReservationByUser(bookId: string, userId: string) {
@@ -257,7 +276,7 @@ class ReservationsController {
         return this.getIssueDetailsForUser(userId, IssueDetailType.BorrowedBook);
     }
 
-    public async getRecentBorrows(limit = 50, skip = 0) {
+    public async getPagedBorrows(limit = 50, skip = 0) {
         if (limit > 100) {
             limit = 100;
         }
@@ -266,7 +285,7 @@ class ReservationsController {
             skip = 0;
         }
 
-        return this.getRecentIssueDetails(IssueDetailType.BorrowedBook, limit, skip);
+        return this.getPagedIssueDetails(IssueDetailType.BorrowedBook, limit, skip);
     }
 
     public async returnBook(userId: string, bookId: string) {
@@ -278,7 +297,6 @@ class ReservationsController {
             throw new Error(this.errors.NOT_FOUND);
         }
 
-        console.dir(borrow);
         if (borrow.returned) {
             console.error(this.errors.ALREADY_RETURNED);
             throw new Error(this.errors.ALREADY_RETURNED);
@@ -287,7 +305,7 @@ class ReservationsController {
         const result = await collections?.issueDetails?.updateOne(
             { _id: borrowId },
             {
-                $set: { returned: true, returnedDate: new Date()}
+                $set: { returned: true, returnedDate: new Date() }
             }
         );
 

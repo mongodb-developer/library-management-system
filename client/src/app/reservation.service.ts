@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { HttpClient } from '@angular/common/http';
 import { Reservation } from './models/reservation';
 import { switchMap } from 'rxjs';
+import { PAGE_SIZE, Page } from './models/page-view';
 
 const URL = 'http://localhost:5000';
 
@@ -30,8 +31,8 @@ export class ReservationService {
       );
   }
 
-  getReservations() {
-    return this.http.get<Reservation[]>(`${URL}/reservations/admin`);
+  getReservationsPage(limit = PAGE_SIZE, skip = 0) {
+    return this.http.get<Page<Reservation>>(`${URL}/reservations/page?${limit}&skip=${skip}`);
   }
 
   createReservation(isbn: string) {

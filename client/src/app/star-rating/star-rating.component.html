@@ -1,6 +1,5 @@
 <div *ngIf="fixed; then nonClickable else clickable"></div>
 
-
 <ng-template #nonClickable>
     <button mat-icon-button class="stars" color="accent" *ngFor="let ratingId of ratingArr; index as i"
         [id]="'star_'+i" disabled>

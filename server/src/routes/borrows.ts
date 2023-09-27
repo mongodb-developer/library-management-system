@@ -15,7 +15,7 @@ const bookController = new BookController();
 /**
  * Routes
  *
- * GET /borrow/admin: Returns a list of borrowed books
+ * GET /borrow/page: Returns a page of borrowed books
  * POST /borrow/:bookId/:userId: Creates a new borrowed book for a user
  * GET /borrow: Returns all borrowed books for the logged in user
  * POST /borrow/:bookId/:userId/return: Returns a borrowed book
@@ -23,11 +23,11 @@ const bookController = new BookController();
  *
  */
 
-borrows.get('/admin', protectedRoute, adminRoute, async (req: AuthRequest, res) => {
+borrows.get('/page', protectedRoute, adminRoute, async (req: AuthRequest, res) => {
     const limit = parseInt(req?.query?.limit as string) || undefined;
     const skip = parseInt(req?.query?.skip as string) || undefined;
 
-    const borrowedBooks = await issueDetailsController.getRecentBorrows(limit, skip);
+    const borrowedBooks = await issueDetailsController.getPagedBorrows(limit, skip);
 
     return res.status(200).json(borrowedBooks);
 });
