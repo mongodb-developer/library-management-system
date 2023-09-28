@@ -31,7 +31,7 @@ export class SearchBarComponent {
   private search(formControl: FormControl<any>): Observable<Book[]> {
     return formControl.valueChanges.pipe(
       filter(text => text!.length > 1),
-      debounceTime(250),
+      debounceTime(700),
       distinctUntilChanged(),
       switchMap(searchTerm => this.bookService.search(searchTerm!)),
     );

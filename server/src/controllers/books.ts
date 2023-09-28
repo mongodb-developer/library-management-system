@@ -1,6 +1,7 @@
 import { DeleteResult, Filter, FindOptions, InsertOneResult, UpdateResult } from 'mongodb';
 import { Book } from '../models/book';
 import { collections } from '../database.js';
+import getEmbeddings from "../embeddings/index.js";
 
 class BookController {
     errors = {
@@ -43,34 +44,51 @@ class BookController {
         // return books;
 
         /** Final Code */
+        // const aggregationPipeline = [
+        //     {
+        //       $search: {
+        //         "index": "fulltextsearch",
+        //         "compound": {
+        //           "must": [
+        //             {
+        //               "text": {
+        //                 "query": "poems",
+        //                 "path": ["title", "author.name", "genres"]
+        //               }
+        //             }
+        //           ],
+        //           "should": [
+        //             {
+        //               "equals": {
+        //                 "value": true,
+        //                 "path": "bookOfTheMonth",
+        //                 "score": {
+        //                   "boost": { value: 10 }
+        //                             }
+        //               }
+        //             }
+        //           ]
+        //         }
+        //       }
+        //     }
+        //   ];
+        // const books = await collections?.books?.aggregate(aggregationPipeline).toArray() as Book[];
+        // return books;
+
+        // Semantic Search Code
+        const vector = await getEmbeddings(query);
         const aggregationPipeline = [
             {
-              $search: {
-                "index": "fulltextsearch",
-                "compound": {
-                  "must": [
-                    {
-                      "text": {
-                        "query": "poems",
-                        "path": ["title", "author.name", "genres"]
-                      }
+                $search: {
+                    index: "vectorsearch",
+                    knnBeta: {
+                        vector,
+                        path: "vectorizedSynopsis",
+                        k: 20
                     }
-                  ],
-                  "should": [
-                    {
-                      "equals": {
-                        "value": true,
-                        "path": "bookOfTheMonth",
-                        "score": {
-                          "boost": { value: 10 }
-                                    }
-                      }
-                    }
-                  ]
                 }
-              }
             }
-          ];
+        ];
         const books = await collections?.books?.aggregate(aggregationPipeline).toArray() as Book[];
         return books;
     }
