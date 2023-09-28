@@ -131,9 +131,10 @@ class ReservationsController {
             _id: bookData?._id,
             title: bookData?.title,
         } as ReservationBook;
+        const userId = user._id.toString();
 
         const reservation = {
-            _id: this.getReservationId(book._id, user._id.toString()),
+            _id: this.getReservationId(book._id, userId),
             book,
             user,
             recordType: 'reservation',
@@ -141,31 +142,9 @@ class ReservationsController {
         } as Reservation;
 
         const result = await collections?.issueDetails?.insertOne(reservation);
-        await Promise.all([
-            bookController.decrementBookInventory(book._id),
-            this.computeUserInHand(user._id)
-        ]);
+        await bookController.decrementBookInventory(book._id);
 
         return result;
-    }
-
-    public async countBooksForUser(userId: ObjectId, type?: IssueDetailType) {
-        const filterValue = `^${userId}${type}`;
-        const filter = new RegExp(filterValue);
-        const count = await collections?.issueDetails?.countDocuments({ '_id': filter });
-        return count;
-    }
-
-    public async countReservationsForUser(userId: ObjectId) {
-        return await this.countBooksForUser(userId, IssueDetailType.Reservation);
-    }
-
-    public async countBorrowedBooksForUser(userId: ObjectId) {
-        return await this.countBooksForUser(userId, IssueDetailType.BorrowedBook);
-    }
-
-    public async countReservationsAndBorrowedBooksForUser(userId: ObjectId) {
-        return await this.countBooksForUser(userId);
     }
 
     public async cancelReservation(bookId: string, userId: string) {
@@ -174,32 +153,9 @@ class ReservationsController {
 
         if (deleteResult.deletedCount === 0) throw new Error(this.errors.NOT_FOUND);
 
-        await Promise.all([
-            bookController.incrementBookInventory(bookId),
-            this.computeUserInHand(new ObjectId(userId))
-        ]);
+        await bookController.incrementBookInventory(bookId);
 
         return deleteResult;
-    }
-
-    public async computeUserInHand(userId: ObjectId) {
-        let counts;
-        try {
-            counts = await Promise.all([
-                this.countReservationsForUser(userId),
-                this.countBorrowedBooksForUser(userId),
-                this.countReservationsAndBorrowedBooksForUser(userId)
-            ]);
-        } catch (error) {
-            throw new Error(error);
-        }
-        const set = {
-            reserved: counts[0],
-            borrowed: counts[1],
-            totalInHand: counts[2]
-        };
-        const result = await collections?.users?.updateOne({ _id: userId }, { $set: set });
-        return result;
     }
 
     public async borrowBook(bookId: string, userId: string) {
@@ -260,14 +216,11 @@ class ReservationsController {
         const reservationId = this.getReservationId(bookId, userId);
         const deleteResult = await collections?.issueDetails?.deleteOne({ _id: reservationId });
 
-        const computes = [this.computeUserInHand(user._id)];
         const borrowReplacesReservation = deleteResult.deletedCount === 1;
         const borrowIsRenewal = upsertResult.modifiedCount === 1;
         if (!borrowReplacesReservation && !borrowIsRenewal) {
-            computes.push(bookController.decrementBookInventory(book._id));
+            await bookController.decrementBookInventory(book._id);
         }
-
-        await Promise.all(computes);
 
         return upsertResult;
     }
@@ -309,10 +262,7 @@ class ReservationsController {
             }
         );
 
-        await Promise.all([
-            bookController.incrementBookInventory(bookId),
-            this.computeUserInHand(new ObjectId(userId))
-        ]);
+        await bookController.incrementBookInventory(bookId);
 
         return result;
     }

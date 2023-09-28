@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { collections } from '../database.js';
+import { IssueDetailType } from '../models/issue-detail.js';
 
 class UserController {
     public async createNewUser() {
@@ -8,8 +9,12 @@ class UserController {
         const animals = ['Alligator', 'Barracuda', 'Cheetah', 'Dingo', 'Elephant', 'Falcon', 'Gorilla', 'Hyena', 'Iguana', 'Jaguar', 'Koala', 'Lemur', 'Mongoose', 'Narwhal', 'Orangutan', 'Platypus', 'Quetzal', 'Rhino', 'Scorpion', 'Tarantula'];
         const randomUsername = `${adjectives[Math.floor(Math.random() * 20)]} ${animals[Math.floor(Math.random() * 20)]}`;
 
-        const result = await collections?.users?.insertOne({ name: randomUsername });
-        const user = { _id: result.insertedId, name: randomUsername };
+        let user = await collections?.users?.findOne({ name: randomUsername });
+        if (!user) {
+            let tempUser = { name: randomUsername, isAdmin: true };
+            let result = await collections?.users?.insertOne(tempUser);
+            user = Object.assign({}, tempUser, {_id: result?.insertedId});
+        }
 
         return user;
     }
