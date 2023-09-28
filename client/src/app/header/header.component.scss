@@ -1,0 +1,27 @@
+@use '../../styles' as styles;
+
+.toolbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 50px 100px;
+}
+
+.toolbar > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+}
+
+.toolbar a {
+    text-decoration: none;
+    color: styles.$dark-text;
+}
+
+.user-profile {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}

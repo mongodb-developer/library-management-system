@@ -18,12 +18,35 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 
 import { BooksCatalogueComponent } from './books-catalogue/books-catalogue.component';
 import { SearchBarComponent } from './search-bar/search-bar.component';
+import { HeaderComponent } from './header/header.component';
+import { JwtModule } from '@auth0/angular-jwt';
+import { ProfileComponent } from './profile/profile.component';
+import { BookComponent } from './book/book.component';
+import { NotFoundComponent } from './not-found/not-found.component';
+import { CountDownComponent } from './count-down/count-down.component';
+import { ReviewFormComponent } from './review-form/review-form.component';
+import { StarRatingComponent } from './star-rating/star-rating.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ReviewComponent } from './review/review.component';
+import { MatTableModule } from '@angular/material/table';
+
+export function tokenGetter() {
+  return localStorage.getItem('access_token');
+}
 
 @NgModule({
   declarations: [
     AppComponent,
     BooksCatalogueComponent,
     SearchBarComponent,
+    HeaderComponent,
+    ProfileComponent,
+    BookComponent,
+    NotFoundComponent,
+    CountDownComponent,
+    ReviewFormComponent,
+    StarRatingComponent,
+    ReviewComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -39,9 +62,16 @@ import { SearchBarComponent } from './search-bar/search-bar.component';
     MatIconModule,
     MatInputModule,
     MatToolbarModule,
+    MatTooltipModule,
     MatPaginatorModule,
+    MatTableModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter,
+        allowedDomains: ['localhost:5000']
+      },
+    }),
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

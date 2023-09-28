@@ -1,0 +1,15 @@
+<div class="review-wrapper">
+    <div class="review-author">
+        <img src="./assets/avatar.png" alt="User Avatar" width="36px" height="36px" />
+        <span>{{ review.name }}</span>
+    </div>
+
+    <div class="review-content">
+        <div class="review-content-header">
+            <lms-star-rating [rating]="review.rating" [fixed]="true"></lms-star-rating>
+            <span>{{ review.timestamp | date }}</span>
+        </div>
+        <p>{{ review.text }}</p>
+    </div>
+
+</div>

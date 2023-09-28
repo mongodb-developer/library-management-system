@@ -1,0 +1,89 @@
+<div class="dashboard-wrapper">
+    <div class="reservations">
+        <h2>Reservations</h2>
+        <div *ngIf="reservations.data.length; then reservationsList else noReservations" class="mat-elevation-z8">
+        </div>
+
+        <ng-template #reservationsList>
+            <table mat-table [dataSource]="reservations">
+                <ng-container matColumnDef="book">
+                    <th mat-header-cell *matHeaderCellDef>Book</th>
+                    <td mat-cell *matCellDef="let reservation"> {{ reservation.book.title }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="user">
+                    <th mat-header-cell *matHeaderCellDef>User</th>
+                    <td mat-cell *matCellDef="let reservation"> {{reservation.user.name}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="expirationDate">
+                    <th mat-header-cell *matHeaderCellDef>Expires on</th>
+                    <td mat-cell *matCellDef="let reservation"> {{reservation.expirationDate | date:"medium"}} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="reservationsDisplayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: reservationsDisplayedColumns;"></tr>
+            </table>
+
+            <mat-paginator #reservationsPaginator [pageSizeOptions]="[10, 50, 100]" [pageSize]="pageSize"
+                [length]="reservationsTotalCount" showFirstLastButtons aria-label="Select page of reservations">
+            </mat-paginator>
+        </ng-template>
+
+        <ng-template #noReservations>
+            <span>No reservations.</span>
+        </ng-template>
+
+    </div>
+
+    <div class="borrowed">
+        <h2>Borrowed Books</h2>
+        <div *ngIf="borrowedBooks.data.length; then borrowedBooksList else noBorrowedBooks" class="mat-elevation-z8">
+        </div>
+
+        <ng-template #borrowedBooksList>
+            <table mat-table [dataSource]="borrowedBooks">
+                <ng-container matColumnDef="book">
+                    <th mat-header-cell *matHeaderCellDef>Book</th>
+                    <td mat-cell *matCellDef="let borrowedBook"> {{ borrowedBook.book.title }} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="user">
+                    <th mat-header-cell *matHeaderCellDef>User</th>
+                    <td mat-cell *matCellDef="let borrowedBook"> {{borrowedBook.user.name}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="borrowDate">
+                    <th mat-header-cell *matHeaderCellDef>Borrowed on</th>
+                    <td mat-cell *matCellDef="let borrowedBook"> {{borrowedBook.borrowDate | date:"medium"}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="dueDate">
+                    <th mat-header-cell *matHeaderCellDef>Due date</th>
+                    <td mat-cell *matCellDef="let borrowedBook"> {{borrowedBook.dueDate | date:"medium"}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="returnedDate">
+                    <th mat-header-cell *matHeaderCellDef>Returned on</th>
+                    <td mat-cell *matCellDef="let borrowedBook"> {{borrowedBook.returnedDate | date:"medium"}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="returned">
+                    <th mat-header-cell *matHeaderCellDef>Returned</th>
+                    <td mat-cell *matCellDef="let borrowedBook"> {{ !!borrowedBook.returned ? "✅" : "No" }} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="borrowsDisplayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: borrowsDisplayedColumns;"></tr>
+            </table>
+
+            <mat-paginator #borrowedBooksPaginator [pageSizeOptions]="[10, 50, 100]" [pageSize]="pageSize"
+                [length]="borrowedBooksTotalCount" showFirstLastButtons aria-label="Select page of borrowed books">
+            </mat-paginator>
+        </ng-template>
+
+        <ng-template #noBorrowedBooks>
+            <span>No borrowed books.</span>
+        </ng-template>
+    </div>
+</div>

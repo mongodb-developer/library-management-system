@@ -1,0 +1,18 @@
+.dashboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.reservations, .borrowed {
+  margin: 20px 30px;
+
+  h2 {
+    margin-bottom: 20px;
+  }
+}
+
+table {
+  width: 100%;
+}

@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { ObjectId } from 'mongodb';
 import { protectedRoute, adminRoute } from '../utils/middlewares.js';
 import { Request as AuthRequest } from 'express-jwt';
 import IssueDetailsController from '../controllers/issue-details.js';
@@ -16,12 +15,22 @@ const bookController = new BookController();
 /**
  * Routes
  *
+ * GET /borrow/page: Returns a page of borrowed books
  * POST /borrow/:bookId/:userId: Creates a new borrowed book for a user
  * GET /borrow: Returns all borrowed books for the logged in user
- * POST /borrow/:bookId/:userId/return: Returns a borrowed book for the logged in user
+ * POST /borrow/:bookId/:userId/return: Returns a borrowed book
  * GET /borrow/history: Returns the history of borrowed books for the logged in user
  *
  */
+
+borrows.get('/page', protectedRoute, adminRoute, async (req: AuthRequest, res) => {
+    const limit = parseInt(req?.query?.limit as string) || undefined;
+    const skip = parseInt(req?.query?.skip as string) || undefined;
+
+    const borrowedBooks = await issueDetailsController.getPagedBorrows(limit, skip);
+
+    return res.status(200).json(borrowedBooks);
+});
 
 borrows.post('/:bookId/:userId/return', protectedRoute, adminRoute, async (req: AuthRequest, res) => {
     const userId = req?.params?.userId;
@@ -40,16 +49,11 @@ borrows.post('/:bookId/:userId/return', protectedRoute, adminRoute, async (req: 
 });
 
 borrows.post('/:bookId/:userId', protectedRoute, adminRoute, async (req: AuthRequest, res) => {
+    const bookId = req?.params?.bookId;
     const userId = req?.params?.userId;
 
-    const user = {
-        _id: new ObjectId(userId),
-        name: req?.auth?.name
-    };
-    const bookId = req?.params?.bookId;
-
     try {
-        const result = await issueDetailsController.borrowBook(bookId, user);
+        const result = await issueDetailsController.borrowBook(bookId, userId);
         return res.status(201).json(result);
     } catch (error) {
         if (error.message == bookController.errors.NOT_FOUND) return res.status(404).json({ message: error.message });
@@ -69,6 +73,7 @@ borrows.get('/', protectedRoute, async (req: AuthRequest, res) => {
         return res.status(500).json({ message: error.message });
     }
 });
+
 
 borrows.get('/history', protectedRoute, async (req: AuthRequest, res) => {
     const userId = req?.auth?.sub;

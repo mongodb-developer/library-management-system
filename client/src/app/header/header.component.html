@@ -1,0 +1,16 @@
+<mat-toolbar class="toolbar" color="primary">
+    <a class="logo" routerLink="/">
+        Library Management System
+    </a>
+
+    <div *ngIf="user$ | async as user">
+        <button [hidden]="!user.isAdmin" mat-icon-button [routerLink]="['/admin']">
+            <mat-icon  color="black">settings</mat-icon>
+        </button>
+
+        <a [routerLink]="['profile/', user.name]" class="user-profile">
+            <span>{{ user.name }} </span>
+            <img src="./assets/avatar.png" alt="User Avatar" width="36px" height="36px" />
+        </a>
+    </div>
+</mat-toolbar>

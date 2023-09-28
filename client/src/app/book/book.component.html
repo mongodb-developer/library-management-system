@@ -1,0 +1,76 @@
+<div class="book-details-wrapper">
+    <section class="book-details-header">
+        <img class="cropped book-thumbnail"
+            onerror="this.onerror=null; this.src='http://lgimages.s3.amazonaws.com/gc-md.gif'"
+            mat-card-image
+            [src]="book.cover" [alt]="book.title" />
+
+        <div class="book-header-details">
+            <h2 class="book-title">{{ book.title }}</h2>
+            <h3 class="book-authors">{{ book.authors }}</h3>
+
+            <div class="reservation-wrapper">
+                <div *ngIf="reservation; else reserveBlock">
+                    <lms-count-down [endDate]="reservation.expirationDate"></lms-count-down>
+                    <button mat-raised-button color="warn" (click)="cancelReservation()">
+                        Cancel Reservation
+                    </button>
+                </div>
+
+                <ng-template #reserveBlock>
+                    <div>
+                        <div>{{ book.available }} available {{ book.available > 1 || book.available === 0 ? "copies" : "copy" }}</div>
+                        <button mat-raised-button color="primary" (click)="reserve()" [disabled]="!book.available">
+                            Reserve
+                        </button>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+    </section>
+
+    <mat-card class="book-details-content">
+        <mat-card-content class="book-card-content">
+            <div *ngIf="book.synopsis" class="book-synopsis">
+                <h3>Description</h3>
+                <div [innerHtml]="book.synopsis"></div>
+            </div>
+
+            <div class="book-additional-details">
+                <div *ngIf="book.genres">
+                    <h3>Genres</h3>
+                    <p>{{ book.genres }}</p>
+                </div>
+                <div *ngIf="book.year">
+                    <h3>Year</h3>
+                    <p>{{ book.year }}</p>
+                </div>
+                <div *ngIf="book.language">
+                    <h3>Language</h3>
+                    <p>{{ book.language }}</p>
+                </div>
+                <div *ngIf="book.publisher">
+                    <h3>Publisher</h3>
+                    <p>{{ book.publisher }}</p>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-card class="book-reviews">
+        <h3>Reviews from Readers</h3>
+
+        <div *ngIf="book.reviews.length; else noReviews">
+            <lms-review *ngFor="let review of book.reviews" [review]="review"></lms-review>
+        </div>
+
+        <ng-template #noReviews>
+            <p>No reviews yet. Be the first to write one!</p>
+        </ng-template>
+    </mat-card>
+
+    <mat-card class="write-review">
+        <h3>Write a Review</h3>
+        <lms-review-form [bookId]="book.isbn" (reviewAdded)="refetchBook()"></lms-review-form>
+    </mat-card>
+</div>

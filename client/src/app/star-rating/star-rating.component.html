@@ -1,0 +1,22 @@
+<div *ngIf="fixed; then nonClickable else clickable"></div>
+
+<ng-template #nonClickable>
+    <button mat-icon-button class="stars" color="accent" *ngFor="let ratingId of ratingArr; index as i"
+        [id]="'star_'+i" disabled>
+
+        <mat-icon>
+            {{showIcon(i)}}
+        </mat-icon>
+    </button>
+</ng-template>
+
+<ng-template #clickable>
+
+    <button mat-icon-button class="stars" color="accent" *ngFor="let ratingId of ratingArr; index as i"
+        [id]="'star_'+i" (click)="onClick(i+1)">
+
+        <mat-icon>
+            {{showIcon(i)}}
+        </mat-icon>
+    </button>
+</ng-template>

@@ -1,0 +1,17 @@
+<ng-container *ngIf="seconds > 86400; then dateBlock; else countDownBlock"></ng-container>
+
+<ng-template #dateBlock>
+    <span>You reservation expires on: </span> {{ endDate | date: 'medium' }}
+</ng-template>
+
+<ng-template #countDownBlock>
+    <ng-container *ngIf="seconds > 0; then timeBlock; else endedBlock"></ng-container>
+
+    <ng-template #timeBlock>
+        <span>Reservation time left: </span>
+        {{ timeRemaining$ | async | date: 'hh:mm:ss': 'GMT' }}
+    </ng-template>
+    <ng-template #endedBlock>
+        <i>Your reservation has expired.</i>
+    </ng-template>
+</ng-template>

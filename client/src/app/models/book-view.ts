@@ -14,7 +14,10 @@ export class BookView {
     reviews: Array<Omit<Review, '_id' | 'bookId'>>;
     authors: string;
     genres: string;
-    synopsis: string;
+    synopsis?: string;
+    publisher?: string;
+    binding?: string;
+    language?: string;
 
     constructor(book: Book) {
         this.isbn = book._id;
@@ -26,6 +29,9 @@ export class BookView {
         this.reviews = book.reviews || [];
         this.authors = book.authors?.map(a => a.name).join(', ') || '';
         this.genres = book.genres?.join(', ') || '';
-        this.synopsis = book.synopsis || '';
+        this.synopsis = book.synopsis;
+        this.publisher = book.publisher;
+        this.binding = book.binding;
+        this.language = book.language;
     }
 }
