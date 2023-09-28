@@ -16,6 +16,18 @@ books.get('/', async (req, res) => {
     return res.json(await bookController.getBooks(limit, skip));
 });
 
+books.get('/search', async (req, res) => {
+    const query = (req?.query?.term as string) || undefined;
+
+    if (!query) {
+        return res.status(400).send({message: 'missing query'});
+    }
+
+    const books = await bookController.searchBooks(query);
+
+    return res.json(books);
+});
+
 books.post('/', protectedRoute, adminRoute, async (req: AuthRequest, res) => {
     const book = req?.body;
 
@@ -82,4 +94,3 @@ books.delete('/:bookId', protectedRoute, adminRoute, async (req: AuthRequest, re
         return res.status(500).send({message: error});
     }
 });
-

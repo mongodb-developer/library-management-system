@@ -57,4 +57,9 @@ export interface Book {
      * See https://www.mongodb.com/blog/post/building-with-patterns-the-subset-pattern.
      */
     reviews: Array<Review>;
+
+    /**
+     * Added for the Search Lab
+     */
+    bookOfTheMonth?: boolean;
 }
