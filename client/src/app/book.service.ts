@@ -3,9 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Book } from './models/book';
 import { Observable, map, of } from 'rxjs';
 import { BookView } from './models/book-view';
-
-const backendPort = "5000";
-const URL = `${location.protocol}//${location.hostname.replace('-4200', `-${backendPort}`)}${location.port ? `:${backendPort}` : ""}`;
+import { URL } from './config';
 
 @Injectable({
   providedIn: 'root'

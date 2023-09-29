@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { NewReview } from './models/new-review';
-
-const URL = 'http://localhost:5000';
+import { URL } from './config';
 
 @Injectable({
   providedIn: 'root'

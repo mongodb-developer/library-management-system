@@ -4,8 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { switchMap } from 'rxjs';
 import { PAGE_SIZE, Page } from './models/page-view';
 import { UserService } from './user.service';
-
-const URL = 'http://localhost:5000';
+import { URL } from './config';
 
 @Injectable({
   providedIn: 'root'

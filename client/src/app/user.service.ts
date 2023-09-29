@@ -3,8 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, map, of, tap } from 'rxjs';
 import jwt_decode from "jwt-decode";
 import { User } from './models/user';
-
-const URL = 'http://localhost:5000';
+import { URL } from './config';
 
 interface JWTDecodeResult {
   name: string;
