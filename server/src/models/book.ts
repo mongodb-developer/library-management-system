@@ -55,4 +55,9 @@ export interface Book {
      * See https://www.mongodb.com/blog/post/building-with-patterns-the-subset-pattern.
      */
     reviews: Array<Omit<Review, '_id' | 'bookId'>>;
+
+    /**
+     * Added for the Search Lab
+     */
+    bookOfTheMonth?: boolean;
 }

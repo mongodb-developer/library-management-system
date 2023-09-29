@@ -1,6 +1,7 @@
 import { DeleteResult, Filter, FindOptions, InsertOneResult, UpdateResult } from 'mongodb';
 import { Book } from '../models/book';
 import { collections } from '../database.js';
+import getEmbeddings from "../embeddings/index.js";
 
 class BookController {
     errors = {
@@ -35,6 +36,61 @@ class BookController {
     public async getBook(bookId: string): Promise<Book> {
         const book = await collections?.books?.findOne({ _id: bookId });
         return book;
+    }
+
+    public async searchBooks(query: string): Promise<Book[]> {
+        /** Initial Code */
+        // const books = await collections?.books?.find({ title: {$regex: new RegExp(query, "i")} }).toArray();
+        // return books;
+
+        /** Final Code */
+        // const aggregationPipeline = [
+        //     {
+        //       $search: {
+        //         "index": "fulltextsearch",
+        //         "compound": {
+        //           "must": [
+        //             {
+        //               "text": {
+        //                 "query": "poems",
+        //                 "path": ["title", "author.name", "genres"]
+        //               }
+        //             }
+        //           ],
+        //           "should": [
+        //             {
+        //               "equals": {
+        //                 "value": true,
+        //                 "path": "bookOfTheMonth",
+        //                 "score": {
+        //                   "boost": { value: 10 }
+        //                             }
+        //               }
+        //             }
+        //           ]
+        //         }
+        //       }
+        //     }
+        //   ];
+        // const books = await collections?.books?.aggregate(aggregationPipeline).toArray() as Book[];
+        // return books;
+
+        // Semantic Search Code
+        const vector = await getEmbeddings(query);
+        const aggregationPipeline = [
+            {
+                $search: {
+                    index: "vectorsearch",
+                    knnBeta: {
+                        vector,
+                        path: "vectorizedSynopsis",
+                        k: 20
+                    }
+                }
+            }
+        ];
+        const books = await collections?.books?.aggregate(aggregationPipeline).toArray() as Book[];
+        return books;
     }
 
     public async createBook(book: Book): Promise<InsertOneResult> {
