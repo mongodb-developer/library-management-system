@@ -18,11 +18,6 @@
           <div class="book-details">
             <span class="book-description" *ngIf="book.bookOfTheMonth">🏆 Book of the Month selection 🏆</span>
           </div>
-
-          <div class="book-details">
-            <span *ngIf="book.genres">{{ book.genres }}</span>
-          </div>
-
           <div>
               <p class="book-description" [innerHTML]="book.synopsis"></p>
           </div>
