@@ -28,14 +28,14 @@
 }
 
 .review-content {
-    align-items: start;
+    align-items: flex-start;
     flex-grow: 3;
 }
 
 .review-content-header {
     display: flex;
     flex-direction: column;
-    align-items: start;
+    align-items: flex-start;
     color: #878787;
 }
 

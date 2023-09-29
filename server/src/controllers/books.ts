@@ -1,7 +1,7 @@
 import { DeleteResult, Filter, FindOptions, InsertOneResult, UpdateResult } from 'mongodb';
 import { Book } from '../models/book';
 import { collections } from '../database.js';
-import getEmbeddings from "../embeddings/index.js";
+import getEmbeddings from '../embeddings/index.js';
 
 class BookController {
     errors = {
@@ -80,10 +80,10 @@ class BookController {
         const aggregationPipeline = [
             {
                 $search: {
-                    index: "vectorsearch",
+                    index: 'vectorsearch',
                     knnBeta: {
                         vector,
-                        path: "vectorizedSynopsis",
+                        path: 'vectorizedSynopsis',
                         k: 20
                     }
                 }

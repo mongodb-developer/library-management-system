@@ -1,4 +1,4 @@
-import { ObjectId, UpdateResult } from 'mongodb';
+import { UpdateResult } from 'mongodb';
 import { collections } from '../database.js';
 import { BorrowedBook, IssueDetail, IssueDetailType, Reservation, ReservationBook, ReservationUser } from '../models/issue-detail.js';
 import BookController from './books.js';

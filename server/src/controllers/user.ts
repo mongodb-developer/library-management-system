@@ -1,6 +1,5 @@
 import { ObjectId } from 'mongodb';
 import { collections } from '../database.js';
-import { IssueDetailType } from '../models/issue-detail.js';
 
 class UserController {
     public async createNewUser() {
@@ -11,8 +10,8 @@ class UserController {
 
         let user = await collections?.users?.findOne({ name: randomUsername });
         if (!user) {
-            let tempUser = { name: randomUsername, isAdmin: true };
-            let result = await collections?.users?.insertOne(tempUser);
+            const tempUser = { name: randomUsername, isAdmin: true };
+            const result = await collections?.users?.insertOne(tempUser);
             user = Object.assign({}, tempUser, {_id: result?.insertedId});
         }
 
