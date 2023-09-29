@@ -31,7 +31,7 @@ export class ReservationService {
   }
 
   getReservationsPage(limit = PAGE_SIZE, skip = 0) {
-    return this.http.get<Page<Reservation>>(`${URL}/reservations/page?${limit}&skip=${skip}`);
+    return this.http.get<Page<Reservation>>(`${URL}/reservations/page?limit=${limit}&skip=${skip}`);
   }
 
   createReservation(isbn: string) {
