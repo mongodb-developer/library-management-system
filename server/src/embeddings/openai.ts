@@ -2,9 +2,12 @@ import OpenAI from 'openai';
 
 const { OPENAI_API_KEY } = process.env;
 
-const openai = new OpenAI({apiKey: OPENAI_API_KEY});
+let openai;
 
 const getTermEmbeddings = async (text) => {
+  if (!openai) {
+    openai = new OpenAI({apiKey: OPENAI_API_KEY});
+  }
   const embeddings = await openai.embeddings.create({
     model: "text-embedding-ada-002",
     input: text,
