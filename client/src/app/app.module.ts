@@ -29,10 +29,13 @@ import { StarRatingComponent } from './star-rating/star-rating.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ReviewComponent } from './review/review.component';
 import { MatTableModule } from '@angular/material/table';
+import { URL } from './config';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
 }
+
+const allowedDomain = URL.replace(/.*?\:\/\//, "").split(/[\/?]/)[0];
 
 @NgModule({
   declarations: [
@@ -68,7 +71,7 @@ export function tokenGetter() {
     JwtModule.forRoot({
       config: {
         tokenGetter,
-        allowedDomains: ['localhost:5000']
+        allowedDomains: [allowedDomain]
       },
     }),
   ],
