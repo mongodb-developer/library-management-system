@@ -83,57 +83,11 @@ class BookController {
     }
 
     public async searchBooks(query: string): Promise<Book[]> {
-        /** Initial Code */
-        // const books = await collections?.books?.find({ title: {$regex: new RegExp(query, "i")} }).toArray();
-        // return books;
-
-        /** Final Code */
-        // const aggregationPipeline = [
-        //     {
-        //       $search: {
-        //         "index": "fulltextsearch",
-        //         "compound": {
-        //           "must": [
-        //             {
-        //               "text": {
-        //                 "query": "poems",
-        //                 "path": ["title", "author.name", "genres"]
-        //               }
-        //             }
-        //           ],
-        //           "should": [
-        //             {
-        //               "equals": {
-        //                 "value": true,
-        //                 "path": "bookOfTheMonth",
-        //                 "score": {
-        //                   "boost": { value: 10 }
-        //                             }
-        //               }
-        //             }
-        //           ]
-        //         }
-        //       }
-        //     }
-        //   ];
-        // const books = await collections?.books?.aggregate(aggregationPipeline).toArray() as Book[];
-        // return books;
-
-        // Semantic Search Code
-        const vector = await getEmbeddings(query);
-        const aggregationPipeline = [
+        const books = await collections?.books?.find(
             {
-                $search: {
-                    index: 'vectorsearch',
-                    knnBeta: {
-                        vector,
-                        path: 'vectorizedSynopsis',
-                        k: 20
-                    }
-                }
-            }
-        ];
-        const books = await collections?.books?.aggregate(aggregationPipeline).toArray() as Book[];
+                title: {$regex: new RegExp(query, "i")},
+                "author.name" : {$regex: new RegExp(query, "i")},
+            }).toArray();
         return books;
     }
 
