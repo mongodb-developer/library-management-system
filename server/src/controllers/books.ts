@@ -85,9 +85,11 @@ class BookController {
     public async searchBooks(query: string): Promise<Book[]> {
         const books = await collections?.books?.find(
             {
-                title: {$regex: new RegExp(query, "i")},
-                "author.name" : {$regex: new RegExp(query, "i")},
-            }).toArray();
+                $or: [
+                    {title: {$regex: new RegExp(query, "i")}},
+                    {"authors.name": {$regex: new RegExp(query, "i")}},
+                ]
+            }).limit(25).toArray();
         return books;
     }
 
