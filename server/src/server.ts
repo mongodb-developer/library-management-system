@@ -16,7 +16,7 @@ app.use(morgan('dev'));
 await connectToDatabase(process.env.DATABASE_URI);
 console.log('Connected to database!');
 
-app.get('/', (_, res) => res.send(200));
+app.get('/', (_, res) => res.sendStatus(200));
 
 app.use('/books', (await import('./routes/books.js')).default);
 app.use('/users', (await import('./routes/users.js')).default);
