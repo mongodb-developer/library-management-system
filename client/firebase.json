@@ -1,0 +1,9 @@
+{
+  "hosting": [
+    {
+      "target": "library-management-system",
+      "source": ".",
+      "frameworksBackend": {}
+    }
+  ]
+}
