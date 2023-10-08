@@ -1,7 +1,6 @@
 import request from 'supertest';
 import assert from 'assert';
-import { Book } from '../models/book';
-import { baseUrl, users, books, cleanDatabase } from '../utils/testing-shared.js';
+import { users, books, getBaseUrl, cleanDatabase } from '../utils/testing-shared.js';
 import BookController from '../controllers/books.js';
 
 const adminJWT = users.admin.jwt;
@@ -10,7 +9,7 @@ const userJWT = users.user1.jwt;
 const bookController = new BookController();
 
 describe('Books API', () => {
-    const book: Book = books.sample;
+    const book = books.sample;
 
     before(async () => {
         await cleanDatabase();
@@ -21,15 +20,18 @@ describe('Books API', () => {
     });
 
     it('Should persist documents for admins', async () => {
-        const createBookResponse = await request(baseUrl)
+        const createBookResponse = await request(getBaseUrl())
             .post('/books')
             .set('Authorization', `Bearer ${adminJWT}`)
             .send(book)
             .expect(201);
 
-        assert(createBookResponse?.body?.message?.includes(bookController.success.CREATED), 'Book was not created');
+        assert(
+            createBookResponse?.body?.message?.includes(bookController.success.CREATED),
+            'Book was not created'
+        );
 
-        const getBooksResponse = await request(baseUrl)
+        const getBooksResponse = await request(getBaseUrl())
             .get(`/books/${book._id}`)
             .expect(200)
             .expect('Content-Type', /json/);
@@ -38,7 +40,7 @@ describe('Books API', () => {
     });
 
     it('Should not persist documents for users', async () => {
-        await request(baseUrl)
+        await request(getBaseUrl())
             .post('/books')
             .set('Authorization', `Bearer ${userJWT}`)
             .send(book)
@@ -46,7 +48,7 @@ describe('Books API', () => {
     });
 
     it('Should retrieve documents', async () => {
-        const response = await request(baseUrl)
+        const response = await request(getBaseUrl())
             .get(`/books/${book._id}`)
             .expect(200)
             .expect('Content-Type', /json/);
@@ -55,7 +57,7 @@ describe('Books API', () => {
     });
 
     it('Should update documents for admins', async () => {
-        const updateReponse = await request(baseUrl)
+        const updateReponse = await request(getBaseUrl())
             .put(`/books/${book._id}`)
             .set('Authorization', `Bearer ${adminJWT}`)
             .send({
@@ -66,7 +68,7 @@ describe('Books API', () => {
 
         assert(updateReponse?.body?.message?.includes(bookController.success.UPDATED), 'Book was not updated');
 
-        const getResponse = await request(baseUrl)
+        const getResponse = await request(getBaseUrl())
             .get(`/books/${book._id}`)
             .expect(200)
             .expect('Content-Type', /json/);
@@ -75,7 +77,7 @@ describe('Books API', () => {
     });
 
     it('Should not let users update books', async () => {
-        await request(baseUrl)
+        await request(getBaseUrl())
             .put(`/books/${book._id}`)
             .set('Authorization', `Bearer ${userJWT}`)
             .send({
@@ -86,14 +88,14 @@ describe('Books API', () => {
     });
 
     it('Should delete documents for admins', async () => {
-        const response = await request(baseUrl)
+        const response = await request(getBaseUrl())
             .delete(`/books/${book._id}`)
             .set('Authorization', `Bearer ${adminJWT}`)
             .expect(202);
 
         assert(response?.body?.message?.includes(bookController.success.DELETED), 'Book was not deleted');
 
-        const getBookReponse = await request(baseUrl)
+        const getBookReponse = await request(getBaseUrl())
             .get(`/books/${book._id}`)
             .expect(404);
 
@@ -101,14 +103,14 @@ describe('Books API', () => {
     });
 
     it('Should not let users delete books; only admins', async () => {
-        await request(baseUrl)
+        await request(getBaseUrl())
             .delete(`/books/${book._id}`)
             .set('Authorization', `Bearer ${userJWT}`)
             .expect(403);
     });
 
     it('Should return 404 for non-existent documents', async () => {
-        const response = await request(baseUrl)
+        const response = await request(getBaseUrl())
             .get('/books/invalid')
             .expect(404);
 
@@ -116,7 +118,7 @@ describe('Books API', () => {
     });
 
     it('Should return 400 for missing body', async () => {
-        const response = await request(baseUrl)
+        const response = await request(getBaseUrl())
             .post('/books')
             .set('Authorization', `Bearer ${adminJWT}`)
             .expect(400);
@@ -125,7 +127,7 @@ describe('Books API', () => {
     });
 
     it('Should return 400 for missing update data', async () => {
-        const response = await request(baseUrl)
+        const response = await request(getBaseUrl())
             .put(`/books/${book._id}`)
             .set('Authorization', `Bearer ${adminJWT}`)
             .expect(400);

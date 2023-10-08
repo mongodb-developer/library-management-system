@@ -1,22 +1,71 @@
-import { ObjectId } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import { Book } from '../models/book';
-import { collections, connectToDatabase } from '../database.js';
-import '../load-env-vars.js';
-
-const baseUrl = 'http://localhost:5000';
+import { connectToDatabase, collections } from '../database.js';
 
 const adminJWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NGQ0Yzk2NGYwZDA1NmVhNmJmMGYzZDgiLCJuYW1lIjoiT2xkU2Nob29sIEFsbGlnYXRvciIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY5MTY2Njc4OCwiZXhwIjoxNzIzMjAyNzg4fQ.0ycGXmrPBBJC9f1_nhJ7Ypi0C1DjzcZ6NpQVvpDAnJM';
 const userJWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NGQ0Yzc1MDViZDQ4MzEwNWM0ODk5MWQiLCJuYW1lIjoiUm93ZHkgSHllbmEiLCJpYXQiOjE2OTE2NjY3ODgsImV4cCI6MTcyMzIwMjc4OH0.YCFLMDhF4R009QT3bOy_H90ocgpKRhIMdbtpOvO-s-c';
 
-const users = {
+export const getBaseUrl = () => `http://localhost:${process.env.PORT}`;
+
+let databaseClient: MongoClient;
+
+export const mochaHooks = {
+    beforeAll: [
+        async function () {
+            await import('../load-env-vars.js');
+            databaseClient = await connectToDatabase(process.env.DATABASE_URI);
+
+            await cleanTestData();
+            await initializeTestData();
+        }
+    ],
+    afterAll: [
+        async function () {
+            await cleanTestData();
+            await databaseClient.close();
+        }
+    ]
+};
+
+export async function initializeTestData() {
+    await collections?.users?.insertMany([
+        users.admin,
+        users.user1,
+    ]);
+}
+
+export async function cleanTestData() {
+    await collections?.users?.deleteMany({
+        _id: {
+            $in: [
+                users.admin._id,
+                users.user1._id
+            ]
+        }
+    });
+}
+
+export async function cleanDatabase() {
+    return await Promise.all([
+        collections?.books?.deleteOne({ _id: books.sample._id }),
+        collections?.books?.deleteOne({ _id: books.oneCopy._id }),
+        collections?.books?.deleteOne({ _id: books.notAvailable._id }),
+        collections.issueDetails?.deleteMany({ _id: new RegExp(`^${users.user1._id}`) }),
+        collections.reviews?.deleteMany({ name: users.user1.name })
+    ]);
+}
+
+export const users = {
     admin: {
+        _id: new ObjectId('64d4c964f0d056ea6bf0f3d8'),
+        name: 'OldSchool Alligator',
+        isAdmin: true,
         jwt: adminJWT,
-        _id: '64d4c964f0d056ea6bf0f3d8'
     },
     user1: {
-        jwt: userJWT,
+        _id: new ObjectId('64d4c7505bd483105c48991d'),
         name: 'Rowdy Hyena',
-        _id: '64d4c7505bd483105c48991d'
+        jwt: userJWT,
     }
 };
 
@@ -114,33 +163,8 @@ const notAvailable: Book = {
     }],
 };
 
-
-const books = {
+export const books = {
     sample: book,
     oneCopy: bookOneCopy,
     notAvailable,
-};
-
-const client = await connectToDatabase(process.env.DATABASE_URI);
-
-async function cleanDatabase() {
-    return await Promise.all([
-        collections?.books?.deleteOne({_id: books.sample._id}),
-        collections?.books?.deleteOne({_id: books.oneCopy._id}),
-        collections?.books?.deleteOne({_id: books.notAvailable._id}),
-        collections.issueDetails?.deleteMany({_id: new RegExp(`^${users.user1._id}`)}),
-        collections.reviews?.deleteMany({name: users.user1.name})
-    ]);
-}
-
-function closeDatabase() {
-    return client.close();
-}
-
-export {
-    baseUrl,
-    users,
-    books,
-    cleanDatabase,
-    closeDatabase
 };

@@ -1,7 +1,6 @@
 import request from 'supertest';
 import assert from 'assert';
-import { Book } from '../models/book';
-import { baseUrl, users, books, cleanDatabase } from '../utils/testing-shared.js';
+import { getBaseUrl, users, books, cleanDatabase } from '../utils/testing-shared.js';
 import IssueDetailsController from '../controllers/issue-details.js';
 import BookController from '../controllers/books.js';
 
@@ -13,11 +12,11 @@ const issueDetailsController = new IssueDetailsController();
 const bookController = new BookController();
 
 describe('Reservation API', () => {
-    const book: Book = books.oneCopy;
+    const book = books.oneCopy;
 
     before(async () => {
         await cleanDatabase();
-        await request(baseUrl)
+        await request(getBaseUrl())
             .post('/books')
             .set('Authorization', `Bearer ${adminJWT}`)
             .send(book);
@@ -28,14 +27,14 @@ describe('Reservation API', () => {
     });
 
     it('Should let users reserve a book', async () => {
-        const createReservationResponse = await request(baseUrl)
+        const createReservationResponse = await request(getBaseUrl())
             .post(`/reservations/${book._id}`)
             .set('Authorization', `Bearer ${userJWT}`)
             .expect(201);
 
         assert(createReservationResponse?.body?.message?.includes(issueDetailsController.success.CREATED), 'Book was not created');
 
-        const getBooksResponse = await request(baseUrl)
+        const getBooksResponse = await request(getBaseUrl())
             .get(`/books/${book._id}`)
             .expect(200)
             .expect('Content-Type', /json/);
@@ -44,7 +43,7 @@ describe('Reservation API', () => {
     });
 
     it('Should return 404 if the book does not exist', async () => {
-        const createReservationResponse = await request(baseUrl)
+        const createReservationResponse = await request(getBaseUrl())
             .post('/reservations/invalid')
             .set('Authorization', `Bearer ${userJWT}`)
             .expect(404);
@@ -53,7 +52,7 @@ describe('Reservation API', () => {
     });
 
     it('Should return 400 if the book is not available', async () => {
-        const createReservationResponse = await request(baseUrl)
+        const createReservationResponse = await request(getBaseUrl())
             .post(`/reservations/${book._id}`)
             .set('Authorization', `Bearer ${userJWT}`)
             .expect(400);
@@ -62,13 +61,13 @@ describe('Reservation API', () => {
     });
 
     it('Should not let me reserve a book if I am not logged in', async () => {
-        await request(baseUrl)
+        await request(getBaseUrl())
             .post('/reservations/9780075536321')
             .expect(401);
     });
 
     it('Should let me see my reserved books', async () => {
-        const getReservationsResponse = await request(baseUrl)
+        const getReservationsResponse = await request(getBaseUrl())
             .get('/reservations')
             .set('Authorization', `Bearer ${userJWT}`)
             .expect(200);
@@ -78,7 +77,7 @@ describe('Reservation API', () => {
     });
 
     it('Should let the admin see a users reserved books', async () => {
-        const getReservationsResponse = await request(baseUrl)
+        const getReservationsResponse = await request(getBaseUrl())
             .get(`/reservations/user/${userId}`)
             .set('Authorization', `Bearer ${adminJWT}`)
             .expect(200);
@@ -88,18 +87,18 @@ describe('Reservation API', () => {
     });
 
     it('Should let me cancel a reservation', async () => {
-        const originalBook = await request(baseUrl)
+        const originalBook = await request(getBaseUrl())
             .get(`/books/${book._id}`)
             .expect(200);
 
-        const cancelReservationResponse = await request(baseUrl)
+        const cancelReservationResponse = await request(getBaseUrl())
             .delete(`/reservations/${book._id}`)
             .set('Authorization', `Bearer ${userJWT}`)
             .expect(200);
 
         assert(cancelReservationResponse?.body?.message?.includes(issueDetailsController.success.CANCELLED), 'Reservation should be cancelled');
 
-        const newBook = await request(baseUrl)
+        const newBook = await request(getBaseUrl())
             .get(`/books/${book._id}`)
             .expect(200);
 

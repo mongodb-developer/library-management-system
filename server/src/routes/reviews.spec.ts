@@ -1,7 +1,6 @@
 import request from 'supertest';
 import assert from 'assert';
-import { Book } from '../models/book';
-import { baseUrl, users, books, cleanDatabase, closeDatabase } from '../utils/testing-shared.js';
+import { getBaseUrl, users, books, cleanDatabase } from '../utils/testing-shared.js';
 import ReviewsController from '../controllers/reviews.js';
 
 const adminJWT = users.admin.jwt;
@@ -10,7 +9,7 @@ const userJWT = users.user1.jwt;
 const reviewsController = new ReviewsController();
 
 describe('Reviews API', () => {
-    const book: Book = books.sample;
+    const book = books.sample;
 
     const review = {
         text: 'Great book!'
@@ -18,7 +17,7 @@ describe('Reviews API', () => {
 
     before(async () => {
         await cleanDatabase();
-        await request(baseUrl)
+        await request(getBaseUrl())
             .post('/books')
             .set('Authorization', `Bearer ${adminJWT}`)
             .send(book);
@@ -26,11 +25,10 @@ describe('Reviews API', () => {
 
     after(async () => {
         await cleanDatabase();
-        closeDatabase();
     });
 
     it('Should let me add reviews', async () => {
-        const createBookResponse = await request(baseUrl)
+        const createBookResponse = await request(getBaseUrl())
             .post(`/books/${book._id}/reviews`)
             .set('Authorization', `Bearer ${userJWT}`)
             .send(review)
@@ -38,7 +36,7 @@ describe('Reviews API', () => {
 
         assert(createBookResponse?.body?.message?.includes(reviewsController.success.CREATED), 'Review was not created');
 
-        const getBooksResponse = await request(baseUrl)
+        const getBooksResponse = await request(getBaseUrl())
             .get(`/books/${book._id}`)
             .expect(200)
             .expect('Content-Type', /json/);
@@ -48,7 +46,7 @@ describe('Reviews API', () => {
 
     it('Should not have more than 5 reviews', async () => {
         for (let i = 0; i < 10; i++) {
-            await request(baseUrl)
+            await request(getBaseUrl())
                 .post(`/books/${book._id}/reviews`)
                 .set('Authorization', `Bearer ${userJWT}`)
                 .send(review)
@@ -56,7 +54,7 @@ describe('Reviews API', () => {
 
         }
 
-        const getBooksResponse = await request(baseUrl)
+        const getBooksResponse = await request(getBaseUrl())
             .get(`/books/${book._id}`)
             .expect(200)
             .expect('Content-Type', /json/);
@@ -65,7 +63,7 @@ describe('Reviews API', () => {
     });
 
     it('Should let me see all reviews for a given book', async () => {
-        const reviewResponse = await request(baseUrl)
+        const reviewResponse = await request(getBaseUrl())
             .get(`/books/${book._id}/reviews`)
             .expect(200);
 
@@ -73,21 +71,21 @@ describe('Reviews API', () => {
     });
 
     it('Should not let me add reviews if I am not logged in', async () => {
-        await request(baseUrl)
+        await request(getBaseUrl())
             .post(`/books/${book._id}/reviews`)
             .send(review)
             .expect(401);
     });
 
     it('Should let me see a single review by id', async () => {
-        const insertResponse = await request(baseUrl)
+        const insertResponse = await request(getBaseUrl())
             .post(`/books/${book._id}/reviews`)
             .set('Authorization', `Bearer ${userJWT}`)
             .send(review);
 
         const reviewId = insertResponse?.body?.insertResult?.insertedId;
 
-        const reviewResponse = await request(baseUrl)
+        const reviewResponse = await request(getBaseUrl())
             .get(`/books/${book._id}/reviews/${reviewId}`)
             .expect(200);
 
@@ -95,7 +93,7 @@ describe('Reviews API', () => {
     });
 
     it('Should return 404 if the review doesn\'t exist', async () => {
-        await request(baseUrl)
+        await request(getBaseUrl())
             .get(`/books/${book._id}/reviews/123456789012`)
             .expect(404);
     });
