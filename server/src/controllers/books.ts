@@ -26,11 +26,7 @@ class BookController {
             limit = 100;
         }
 
-        const bookCursor = collections?.books?.find({}, {
-            projection: {
-                _id: 0
-            }
-        });
+        const bookCursor = collections?.books?.find({});
         const books = await bookCursor.limit(limit).skip(skip).toArray();
 
         return books;
