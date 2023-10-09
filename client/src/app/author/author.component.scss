@@ -1,0 +1,90 @@
+@use '../../styles' as styles;
+
+h2 {
+    margin-bottom: 40px;
+}
+
+.author-details-wrapper {
+    position: relative;
+    margin: 30px auto;
+ }
+
+.book-card-wrapper {
+    margin-top: 70px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+.author-card, .book-card {
+    margin-bottom: 3rem;
+}
+
+.author-card {
+    padding: 3rem 5rem;
+}
+
+.book-card {
+    width: 200px;
+    height: 270px;
+}
+
+.book-thumbnail {
+    margin: 10px auto;
+    box-shadow: -5px 10px 15px 3px rgba(0, 0, 0, 0.25);
+    border-radius: 2px;
+    width: 86px;
+    height: 144px;
+}
+
+.book-title {
+    overflow: scroll;
+    line-height: 20px;
+    font-size: 16px;
+    text-align: center;
+    max-height: 80px;
+    font-weight: normal;
+
+    a {
+        color: styles.$dark-text;
+        text-decoration: none;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .author-details-wrapper {
+        margin: 30px 0;
+    }
+
+    .author-card {
+        padding: 3rem 2rem;
+        max-height: 450px;
+    }
+
+    .author-bio {
+        max-height: 300px;
+        overflow: scroll;
+    }
+
+    .book-card-wrapper {
+        margin-top: 30px;
+        justify-content: center;
+    }
+
+    .book-card {
+        width: 200px;
+        height: 230px;
+    }
+
+    .book-thumbnail {
+        width: 86px;
+        height: 112px;
+    }
+
+    .book-title {
+        font-size: 14px;
+        line-height: 16px;
+        max-height: 60px;
+    }
+}

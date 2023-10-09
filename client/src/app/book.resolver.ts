@@ -1,5 +1,4 @@
 import { ResolveFn, Router } from '@angular/router';
-import { Book } from './models/book';
 import { BookView } from './models/book-view';
 import { inject } from '@angular/core';
 import { BookService } from './book.service';

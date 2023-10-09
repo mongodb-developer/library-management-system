@@ -1,31 +1,36 @@
 <div class="book-details-wrapper">
     <section class="book-details-header">
         <img class="cropped book-thumbnail"
-            onerror="this.onerror=null; this.src='http://lgimages.s3.amazonaws.com/gc-md.gif'"
-            mat-card-image
+            onerror="this.onerror=null; this.src='http://lgimages.s3.amazonaws.com/gc-md.gif'" mat-card-image
             [src]="book.cover" [alt]="book.title" />
 
         <div class="book-header-details">
             <h2 class="book-title">{{ book.title }}</h2>
-            <h3 class="book-authors">{{ book.authors }}</h3>
+            <span class="book-authors">
+                <span *ngFor="let author of book.authors; let last = last">
+                    <a [routerLink]="['/authors', author._id]">{{ author.name }}</a>
+                    <span *ngIf="!last">, </span>
+                </span>
+            </span>
 
-            <div class="reservation-wrapper">
-                <div *ngIf="reservation; else reserveBlock">
-                    <lms-count-down [endDate]="reservation.expirationDate"></lms-count-down>
-                    <button mat-raised-button color="warn" (click)="cancelReservation()">
-                        Cancel Reservation
-                    </button>
-                </div>
-
-                <ng-template #reserveBlock>
-                    <div>
-                        <div>{{ book.available }} available {{ book.available > 1 || book.available === 0 ? "copies" : "copy" }}</div>
-                        <button mat-raised-button color="primary" (click)="reserve()" [disabled]="!book.available">
-                            Reserve
+                <div class="reservation-wrapper">
+                    <div *ngIf="reservation; else reserveBlock">
+                        <lms-count-down [endDate]="reservation.expirationDate"></lms-count-down>
+                        <button mat-raised-button color="warn" (click)="cancelReservation()">
+                            Cancel Reservation
                         </button>
                     </div>
-                </ng-template>
-            </div>
+
+                    <ng-template #reserveBlock>
+                        <div>
+                            <div>{{ book.available }} available {{ book.available > 1 || book.available === 0 ? "copies"
+                                : "copy" }}</div>
+                            <button mat-raised-button color="primary" (click)="reserve()" [disabled]="!book.available">
+                                Reserve
+                            </button>
+                        </div>
+                    </ng-template>
+                </div>
         </div>
     </section>
 

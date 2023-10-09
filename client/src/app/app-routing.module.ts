@@ -12,6 +12,8 @@ import { reservationsResolver } from './reservations.resolver';
 import { isAdminGuard } from './is-admin.guard';
 import { userReservationsResolver } from './user-reservations.resolver';
 import { userBorrowedBooksResolver } from './user-borrowed-books.resolver';
+import { AuthorComponent } from './author/author.component';
+import { authorResolver } from './author.resolver';
 
 const routes: Routes = [
   {
@@ -40,6 +42,13 @@ const routes: Routes = [
     },
   },
   {
+    path: 'authors/:id',
+    component: AuthorComponent,
+    resolve: {
+      author: authorResolver
+    }
+  },
+  {
     path: 'admin',
     loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
     canMatch: [isAdminGuard],
@@ -50,7 +59,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { scrollPositionRestoration: 'top' })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

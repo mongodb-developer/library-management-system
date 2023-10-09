@@ -5,7 +5,7 @@
 
     <div *ngIf="user$ | async as user">
         <button [hidden]="!user.isAdmin" mat-icon-button [routerLink]="['/admin']">
-            <mat-icon  color="black">settings</mat-icon>
+            <mat-icon color="black">settings</mat-icon>
         </button>
 
         <a [routerLink]="['profile/', user.name]" class="user-profile">
