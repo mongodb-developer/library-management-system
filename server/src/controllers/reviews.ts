@@ -15,13 +15,13 @@ class ReviewsController {
     };
 
     // Get all reviews for a book
-    public async getReviews(bookId): Promise<Review[]> {
+    public async getReviews(bookId: string): Promise<Review[]> {
         const reviews = await collections?.reviews?.find({ bookId: bookId }).toArray();
         return reviews;
     }
 
     // Create a new review
-    public async createReview(bookId, reviewBody, userName): Promise<{ insertResult: InsertOneResult, updateResult: UpdateResult }> {
+    public async createReview(bookId: string, reviewBody: { text: string; rating: number; }, userName: string): Promise<{ insertResult: InsertOneResult, updateResult: UpdateResult }> {
         const review = {
             _id: null,
             text: reviewBody?.text,
@@ -49,11 +49,10 @@ class ReviewsController {
         return { insertResult, updateResult };
     }
 
-    public async getReview(bookId, reviewId): Promise<Review> {
+    public async getReview(bookId: string, reviewId: string): Promise<Review> {
         const review = await collections?.reviews?.findOne({ _id: new ObjectId(reviewId), bookId: bookId });
         return review;
     }
-
 }
 
 export default ReviewsController;
