@@ -28,6 +28,7 @@ export class AuthorController {
                                 isbn: '$_id', // Rename _id to isbn
                                 _id: 0, // Exclude _id
                                 title: 1, // Include title
+                                cover: 1, // Include cover
                             }
                         }
                     ],
