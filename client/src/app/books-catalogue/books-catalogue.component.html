@@ -5,7 +5,7 @@
         <img class="img-link cropped book-thumbnail"
             onerror="this.onerror=null; this.src='http://lgimages.s3.amazonaws.com/gc-md.gif'"
             [routerLink]="['/books', book.isbn]"
-            width="128" height="216" mat-card-image [src]="book.cover" [alt]="book.title" />
+            mat-card-image [src]="book.cover" [alt]="book.title" />
 
         <mat-card-header class="book-card-header">
             <mat-card-title class="book-card-title">
