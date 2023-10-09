@@ -53,6 +53,8 @@ $body2: mat.define-typography-level(14px, 24px, 300);
 $caption: mat.define-typography-level(12px, 20px, 400);
 $button: mat.define-typography-level(14px, 14px, 500);
 
+$font-family: 'Euclid Circular A';
+
 // Define the typography config.
 $lms-typography: mat.define-typography-config(
   $font-family: 'Euclid Circular A',
