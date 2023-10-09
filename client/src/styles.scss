@@ -289,6 +289,12 @@ body {
     display: block;
 }
 
+@media screen and (max-width: 768px) {
+    .content-wrapper {
+        padding: 20px 20px;
+    }
+}
+
 .cropped {
     object-fit: cover;
     margin: 10px 0;

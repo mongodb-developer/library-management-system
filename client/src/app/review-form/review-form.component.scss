@@ -14,3 +14,9 @@
     margin: 20px 0 15px 0; 
     font-size: 16px;
 }
+
+@media screen  and (max-width: 550px){
+    .rating {
+        flex-direction: column;
+    }
+}
