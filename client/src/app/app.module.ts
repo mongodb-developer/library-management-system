@@ -30,6 +30,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ReviewComponent } from './review/review.component';
 import { MatTableModule } from '@angular/material/table';
 import { URL } from './config';
+import { AuthorComponent } from './author/author.component';
 
 export function tokenGetter() {
   return localStorage.getItem('access_token');
@@ -50,6 +51,7 @@ const allowedDomain = URL.replace(/.*?\:\/\//, "").split(/[\/?]/)[0];
     ReviewFormComponent,
     StarRatingComponent,
     ReviewComponent,
+    AuthorComponent,
   ],
   imports: [
     AppRoutingModule,

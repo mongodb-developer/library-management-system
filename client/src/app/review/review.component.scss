@@ -43,3 +43,9 @@
     max-height: 300px;
     overflow: scroll;
 }
+
+@media screen and (max-width: 550px) {
+    .review-wrapper {
+        flex-direction: column;
+    }
+}

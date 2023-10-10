@@ -1,15 +1,29 @@
+@use '../../styles' as styles;
+
 .dashboard-wrapper {
   display: flex;
   flex-direction: column;
   height: 100%;
   width: 100%;
+
+  .title-wrapper {
+    text-align: center;
+    padding: 20px 0;
+    margin: 20px 0;
+    width: 100%;
+    color: styles.$dark-primary-text;
+  }
 }
 
-.reservations, .borrowed {
-  margin: 20px 30px;
+.reservations,
+.borrowed {
+  background: white;
+  padding: 40px;
+  width: calc(100% + 77px);
+  margin-left: -70px;
 
   h2 {
-    margin-bottom: 20px;
+    margin-bottom: 40px;
   }
 }
 

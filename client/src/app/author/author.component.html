@@ -1,0 +1,26 @@
+<div class="author-details-wrapper">
+    <mat-card class="author-card">
+        <h2>{{ author.name }} (author) </h2>
+        
+        <p *ngIf="author.bio; else noBio" class="author-bio">{{ author.bio }}</p>
+
+        <ng-template #noBio>
+            <p>No biography available.</p>
+        </ng-template>
+    </mat-card>
+
+    <div class="book-card-wrapper">
+        <mat-card class="book-card" *ngFor="let book of author.books">
+            <img class="img-link cropped book-thumbnail"
+                onerror="this.onerror=null; this.src='http://lgimages.s3.amazonaws.com/gc-md.gif'"
+                [routerLink]="['/books', book.isbn]" mat-card-image [src]="book.cover"
+                [alt]="book.title" />
+
+            <mat-card-header class="book-card-header">
+                <mat-card-title class="book-card-title">
+                    <h3 class="book-title"><a [routerLink]="['/books', book.isbn]">{{ book.title }}</a></h3>
+                </mat-card-title>
+            </mat-card-header>
+        </mat-card>
+    </div>
+</div>

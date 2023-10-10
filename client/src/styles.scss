@@ -44,14 +44,16 @@ $headline1: mat.define-typography-level(98px, 112px, 300);
 $headline2: mat.define-typography-level(61px, 56px, 300);
 $headline3: mat.define-typography-level(49px, 48px, 300);
 $headline4: mat.define-typography-level(35px, 40px, 300);
-$headline5: mat.define-typography-level(24px, 24px, 300, 'MongoDB Value Serif Bold'); // H1
-$headline6: mat.define-typography-level(22px, 20px, 300, 'MongoDB Value Serif Bold'); // H2
-$subtitle1: mat.define-typography-level(20px, 20px, 300, 'MongoDB Value Serif Bold'); // H3
+$headline5: mat.define-typography-level(30px, 24px, 600, 'Euclid Circular A'); // H1
+$headline6: mat.define-typography-level(26px, 20px, 400, 'Euclid Circular A'); // H2
+$subtitle1: mat.define-typography-level(24px, 20px, 300, 'MongoDB Value Serif Bold'); // H3
 $subtitle2: mat.define-typography-level(18px, 20px, 300, 'MongoDB Value Serif Bold'); // H4
 $body1: mat.define-typography-level(16px, 24px, 300); // Base body text
 $body2: mat.define-typography-level(14px, 24px, 300);
 $caption: mat.define-typography-level(12px, 20px, 400);
 $button: mat.define-typography-level(14px, 14px, 500);
+
+$font-family: 'Euclid Circular A';
 
 // Define the typography config.
 $lms-typography: mat.define-typography-config(
@@ -229,10 +231,14 @@ $lms-brand: (
 
 $theme-primary: mat.define-palette($lms-brand, 900);
 
+$accent-color: #00ED64;
+$accent-lighter-color: #E9FF99;
+$accent-darker-color: #00684A;
+
 body {
-  --accent-color: #00ED64;
-  --accent-lighter-color: #E9FF99;
-  --accent-darker-color: #00684A;
+  --accent-color: #{$accent-color};
+  --accent-lighter-color: #{$accent-lighter-color};
+  --accent-darker-color: #{$accent-darker-color};
   --text-accent-color: #{$dark-primary-text};
   --text-accent-lighter-color: #{$dark-primary-text};
   --text-accent-darker-color: #{$dark-primary-text};
@@ -274,10 +280,6 @@ body {
     background: #F9F9F9;
 }
 
-h1, h2, h3 {
-    font-family: 'MongoDB Value Serif';
-}
-
 .center {
     text-align: center;
 }
@@ -285,6 +287,12 @@ h1, h2, h3 {
 .content-wrapper {
     padding: 20px 70px;
     display: block;
+}
+
+@media screen and (max-width: 768px) {
+    .content-wrapper {
+        padding: 20px 20px;
+    }
 }
 
 .cropped {
@@ -302,4 +310,9 @@ h1, h2, h3 {
 
 .cdk-overlay-container {
     margin-top: 4px;
+}
+
+.subtitle {
+  font-size: 18px;
+  line-height: 24px;
 }

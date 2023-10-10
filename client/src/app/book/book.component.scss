@@ -37,6 +37,10 @@
     font-size: 20px;
     line-height: 24px;
     margin-top: 30px;
+
+    a {
+        color: styles.$dark-primary-text;
+    }
 }
 
 .book-details-content, .book-reviews, .write-review {
@@ -128,13 +132,18 @@
 }
 
 @media screen and (max-width: 800px) {
+    .book-thumbnail {
+        width: 170px;
+        height: 288px;
+    }
+
     .book-details-wrapper {
         margin: 15px auto;
     }
 
     .book-details-content {
-        margin: -35rem auto 5rem auto;
-        padding: 37rem 3rem;
+        margin: -25rem auto 5rem auto;
+        padding: 27rem 3rem 3rem 3rem;
         flex-direction: column;
     }
 
@@ -148,6 +157,22 @@
         gap: 1rem;
     }
 
+    .book-header-details {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+        margin-top: 1.5rem;
+    }
+
+    .book-authors {
+        margin-top: 0;
+    }
+
+    .book-card-content {
+        gap: 2rem;
+    }
+
     .book-title {
         font-size: 18px;
         line-height: 24px;
@@ -158,6 +183,23 @@
         line-height: 20px;
         margin-top: 15px;
     }
+
+    .reservation-wrapper {
+        align-items: center;
+    }
 }
 
+@media screen and (max-width: 550px) {
+     .book-thumbnail {
+        width: 160px;
+        height: 220px;
+    }
 
+    .book-reviews, .write-review {
+        padding: 2rem;
+
+        h3 {
+            text-align: center;
+        }
+    }
+}

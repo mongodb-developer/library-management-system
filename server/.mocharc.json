@@ -1,4 +1,7 @@
 {
+    "require": "./dist/utils/testing-shared.js",
+    "spec": "./dist/**/*.spec.js",
+    "timeout": 60000,
     "node-option": [
         "loader=ts-node/esm"
     ]

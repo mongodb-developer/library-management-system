@@ -4,13 +4,18 @@
     <mat-card class="book-card" *ngFor="let book of books$ | async">
         <img class="img-link cropped book-thumbnail"
             onerror="this.onerror=null; this.src='http://lgimages.s3.amazonaws.com/gc-md.gif'"
-            (click)="goToBook(book)"
-            width="128" height="216" mat-card-image [src]="book.cover" [alt]="book.title" />
+            [routerLink]="['/books', book.isbn]"
+            mat-card-image [src]="book.cover" [alt]="book.title" />
 
         <mat-card-header class="book-card-header">
             <mat-card-title class="book-card-title">
-              <h3 class="book-title" (click)="goToBook(book)">{{ book.title }}</h3>
-              <span class="book-authors">by {{ book.authors }}</span>
+              <h3 class="book-title"><a [routerLink]="['/books', book.isbn]">{{ book.title }}</a></h3>
+              <span class="book-authors">by 
+                <span *ngFor="let author of book.authors; let last = last">
+                  <a [routerLink]="['/authors', author._id]">{{ author.name }}</a>
+                  <span *ngIf="!last">, </span>
+                </span>
+              </span>
             </mat-card-title>
         </mat-card-header>
 

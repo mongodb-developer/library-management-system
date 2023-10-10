@@ -12,7 +12,7 @@ export class BookView {
     available: number;
     totalInventory: number;
     reviews: Array<Omit<Review, '_id' | 'bookId'>>;
-    authors: string;
+    authors: Array<{ name: string, _id: string }>;
     genres: string;
     synopsis?: string;
     publisher?: string;
@@ -28,7 +28,7 @@ export class BookView {
         this.available = book.available;
         this.totalInventory = book.totalInventory;
         this.reviews = book.reviews || [];
-        this.authors = book.authors?.map(a => a.name).join(', ') || '';
+        this.authors = book.authors || [];
         this.genres = book.genres?.join(', ') || '';
         this.synopsis = book.synopsis;
         this.publisher = book.publisher;

@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "potent-bulwark-400605": {
+      "hosting": {
+        "library-management-system": [
+          "potent-bulwark-400605"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "potent-bulwark-400605"
+  }
+}
