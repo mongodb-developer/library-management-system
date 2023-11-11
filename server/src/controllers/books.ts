@@ -1,7 +1,6 @@
 import { DeleteResult, InsertOneResult, UpdateResult } from 'mongodb';
 import { Book } from '../models/book';
 import { collections } from '../database.js';
-import getEmbeddings from '../embeddings/index.js';
 
 class BookController {
     errors = {
@@ -85,8 +84,8 @@ class BookController {
         const books = await collections?.books?.find(
             {
                 $or: [
-                    {title: {$regex: new RegExp(query, "i")}},
-                    {"authors.name": {$regex: new RegExp(query, "i")}},
+                    {title: {$regex: new RegExp(query, 'i')}},
+                    {'authors.name': {$regex: new RegExp(query, 'i')}},
                 ]
             }).limit(25).toArray();
         return books;
