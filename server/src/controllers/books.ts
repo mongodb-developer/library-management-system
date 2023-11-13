@@ -1,6 +1,8 @@
 import { DeleteResult, InsertOneResult, UpdateResult } from 'mongodb';
 import { Book } from '../models/book';
 import { collections } from '../database.js';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import getEmbeddings from '../embeddings/index.js';
 
 class BookController {
     errors = {
