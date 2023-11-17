@@ -1,8 +1,8 @@
 @use '../../styles' as styles;
 
 .book-description {
-  max-height: 120px;
-  overflow: hidden;
+  max-height: 100px;
+  overflow: scroll;
 }
 
 .book-card-content {
@@ -21,7 +21,6 @@
 .book-card-title {
   display: flex;
   flex-direction: column;
-  height: 70;
 }
 
 .book-card {
@@ -39,9 +38,10 @@
 }
 
 .book-title {
-    overflow: hidden;
+    overflow: scroll;
     line-height: 24px;
     font-size: 16px;
+    max-height: 55px;
 
     a {
       color: styles.$dark-text;
@@ -99,3 +99,4 @@
     display: none;
   }
 }
+
