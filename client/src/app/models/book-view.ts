@@ -19,6 +19,7 @@ export class BookView {
     binding?: string;
     language?: string;
     bookOfTheMonth?: boolean;
+    pages: number;
 
     constructor(book: Book) {
         this.isbn = book._id;
@@ -35,5 +36,6 @@ export class BookView {
         this.binding = book.binding;
         this.language = book.language;
         this.bookOfTheMonth = book.bookOfTheMonth || false;
+        this.pages = book.pages || 0;
     }
 }
