@@ -4,6 +4,7 @@ import { IssueDetail } from './models/issue-detail';
 import { Author } from './models/author';
 import { Review } from './models/review';
 import { User } from './models/user';
+import { printError } from './utils/print-error.js';
 
 export const collections: {
     books?: mongodb.Collection<Book>;
@@ -17,9 +18,18 @@ export async function connectToDatabase(uri?: string) {
     if (!uri || typeof uri !== 'string') {
         throw new Error('Database URI is not defined');
     }
-
-    const client = new mongodb.MongoClient(uri);
-    await client.connect();
+    var client: mongodb.MongoClient = null;
+    try {
+        client = new mongodb.MongoClient(uri);
+        await client.connect();
+        
+    } catch (error) {
+        console.log(error);
+        printError("There was an error connecting to the database!\nCan you please check that the URI is correct?\n(Error details are printed above)");
+        
+        console.error("URI: " + uri);
+        return null;
+    }
 
     const db = client.db(process.env.DATABASE_NAME);
 
