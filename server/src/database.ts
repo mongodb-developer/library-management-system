@@ -18,7 +18,7 @@ export async function connectToDatabase(uri?: string) {
         throw new Error('Database URI is not defined');
     }
 
-    const client = new mongodb.MongoClient(uri);
+    const client = new mongodb.MongoClient(uri, { appName: 'devrel.workshop.devday' });
     await client.connect();
 
     const db = client.db(process.env.DATABASE_NAME);
