@@ -13,15 +13,20 @@ export const collections: {
     issueDetails?: mongodb.Collection<IssueDetail>;
 } = {};
 
+export const databases: {
+    library?: mongodb.Db;
+} = {};
+
 export async function connectToDatabase(uri?: string) {
     if (!uri || typeof uri !== 'string') {
-        throw new Error('Database URI is not defined');
+        throw new Error('Missing URI parameter for database connection. Define in .env');
     }
 
     const client = new mongodb.MongoClient(uri, { appName: 'devrel.workshop.devday' });
     await client.connect();
 
     const db = client.db(process.env.DATABASE_NAME);
+    databases.library = db;
 
     const booksCollection = db.collection<Book>('books');
     const authorsCollection = db.collection<Author>('authors');
