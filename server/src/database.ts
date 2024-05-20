@@ -18,8 +18,18 @@ export const databases: {
 } = {};
 
 export async function connectToDatabase(uri?: string) {
-    if (!uri || typeof uri !== 'string') {
-        throw new Error('Missing URI parameter for database connection. Define in .env');
+    if (!uri || uri === 'mongodb+srv://user:password@cluster' || typeof uri !== 'string') {
+        throw new Error(`
+        ####### ######  ######  ####### ######  
+        #       #     # #     # #     # #     # 
+        #       #     # #     # #     # #     # 
+        #####   ######  ######  #     # ######  
+        #       #   #   #   #   #     # #   #   
+        #       #    #  #    #  #     # #    #  
+        ####### #     # #     # ####### #     # 
+
+        Missing database connection string! Open the .env file and add your MongoDB connection string to the DATABASE_URI variable.
+    `);
     }
 
     const client = new mongodb.MongoClient(uri, { appName: 'devrel.workshop.devday' });
