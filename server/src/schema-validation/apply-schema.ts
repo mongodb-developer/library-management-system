@@ -40,7 +40,7 @@ results.push(resultUsers);
 
 // const authorSchema = {
 //     bsonType: 'object',
-//     required: ['name', 'isAdmin'],
+//     required: ['name'],
 //     properties: {
 //         name: {
 //             bsonType: 'string',
@@ -49,13 +49,14 @@ results.push(resultUsers);
 //         },
 //         // TODO: Add the missing validation rules for the authorSchema
 //         // Hint: Look at the 'library.authors' collection in
-//         //       the MongoDB Atlas UI
+//         // the MongoDB Atlas UI
 //     }
 // };
 
 // console.log('Applying schema validation for authors...');
 // const resultAuthors = await db.command({
 //     // TODO: Modify the authors collection to apply the authorSchema
+//     // Hint: Look at line 30 in this file.
 // });
 
 // results.push(resultAuthors);
