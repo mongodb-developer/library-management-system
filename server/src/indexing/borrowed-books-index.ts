@@ -34,7 +34,7 @@ console.log('\n-----------------------------\n');
 console.log('AFTER creating the index\n');
 await explainBorrowedBooksQuery();
 
-await collections?.issueDetails?.dropIndex('user._id_1_returnedDate_1_borrowDate_1');
+await collections?.issueDetails?.dropIndexes();
 await client.close();
 process.exit();
 
