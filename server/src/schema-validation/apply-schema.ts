@@ -38,20 +38,20 @@ const resultUsers = await db.command({
 
 results.push(resultUsers);
 
-// const authorSchema = {
-//     bsonType: 'object',
-//     required: ['name'],
-//     properties: {
-//         name: {
-//             bsonType: 'string',
-//             minLength: 5,
-//             description: 'must be a string and is required'
-//         },
-//         // TODO: Add the missing validation rules for the authorSchema
-//         // Hint: Look at the 'library.authors' collection in
-//         // the MongoDB Atlas UI
-//     }
-// };
+const authorSchema = {
+    bsonType: 'object',
+    required: ['name'],
+    properties: {
+        name: {
+            bsonType: 'string',
+            minLength: 5,
+            description: 'must be a string and is required'
+        },
+        // TODO: Add the missing validation rules for the authorSchema
+        // Hint: Look at the 'library.authors' collection in
+        // the MongoDB Atlas UI
+    }
+};
 
 // console.log('Applying schema validation for authors...');
 // const resultAuthors = await db.command({
@@ -60,6 +60,18 @@ results.push(resultUsers);
 // });
 
 // results.push(resultAuthors);
+console.log('Applying schema validation for authors...');
+const resultAuthors = await db.command({
+    collMod: 'authors',
+    validator: {
+        $jsonSchema: authorSchema
+    },
+    validationLevel: 'strict',
+    validationAction: 'error'
+});
+
+results.push(resultAuthors);
+
 
 
 const isStatusInvalid = (r) => r.ok!== 1;

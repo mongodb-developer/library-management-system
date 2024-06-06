@@ -82,6 +82,21 @@ class BookController {
         return books[0];
     }
 
+
+
+
+    // public async getBook(bookId: string): Promise<Book> {
+    //     /**
+    //      * Optimized Code
+    //      */
+    //     const book = await collections?.books?.findOne({ _id: bookId });
+
+    //     return book;
+    // }
+
+
+
+
     public async searchBooks(query: string): Promise<Book[]> {
         const books = await collections?.books?.find(
             {
