@@ -16,7 +16,7 @@ export class BookService {
       limit = 100;
     }
 
-    return this.http.get<Book[]>(`${URL}/books?limit=${limit}?skip=${skip}`)
+    return this.http.get<Book[]>(`${URL}/books?limit=${limit}&skip=${skip}`)
       .pipe(
         map(books => books.map(book => new BookView(book)))
       )

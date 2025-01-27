@@ -4,9 +4,10 @@ import { getBaseUrl, users, books, cleanDatabase } from '../utils/testing-shared
 import IssueDetailsController from '../controllers/issue-details.js';
 import BookController from '../controllers/books.js';
 
-const adminJWT = users.admin.jwt;
-const userJWT = users.user1.jwt;
-const userId = users.user1._id;
+
+let adminJWT;
+let userJWT;
+let userId;
 
 const issueDetailsController = new IssueDetailsController();
 const bookController = new BookController();
@@ -15,6 +16,10 @@ describe('Reservation API', () => {
     const book = books.oneCopy;
 
     before(async () => {
+        adminJWT = users.admin.jwt;
+        userJWT = users.user1.jwt;
+        userId = users.user1._id;
+        
         await cleanDatabase();
         await request(getBaseUrl())
             .post('/books')
