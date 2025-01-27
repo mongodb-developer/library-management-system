@@ -1,17 +1,17 @@
 {
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
-  "waitFor": "onCreateCommand",
-  "updateContentCommand": "/bin/bash .devcontainer/updateContent.sh",
-  "postCreateCommand": "",
+  "image": "mcr.microsoft.com/devcontainers/java:21-bookworm",
+  "waitFor": "updateContentCommand",
+  "updateContentCommand": "bash .devcontainer/updateContent.sh",
+  "postStartCommand": "",
   "postAttachCommand": {
-    "server": "cd server && npm start",
-    "client": "export NG_CLI_ANALYTICS=\"false\"; cd client && npm start",
-    "portSetup": "/bin/bash .devcontainer/portSetup.sh"
+    "server": "cd java-server && ./mvnw spring-boot:run",
+    "client": "export NG_CLI_ANALYTICS=\"false\"; npm start --prefix client"
   },
   "customizations": {
     "codespaces": {
       "openFiles": [
-        "server/.env"
+        "java-server/src/main/java/com/mongodb/devrel/library/LibraryApplication.java",
+        "java-server/src/main/resources/.env"
       ]
     }
   },
@@ -21,8 +21,19 @@
       "onAutoForward": "openPreview"
     },
     "5000": {
-      "label": "Server"
+      "label": "Java Server"
     }
   },
-  "forwardPorts": [4200, 5000]
+  "forwardPorts": [4200, 5000],
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "none",
+      "installGradle": "false",
+      "installMaven": "true"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "latest"
+    }
+  }
 }
