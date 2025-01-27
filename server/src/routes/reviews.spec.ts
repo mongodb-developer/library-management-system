@@ -3,8 +3,8 @@ import assert from 'assert';
 import { getBaseUrl, users, books, cleanDatabase } from '../utils/testing-shared.js';
 import ReviewsController from '../controllers/reviews.js';
 
-const adminJWT = users.admin.jwt;
-const userJWT = users.user1.jwt;
+let adminJWT: string;
+let userJWT: string;
 
 const reviewsController = new ReviewsController();
 
@@ -16,6 +16,9 @@ describe('Reviews API', () => {
     };
 
     before(async () => {
+        adminJWT = users.admin.jwt;
+        userJWT = users.user1.jwt;
+
         await cleanDatabase();
         await request(getBaseUrl())
             .post('/books')

@@ -5,8 +5,8 @@ import { getBaseUrl, users, books } from '../utils/testing-shared.js';
 import { cleanDatabase } from '../utils/testing-shared.js';
 import IssueDetailsController from '../controllers/issue-details.js';
 
-const adminJWT = users.admin.jwt;
-const userJWT = users.user1.jwt;
+let adminJWT;
+let userJWT;
 
 const issueDetailsController = new IssueDetailsController();
 
@@ -16,6 +16,9 @@ describe('Borrows API', () => {
     const bookWithOneCopy: Book = books.oneCopy;
 
     before(async () => {
+        adminJWT = users.admin.jwt;
+        userJWT = users.user1.jwt;
+
         await cleanDatabase();
 
         await request(getBaseUrl())

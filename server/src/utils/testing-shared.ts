@@ -1,9 +1,7 @@
 import { MongoClient, ObjectId } from 'mongodb';
 import { Book } from '../models/book';
 import { connectToDatabase, collections } from '../database.js';
-
-const adminJWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NGQ0Yzk2NGYwZDA1NmVhNmJmMGYzZDgiLCJuYW1lIjoiT2xkU2Nob29sIEFsbGlnYXRvciIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY5MTY2Njc4OCwiZXhwIjoxNzIzMjAyNzg4fQ.0ycGXmrPBBJC9f1_nhJ7Ypi0C1DjzcZ6NpQVvpDAnJM';
-const userJWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NGQ0Yzc1MDViZDQ4MzEwNWM0ODk5MWQiLCJuYW1lIjoiUm93ZHkgSHllbmEiLCJpYXQiOjE2OTE2NjY3ODgsImV4cCI6MTcyMzIwMjc4OH0.YCFLMDhF4R009QT3bOy_H90ocgpKRhIMdbtpOvO-s-c';
+import request from 'supertest';
 
 export const getBaseUrl = () => `http://localhost:${process.env.PORT}`;
 
@@ -32,6 +30,14 @@ export async function initializeTestData() {
         users.admin,
         users.user1,
     ]);
+
+    const adminResponse = await request(getBaseUrl())
+        .get(`/users/login/${users.admin.name}`);
+    users.admin.jwt = adminResponse.body.jwt;
+
+    const userResponse = await request(getBaseUrl())
+        .get(`/users/login/${users.user1.name}`);
+    users.user1.jwt = userResponse.body.jwt;
 }
 
 export async function cleanTestData() {
@@ -47,11 +53,9 @@ export async function cleanTestData() {
 
 export async function cleanDatabase() {
     return await Promise.all([
-        collections?.books?.deleteOne({ _id: books.sample._id }),
-        collections?.books?.deleteOne({ _id: books.oneCopy._id }),
-        collections?.books?.deleteOne({ _id: books.notAvailable._id }),
-        collections.issueDetails?.deleteMany({ _id: new RegExp(`^${users.user1._id}`) }),
-        collections.reviews?.deleteMany({ name: users.user1.name })
+        collections?.books?.deleteMany(),
+        collections.issueDetails?.deleteMany(),
+        collections.reviews?.deleteMany()
     ]);
 }
 
@@ -60,12 +64,12 @@ export const users = {
         _id: new ObjectId('64d4c964f0d056ea6bf0f3d8'),
         name: 'OldSchool Alligator',
         isAdmin: true,
-        jwt: adminJWT,
+        jwt: ''
     },
     user1: {
         _id: new ObjectId('64d4c7505bd483105c48991d'),
         name: 'Rowdy Hyena',
-        jwt: userJWT,
+        jwt: ''
     }
 };
 

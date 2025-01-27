@@ -3,8 +3,8 @@ import assert from 'assert';
 import { users, books, getBaseUrl, cleanDatabase } from '../utils/testing-shared.js';
 import BookController from '../controllers/books.js';
 
-const adminJWT = users.admin.jwt;
-const userJWT = users.user1.jwt;
+let adminJWT;
+let userJWT;
 
 const bookController = new BookController();
 
@@ -12,6 +12,8 @@ describe('Books API', () => {
     const book = books.sample;
 
     before(async () => {
+        adminJWT = users.admin.jwt;
+        userJWT = users.user1.jwt;
         await cleanDatabase();
     });
 
