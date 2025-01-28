@@ -3,6 +3,7 @@ package com.mongodb.devrel.library.service;
 import com.mongodb.devrel.library.model.User;
 import com.mongodb.devrel.library.repository.UserRepository;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +43,7 @@ public class UserService {
         return newUser;
     }
 
-    public Optional<User> userById(String id) {
+    public Optional<User> userById(ObjectId id) {
         System.out.println(id);
         return userRepository.findById(id);
     }
