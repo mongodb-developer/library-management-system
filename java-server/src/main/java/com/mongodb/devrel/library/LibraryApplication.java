@@ -15,8 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 public class LibraryApplication {
 
-	@Value("${MONGO_DATABASE}")
-	private static Optional<String> database;
+	@Value("${DATABASE_URI}")
+	private static Optional<String> mongoDBURI;
 
 	public static void main(String[] args) {
 		
@@ -24,7 +24,7 @@ public class LibraryApplication {
 			SpringApplication.run(LibraryApplication.class, args);
 			log.info("App Started");
 		} catch (org.springframework.beans.factory.UnsatisfiedDependencyException e) {
-			if (database == null || !database.isPresent()) {
+			if (mongoDBURI == null || !mongoDBURI.isPresent()) {
 				log.error(ErrorMessage.noDB);
 			}
 		}
