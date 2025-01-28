@@ -4,7 +4,7 @@
   "updateContentCommand": "bash .devcontainer/updateContent.sh",
   "postStartCommand": "",
   "postAttachCommand": {
-    "server": "cd java-server && ./mvnw spring-boot:run",
+    "server": "cd java-server && mvn spring-boot:run",
     "client": "export NG_CLI_ANALYTICS=\"false\"; npm start --prefix client"
   },
   "customizations": {
