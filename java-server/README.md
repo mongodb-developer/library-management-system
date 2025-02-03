@@ -1,4 +1,17 @@
-# Getting Started
+# Library App, Java version
+
+This folder contains the Java implementation of the Library app. Is a Java Spring Boot API that exposes some routes on port 5000 by default. This app has been built to maintain as much compatibility as possible with the original Node Express server (you can have a look at that implementation in `/server`). The goal was to use the same client app for both server implementations.
+
+## Structure
+
+- Main app file: `/java-server/src/main/java/com/mongodb/devrel/library/LibraryApplication.java`
+- Config file: `/java-server/src/main/resources/.env`
+- Routes / Controllers: defined in the `controllers` folder.
+- Services: used by the Controllers to access data, they do the heavy lifting
+- Repositories: MongoDB repositories to access our database
+- Model: model classes for our app
+
+## Reference
 
 ### Reference Documentation
 For further reference, please consider the following sections:
