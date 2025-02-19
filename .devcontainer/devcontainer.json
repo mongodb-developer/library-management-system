@@ -10,8 +10,8 @@
   "customizations": {
     "codespaces": {
       "openFiles": [
-        "java-server/src/main/java/com/mongodb/devrel/library/LibraryApplication.java",
-        "java-server/src/main/resources/.env"
+        "java-server/src/main/resources/application.properties",
+        "java-server/README.md"
       ]
     }
   },

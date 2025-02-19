@@ -11,23 +11,39 @@ import com.mongodb.devrel.library.util.ErrorMessage;
 
 import lombok.extern.slf4j.Slf4j;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import java.util.List;
+import org.springframework.boot.CommandLineRunner;
+
 @Slf4j
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
-public class LibraryApplication {
+public class LibraryApplication implements CommandLineRunner {
 
-	@Value("${DATABASE_URI}")
-	private static Optional<String> mongoDBURI;
+	@Value("${spring.data.mongodb.uri}")
+	private String mongoDBURI;
+
+	@Value("${spring.data.mongodb.database}")
+	private String database;
 
 	public static void main(String[] args) {
 		
 		try {
 			SpringApplication.run(LibraryApplication.class, args);
-			log.info("App Started");
 		} catch (org.springframework.beans.factory.UnsatisfiedDependencyException e) {
-			if (mongoDBURI == null || !mongoDBURI.isPresent()) {
-				log.error(ErrorMessage.noDB);
-			}
+			log.error(ErrorMessage.noDB);
 		}
-
+	}
+	
+	@Override
+    public void run(String... args) {
+		log.info("🚀 App Started");
 	}
 }
+

@@ -11,6 +11,6 @@ public class ErrorMessage {
         #       #    #  #    #  #     # #    #  
         ####### #     # #     # ####### #     # 
 
-        Missing database connection string! Open the .env file and add your MongoDB connection string to the DATABASE and URI variables.
+        Missing database connection string! Open the application.properties file and add your MongoDB connection string to the spring.data.mongodb.uri variable.
     """; 
 }
