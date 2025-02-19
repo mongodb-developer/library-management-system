@@ -56,13 +56,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- Dot env files -->
-		<!-- https://mvnrepository.com/artifact/me.paulschwarz/spring-dotenv -->
-		<dependency>
-			<groupId>me.paulschwarz</groupId>
-			<artifactId>spring-dotenv</artifactId>
-			<version>4.0.0</version>
-		</dependency>
 		<!-- To Override security defaults and allow CORS  -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
