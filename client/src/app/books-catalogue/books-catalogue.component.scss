@@ -39,15 +39,13 @@
 
 .book-title {
     overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 24px;
+    line-height: 26px;
     font-size: 16px;
     max-height: 55px;
 
     a {
       color: styles.$dark-text;
       text-decoration: none;
-      font-weight: bold;
     }
 }
 
