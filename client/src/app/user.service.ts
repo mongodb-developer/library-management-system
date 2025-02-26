@@ -85,6 +85,10 @@ export class UserService {
       name: decodedToken?.name,
       isAdmin: !!decodedToken?.isAdmin
     };
+
+
+    this.user.email = `${this.user.name.toLowerCase()}@mongodb-library.com`;
+    this.user.address = `${Math.floor(Math.random()*100)} Main Street`;
   }
 
   private clearSession() {
