@@ -56,7 +56,11 @@
                 </div>
                 <div *ngIf="book.publisher">
                     <h3>Publisher</h3>
-                    <p>{{ book.publisher }} / {{ book.pages }} pages</p>
+                    <p>{{ book.publisher }}</p>
+                </div>
+                <div *ngIf="book.publisher">
+                    <h3>Publisher Country</h3>
+                    <p>USA</p>
                 </div>
             </div>
         </mat-card-content>
