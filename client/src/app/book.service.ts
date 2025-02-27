@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Book } from './models/book';
-import { Observable, map, of } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { BookView } from './models/book-view';
 import { URL } from './config';
 

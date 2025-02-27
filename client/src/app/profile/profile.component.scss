@@ -1,18 +1,25 @@
-.dashboard-wrapper {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+@use '../../styles' as styles;
+
+.title-wrapper {
+  text-align: center;
+  padding: 20px 0;
+  margin: 20px 0;
   width: 100%;
+  color: styles.$dark-primary-text;
 }
 
-.reservations, .borrowed {
-  margin: 20px 30px;
 
-  h2 {
-    margin-bottom: 20px;
+.user-card {
+  max-width: 1000px;
+  margin: 0 auto;
+
+  .user-additional-details div {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+
+    & :first-child {
+      text-decoration: underline;
+    }
   }
-}
-
-table {
-  width: 100%;
 }
