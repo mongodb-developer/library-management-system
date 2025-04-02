@@ -17,13 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/author")
 public class AuthorController {
-     @Autowired
-    private AuthorService authorService;
+
+    private final AuthorService authorService;
+
+     AuthorController(AuthorService authorService) {
+         this.authorService = authorService;
+     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Author>> getAuthorById(@PathVariable ObjectId id) {
         Optional<Author> author = authorService.authorById(id);
 
-        return new ResponseEntity<Optional<Author>>(author, HttpStatus.OK);
+        return new ResponseEntity<>(author, HttpStatus.OK);
     }
 }

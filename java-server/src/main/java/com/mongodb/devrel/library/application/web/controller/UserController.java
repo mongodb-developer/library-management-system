@@ -21,10 +21,14 @@ import lombok.Data;
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
 
-     @GetMapping("/login")
+    private final UserService userService;
+
+    UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/login")
     public ResponseEntity<JWTResponse> login(@RequestParam Optional<String> userName) {
         User user = userService.loginUser(userName.orElse(""));
 

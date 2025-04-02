@@ -20,8 +20,11 @@ import java.util.Optional;
 @RequestMapping("/books")
 public class BookController {
 
-    @Autowired
-    private BookService bookService;
+    private final BookService bookService;
+
+    BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks(@RequestParam Optional<Integer> limit, @RequestParam Optional<Integer> skip) {
@@ -30,7 +33,7 @@ public class BookController {
         Integer theSkip = skip.orElse(0);
         Page<Book> books = bookService.findAllBooks(theLimit, theSkip);
 
-        return new ResponseEntity<List<Book>>(books.getContent(), HttpStatus.OK);
+        return new ResponseEntity<>(books.getContent(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -44,7 +47,7 @@ public class BookController {
         String theTerm = term.orElse("");
         Page<Book> books = bookService.searchBooks(theTerm);
 
-        return new ResponseEntity<List<Book>>(books.getContent(), HttpStatus.OK);
+        return new ResponseEntity<>(books.getContent(), HttpStatus.OK);
     }
 
 }

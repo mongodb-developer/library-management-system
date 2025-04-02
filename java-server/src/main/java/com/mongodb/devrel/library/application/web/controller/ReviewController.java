@@ -15,12 +15,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/reviews")
 public class ReviewController {
-    @Autowired
-    private ReviewService reviewService;
+
+    private final ReviewService reviewService;
+
+    ReviewController(ReviewService reviewService) {
+        this.reviewService = reviewService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Review>> allReviews() {
-        return new ResponseEntity<List<Review>>(reviewService.allReviews(), HttpStatus.OK);
+        return new ResponseEntity<>(reviewService.allReviews(), HttpStatus.OK);
     }
 
     // @PostMapping

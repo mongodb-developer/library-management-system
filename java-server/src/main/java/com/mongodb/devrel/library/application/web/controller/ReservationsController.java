@@ -41,11 +41,15 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/reservations")
 public class ReservationsController {
-    @Autowired
-    private IssueDetailsService issueDetailsService;
 
-    @Autowired
-    private BookService bookService;
+
+    private final IssueDetailsService issueDetailsService;
+    private final BookService bookService;
+
+    ReservationsController(BookService bookService, IssueDetailsService issueDetailsService) {
+        this.bookService = bookService;
+        this.issueDetailsService = issueDetailsService;
+    }
 
     @GetMapping
     public List<IssueDetail> getReservedBooksForCurrentUser(@RequestHeader("Authorization") String authorizationHeader) {
