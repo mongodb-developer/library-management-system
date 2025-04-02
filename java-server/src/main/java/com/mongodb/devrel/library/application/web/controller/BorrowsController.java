@@ -28,8 +28,12 @@ import com.mongodb.devrel.library.domain.util.JWT;
 @RestController
 @RequestMapping("/borrow")
 public class BorrowsController {
-    @Autowired
-    private IssueDetailsService issueDetailsService;
+
+    private final IssueDetailsService issueDetailsService;
+
+    BorrowsController(IssueDetailsService issueDetailsService) {
+        this.issueDetailsService = issueDetailsService;
+    }
 
     @GetMapping
     public List<IssueDetail> getBorowedBooksForCurrentUser(@RequestHeader("Authorization") String authorizationHeader) {
@@ -41,7 +45,7 @@ public class BorrowsController {
 
     @Data
     @AllArgsConstructor
-    private class BorrowedBooksResponse {
+    private static class BorrowedBooksResponse {
         List<IssueDetail> data;
     }
 
