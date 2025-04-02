@@ -12,8 +12,12 @@ import java.util.Random;
 
 @Service
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+
+    private final UserRepository userRepository;
+
+    UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public User loginUser(String userName) {
         Optional<User> user = userRepository.findUserByName(userName);

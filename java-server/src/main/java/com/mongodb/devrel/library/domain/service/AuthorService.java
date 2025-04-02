@@ -11,8 +11,12 @@ import java.util.Optional;
 
 @Service
 public class AuthorService {
-    @Autowired
-    private AuthorRepository authorRepository;
+
+    private final AuthorRepository authorRepository;
+
+    AuthorService(AuthorRepository authorRepository) {
+        this.authorRepository = authorRepository;
+    }
 
     public Optional<Author> authorById(ObjectId id) {
         System.out.println(id);

@@ -17,11 +17,17 @@ import java.util.List;
 
 @Service
 public class IssueDetailsService {
-    @Autowired
-    private IssueDetailsRepository issueDetailsRepository;
 
-    @Autowired
-    private BookRepository bookRepository;
+
+    private final IssueDetailsRepository issueDetailsRepository;
+
+
+    private final BookRepository bookRepository;
+
+    IssueDetailsService(IssueDetailsRepository issueDetailsRepository, BookRepository bookRepository) {
+        this.issueDetailsRepository = issueDetailsRepository;
+        this.bookRepository = bookRepository;
+    }
 
     public Page<IssueDetail> findAllBorrowedBooks(Integer limit, Integer skip) {
         PageRequest request = PageRequest.of(skip, limit, Sort.unsorted());

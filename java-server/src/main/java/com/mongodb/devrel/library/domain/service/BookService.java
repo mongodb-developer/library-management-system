@@ -12,16 +12,20 @@ import java.util.Optional;
 
 @Service
 public class BookService {
-    @Autowired
-    private BookRepository bookRepository;
+
+
+    private final BookRepository bookRepository;
+
+    BookService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
 
     public Page<Book> findAllBooks(Integer limit, Integer skip) {
         PageRequest request = PageRequest.of(skip, limit, Sort.unsorted());
 
         // findAll(Pageable) from PagingAndSortingRepository
-        Page<Book> books = bookRepository.findAll(request);
 
-        return books;
+        return bookRepository.findAll(request);
     }
 
     public Optional<Book> bookById(String id) {
@@ -31,8 +35,6 @@ public class BookService {
     public Page<Book> searchBooks(String theTerm) {
         PageRequest request = PageRequest.of(0, 10, Sort.unsorted());
 
-        Page<Book> books = bookRepository.searchByText(theTerm, request);    
-
-        return books;
+        return bookRepository.searchByText(theTerm, request);
     }
 }
