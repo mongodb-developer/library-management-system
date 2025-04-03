@@ -5,13 +5,12 @@ import com.mongodb.devrel.library.domain.model.User;
 import com.mongodb.devrel.library.domain.service.IssueDetailsService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import com.mongodb.devrel.library.domain.util.JWT;
+import com.mongodb.devrel.library.domain.util.JWTConfig;
 /**
  * Routes
  *
@@ -30,14 +29,18 @@ import com.mongodb.devrel.library.domain.util.JWT;
 public class BorrowsController {
 
     private final IssueDetailsService issueDetailsService;
+    private final JWTConfig jwtConfig;
 
-    BorrowsController(IssueDetailsService issueDetailsService) {
+    BorrowsController(
+            IssueDetailsService issueDetailsService,
+            JWTConfig jwtConfig) {
         this.issueDetailsService = issueDetailsService;
+        this.jwtConfig = jwtConfig;
     }
 
     @GetMapping
     public List<IssueDetail> getBorowedBooksForCurrentUser(@RequestHeader("Authorization") String authorizationHeader) {
-        User loggedInUser = JWT.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
+        User loggedInUser = jwtConfig.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
         
         List<IssueDetail> books = issueDetailsService.findAllBorrowedBooksForCurrentUser(loggedInUser);
         return books;
@@ -51,7 +54,7 @@ public class BorrowsController {
 
      @GetMapping("/page")
      public BorrowedBooksResponse getPageOfBorrowedBooks(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Optional<Integer> limit, @RequestParam Optional<Integer> skip) {
-         User loggedInUser = JWT.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
+         User loggedInUser = jwtConfig.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
 
          // only admins can see all borrowed books
         if (!loggedInUser.isAdmin()) {
