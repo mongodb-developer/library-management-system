@@ -38,7 +38,7 @@ public class BookController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Book>> getBook(@PathVariable String id) {
-        return new ResponseEntity<Optional<Book>>(bookService.bookById(id), HttpStatus.OK);
+        return new ResponseEntity<>(bookService.bookById(id), HttpStatus.OK);
     }
 
     @GetMapping("/search")

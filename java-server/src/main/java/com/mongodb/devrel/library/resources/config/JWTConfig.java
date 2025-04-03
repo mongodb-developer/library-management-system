@@ -1,4 +1,4 @@
-package com.mongodb.devrel.library.domain.util;
+package com.mongodb.devrel.library.resources.config;
 
 import com.mongodb.devrel.library.domain.model.User;
 import io.jsonwebtoken.Claims;
@@ -73,22 +73,13 @@ public class JWTConfig {
             // Extract the claims
             Claims claims = claimsJws.getBody();
 
-            // Extract user details
-            String userId = claims.get("sub", String.class);
-            String userName = claims.get("name", String.class);
-            Boolean isAdmin = claims.get("isAdmin", Boolean.class);
-            // Long issuedAt = claims.get("iat", Long.class);
-
-            // Print user details
-            System.out.println("User ID: " + userId);
-            System.out.println("User Name: " + userName);
-            System.out.println("Is Admin: " + isAdmin);
-            // System.out.println("Issued At: " + issuedAt);
-
-            user = new User(new ObjectId(userId), userName, isAdmin);
+            user = new User(
+                    new ObjectId(claims.get("sub", String.class)),
+                    claims.get("name", String.class),
+                    claims.get("isAdmin", Boolean.class)
+            );
 
         } catch (Exception e) {
-            // Handle invalid JWTs
             log.error("Invalid JWT: ()", e.getMessage());
         }
 
@@ -98,7 +89,6 @@ public class JWTConfig {
     public User loggedInUserFromBearerAuthenticationHeader(String authorizationHeader) {
         String token = null;
 
-        // Extract the token by removing "Bearer " prefix
         if (authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
         }
