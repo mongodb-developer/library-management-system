@@ -37,7 +37,6 @@ public class MongoDBConfig {
     @Value("${spring.data.mongodb.database}")
     private String database;
 
-
     @Bean
     public MongoClient mongoClient() {
         return MongoClients.create(MongoClientSettings.builder()
