@@ -8,8 +8,7 @@ import com.mongodb.devrel.library.domain.model.IssueDetail;
 import com.mongodb.devrel.library.domain.model.User;
 import com.mongodb.devrel.library.domain.service.BookService;
 import com.mongodb.devrel.library.domain.service.IssueDetailsService;
-import com.mongodb.devrel.library.domain.util.JWT;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.mongodb.devrel.library.domain.util.JWTConfig;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,18 +41,21 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/reservations")
 public class ReservationsController {
 
-
     private final IssueDetailsService issueDetailsService;
     private final BookService bookService;
+    private final JWTConfig jwtConfig;
 
-    ReservationsController(BookService bookService, IssueDetailsService issueDetailsService) {
+    ReservationsController(BookService bookService, IssueDetailsService issueDetailsService, JWTConfig jwtConfig) {
         this.bookService = bookService;
         this.issueDetailsService = issueDetailsService;
+        this.jwtConfig = jwtConfig;
+
     }
 
     @GetMapping
     public List<IssueDetail> getReservedBooksForCurrentUser(@RequestHeader("Authorization") String authorizationHeader) {
-        User loggedInUser = JWT.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
+
+        User loggedInUser = jwtConfig.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
 
         List<IssueDetail> books = issueDetailsService.findAllReservedBooksForCurrentUser(loggedInUser);
 
@@ -78,7 +80,7 @@ public class ReservationsController {
     @GetMapping("/page")
     public ReservedBooksResponse getPageOfReservedBooks(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Optional<Integer> limit, @RequestParam Optional<Integer> skip) {
         
-        User loggedInUser = JWT.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
+        User loggedInUser = jwtConfig.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
 
         if (!loggedInUser.isAdmin()) {
             return null;
@@ -100,7 +102,7 @@ public class ReservationsController {
 
     @PostMapping("/{bookId}")
     public ReservationResponse reserveBook(@RequestHeader("Authorization") String authorizationHeader, @PathVariable String bookId) {
-        User loggedInUser = JWT.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
+        User loggedInUser = jwtConfig.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
 
         Optional<Book> book = bookService.bookById(bookId);
 
@@ -120,7 +122,7 @@ public class ReservationsController {
 
     @DeleteMapping("/{reservationId}")
     public CancelReservationResponse cancelReservation(@RequestHeader("Authorization") String authorizationHeader, @PathVariable String reservationId) {
-        User loggedInUser = JWT.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
+        User loggedInUser = jwtConfig.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
 
         issueDetailsService.cancelReservation(reservationId, loggedInUser.get_id());;
         CancelReservationResponse response  = new CancelReservationResponse();

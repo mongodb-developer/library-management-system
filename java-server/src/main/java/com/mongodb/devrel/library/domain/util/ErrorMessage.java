@@ -1,4 +1,4 @@
-package com.mongodb.devrel.library.util;
+package com.mongodb.devrel.library.domain.util;
 
 public class ErrorMessage {
     public static final String noDB = """
