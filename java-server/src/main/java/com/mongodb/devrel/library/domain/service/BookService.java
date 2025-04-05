@@ -1,8 +1,7 @@
 package com.mongodb.devrel.library.domain.service;
 
 import com.mongodb.devrel.library.domain.model.Book;
-import com.mongodb.devrel.library.resources.repository.BookRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.mongodb.devrel.library.infrastructure.repository.BookRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;

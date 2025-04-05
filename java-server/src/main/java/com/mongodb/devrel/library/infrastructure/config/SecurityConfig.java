@@ -1,4 +1,4 @@
-package com.mongodb.devrel.library.resources.config;
+package com.mongodb.devrel.library.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

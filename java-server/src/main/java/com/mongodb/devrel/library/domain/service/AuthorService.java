@@ -1,9 +1,8 @@
 package com.mongodb.devrel.library.domain.service;
 
 import com.mongodb.devrel.library.domain.model.Author;
-import com.mongodb.devrel.library.resources.repository.AuthorRepository;
+import com.mongodb.devrel.library.infrastructure.repository.AuthorRepository;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 

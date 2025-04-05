@@ -1,4 +1,4 @@
-package com.mongodb.devrel.library.resources.repository;
+package com.mongodb.devrel.library.infrastructure.repository;
 
 import com.mongodb.devrel.library.domain.model.Book;
 import org.springframework.data.domain.Page;
