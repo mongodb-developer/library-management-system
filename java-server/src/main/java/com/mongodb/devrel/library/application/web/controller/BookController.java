@@ -1,19 +1,21 @@
 package com.mongodb.devrel.library.application.web.controller;
 
 
+import com.mongodb.devrel.library.application.web.controller.request.ReviewRequest;
 import com.mongodb.devrel.library.domain.model.Book;
+import com.mongodb.devrel.library.domain.model.Review;
+import com.mongodb.devrel.library.domain.model.User;
 import com.mongodb.devrel.library.domain.service.BookService;
+import com.mongodb.devrel.library.domain.service.ReviewService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -21,9 +23,11 @@ import java.util.Optional;
 public class BookController {
 
     private final BookService bookService;
+    private final ReviewService reviewService;
 
-    BookController(BookService bookService) {
+    BookController(BookService bookService, ReviewService reviewService) {
         this.bookService = bookService;
+        this.reviewService = reviewService;
     }
 
     @GetMapping
@@ -39,6 +43,13 @@ public class BookController {
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Book>> getBook(@PathVariable String id) {
         return new ResponseEntity<>(bookService.bookById(id), HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/reviews")
+    public ResponseEntity<Review> createBookReview(HttpServletRequest request,  @PathVariable String id, @RequestBody ReviewRequest reviewRequest, @RequestHeader("Authorization") String authorizationHeader) {
+        User loggedInUser = (User) request.getAttribute("loggedInUser");
+
+        return new ResponseEntity<>(reviewService.createReview(id, reviewRequest, loggedInUser), HttpStatus.CREATED);
     }
 
     @GetMapping("/search")
