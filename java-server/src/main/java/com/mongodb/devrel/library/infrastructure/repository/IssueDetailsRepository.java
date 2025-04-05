@@ -1,4 +1,4 @@
-package com.mongodb.devrel.library.resources.repository;
+package com.mongodb.devrel.library.infrastructure.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;

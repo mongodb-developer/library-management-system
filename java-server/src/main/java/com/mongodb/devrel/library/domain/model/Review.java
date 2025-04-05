@@ -17,7 +17,6 @@ public class Review {
     private String text;
     private Integer rating;
     private String name;
-
     private Object timestamp;
     private String bookId;
 }

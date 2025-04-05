@@ -8,7 +8,8 @@ import com.mongodb.devrel.library.domain.model.IssueDetail;
 import com.mongodb.devrel.library.domain.model.User;
 import com.mongodb.devrel.library.domain.service.BookService;
 import com.mongodb.devrel.library.domain.service.IssueDetailsService;
-import com.mongodb.devrel.library.resources.config.JWTConfig;
+import com.mongodb.devrel.library.infrastructure.config.JWTConfig;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,19 +24,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Routes
- *
- * GET /reservations/page: Returns a page of reservations.
- * GET /reservations: Returns the list of reservations for the logged in user
- * GET /reservations/:reservationId: Returns the details of a reservation.
- * POST /reservations/:bookId: Creates a new reservation.
- * DELETE /reservations/:bookId: Deletes a reservation.
- * GET /reservations/user/:userId: Returns the list of reservations for the
- * specified user.
- *
- */
-
 @Slf4j
 @RestController
 @RequestMapping("/reservations")
@@ -43,25 +31,18 @@ public class ReservationsController {
 
     private final IssueDetailsService issueDetailsService;
     private final BookService bookService;
-    private final JWTConfig jwtConfig;
 
-    ReservationsController(BookService bookService, IssueDetailsService issueDetailsService, JWTConfig jwtConfig) {
+    ReservationsController(BookService bookService, IssueDetailsService issueDetailsService) {
         this.bookService = bookService;
         this.issueDetailsService = issueDetailsService;
-        this.jwtConfig = jwtConfig;
-
     }
 
     @GetMapping
-    public List<IssueDetail> getReservedBooksForCurrentUser(@RequestHeader("Authorization") String authorizationHeader) {
+    public List<IssueDetail> getReservedBooksForCurrentUser(HttpServletRequest request, @RequestHeader("Authorization") String authorizationHeader) {
+        User loggedInUser = (User) request.getAttribute("loggedInUser");
 
-        User loggedInUser = jwtConfig.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
-
-        List<IssueDetail> books = issueDetailsService.findAllReservedBooksForCurrentUser(loggedInUser);
-
-        return books;
+        return issueDetailsService.findAllReservedBooksForCurrentUser(loggedInUser);
     }
-
 
     @Data
     @AllArgsConstructor
@@ -78,9 +59,9 @@ public class ReservationsController {
      * @return
      */
     @GetMapping("/page")
-    public ReservedBooksResponse getPageOfReservedBooks(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Optional<Integer> limit, @RequestParam Optional<Integer> skip) {
-        
-        User loggedInUser = jwtConfig.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
+    public ReservedBooksResponse getPageOfReservedBooks(HttpServletRequest request, @RequestHeader("Authorization") String authorizationHeader, @RequestParam Optional<Integer> limit, @RequestParam Optional<Integer> skip) {
+
+        User loggedInUser = (User) request.getAttribute("loggedInUser");
 
         if (!loggedInUser.isAdmin()) {
             return null;
@@ -101,8 +82,9 @@ public class ReservationsController {
     }
 
     @PostMapping("/{bookId}")
-    public ReservationResponse reserveBook(@RequestHeader("Authorization") String authorizationHeader, @PathVariable String bookId) {
-        User loggedInUser = jwtConfig.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
+    public ReservationResponse reserveBook(HttpServletRequest request, @RequestHeader("Authorization") String authorizationHeader, @PathVariable String bookId) {
+//        User loggedInUser = jwtConfig.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
+        User loggedInUser = (User) request.getAttribute("loggedInUser");
 
         Optional<Book> book = bookService.bookById(bookId);
 
@@ -121,8 +103,8 @@ public class ReservationsController {
     }
 
     @DeleteMapping("/{reservationId}")
-    public CancelReservationResponse cancelReservation(@RequestHeader("Authorization") String authorizationHeader, @PathVariable String reservationId) {
-        User loggedInUser = jwtConfig.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
+    public CancelReservationResponse cancelReservation(HttpServletRequest request, @RequestHeader("Authorization") String authorizationHeader, @PathVariable String reservationId) {
+        User loggedInUser = (User) request.getAttribute("loggedInUser");
 
         issueDetailsService.cancelReservation(reservationId, loggedInUser.get_id());;
         CancelReservationResponse response  = new CancelReservationResponse();

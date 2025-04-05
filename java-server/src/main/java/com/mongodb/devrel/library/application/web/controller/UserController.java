@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import com.mongodb.devrel.library.domain.model.User;
 import com.mongodb.devrel.library.domain.service.UserService;
-import com.mongodb.devrel.library.resources.config.JWTConfig;
+import com.mongodb.devrel.library.infrastructure.config.JWTConfig;
 import com.mongodb.devrel.library.domain.util.LoggedInUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,6 @@ import lombok.Data;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
 
     private final UserService userService;
     private final JWTConfig jwtConfig;

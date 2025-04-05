@@ -2,9 +2,8 @@ package com.mongodb.devrel.library.domain.service;
 
 import com.mongodb.devrel.library.domain.model.User;
 
-import com.mongodb.devrel.library.resources.repository.UserRepository;
+import com.mongodb.devrel.library.infrastructure.repository.UserRepository;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
