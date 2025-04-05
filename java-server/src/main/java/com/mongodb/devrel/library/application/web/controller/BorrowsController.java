@@ -3,6 +3,7 @@ package com.mongodb.devrel.library.application.web.controller;
 import com.mongodb.devrel.library.domain.model.IssueDetail;
 import com.mongodb.devrel.library.domain.model.User;
 import com.mongodb.devrel.library.domain.service.IssueDetailsService;
+import com.mongodb.devrel.library.domain.service.TokenService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.domain.Page;
@@ -10,25 +11,24 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import com.mongodb.devrel.library.resources.config.JWTConfig;
 
 @RestController
 @RequestMapping("/borrow")
 public class BorrowsController {
 
     private final IssueDetailsService issueDetailsService;
-    private final JWTConfig jwtConfig;
+    private final TokenService tokenService;
 
     BorrowsController(
             IssueDetailsService issueDetailsService,
-            JWTConfig jwtConfig) {
+            TokenService tokenService) {
         this.issueDetailsService = issueDetailsService;
-        this.jwtConfig = jwtConfig;
+        this.tokenService = tokenService;
     }
 
     @GetMapping
     public List<IssueDetail> getBorrowedBooksForCurrentUser(@RequestHeader("Authorization") String authorizationHeader) {
-        User loggedInUser = jwtConfig.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
+        User loggedInUser = tokenService.extractUserFromHeader(authorizationHeader);
 
         return issueDetailsService.findAllBorrowedBooksForCurrentUser(loggedInUser);
     }
@@ -41,7 +41,7 @@ public class BorrowsController {
 
      @GetMapping("/page")
      public BorrowedBooksResponse getPageOfBorrowedBooks(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Optional<Integer> limit, @RequestParam Optional<Integer> skip) {
-         User loggedInUser = jwtConfig.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
+         User loggedInUser = tokenService.extractUserFromHeader(authorizationHeader);
 
          // only admins can see all borrowed books
         if (!loggedInUser.isAdmin()) {

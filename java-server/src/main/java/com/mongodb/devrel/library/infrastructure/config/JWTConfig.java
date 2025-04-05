@@ -1,4 +1,4 @@
-package com.mongodb.devrel.library.resources.config;
+package com.mongodb.devrel.library.infrastructure.config;
 
 import com.mongodb.devrel.library.domain.model.User;
 import io.jsonwebtoken.Claims;
@@ -86,19 +86,5 @@ public class JWTConfig {
         return user;
     }
 
-    public User loggedInUserFromBearerAuthenticationHeader(String authorizationHeader) {
-        String token = null;
-
-        if (authorizationHeader.startsWith("Bearer ")) {
-            token = authorizationHeader.substring(7);
-        }
-
-        User user = toUser(token);
-
-        log.debug("Token: " + token);
-        log.debug("Name: " + user.getName());
-
-        return user;
-    }
 }
 
