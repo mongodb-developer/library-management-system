@@ -2,8 +2,11 @@ package com.mongodb.devrel.library.domain.model;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import lombok.AllArgsConstructor;
@@ -19,8 +22,9 @@ public class IssueDetail {
     public static final String RESERVED = "reservation";
     public static final String BORROWED = "borrowedBook";
 
-    @MongoId
-    private String _id;
+    @MongoId(FieldType.OBJECT_ID)
+    @JsonProperty("_id")
+    String id;
 
     private BookExtRef book;
 

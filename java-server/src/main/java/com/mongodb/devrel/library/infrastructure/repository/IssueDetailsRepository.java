@@ -24,7 +24,7 @@ public interface IssueDetailsRepository extends MongoRepository<IssueDetail, Str
     Page<IssueDetail> findAllReservedBooks(Pageable page);
 
     @Query("{ 'user._id': ?0, 'recordType': 'borrowedBook' }")
-    List<IssueDetail> findBorrowedBooksForUserId(String userId);
+    List<IssueDetail> findBorrowedBooksForUserId(ObjectId userId);
 
     @Query("{ 'user._id': ?0, 'recordType': 'reservation' }")
     List<IssueDetail> findReservedBooksForUserId(ObjectId userId);

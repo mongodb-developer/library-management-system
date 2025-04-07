@@ -1,7 +1,6 @@
 package com.mongodb.devrel.library.application.web.controller;
 
-import java.util.Optional;
-
+import com.mongodb.devrel.library.application.web.controller.response.JWTResponse;
 import com.mongodb.devrel.library.domain.model.User;
 import com.mongodb.devrel.library.domain.service.UserService;
 import com.mongodb.devrel.library.domain.util.LoggedInUser;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.Data;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -30,19 +29,9 @@ public class UserController {
     @GetMapping("/login")
     public ResponseEntity<JWTResponse> login(@RequestParam Optional<String> userName) {
         User user = userService.loginUser(userName.orElse(""));
-
         LoggedInUser.user = user;
-
         String result = jwtConfig.fromUser(user);
-        JWTResponse response = new JWTResponse();
-        response.jwt = result;
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @Data
-    private class JWTResponse {
-        String jwt;
+        return new ResponseEntity<>(new JWTResponse(result), HttpStatus.OK);
     }
 
 }

@@ -18,9 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.mongodb.devrel.library.application.web.controller.util.Constants.DEFAULT_PAGE_NUMBER;
+import static com.mongodb.devrel.library.application.web.controller.util.Constants.DEFAULT_PAGE_SIZE;
+
 @RestController
 @RequestMapping("/books")
-public class BookController {
+public class BookController extends BaseController{
 
     private final BookService bookService;
     private final ReviewService reviewService;
@@ -33,8 +36,8 @@ public class BookController {
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks(@RequestParam Optional<Integer> limit, @RequestParam Optional<Integer> skip) {
 
-        Integer theLimit = limit.orElse(10);
-        Integer theSkip = skip.orElse(0);
+        Integer theLimit = limit.orElse(DEFAULT_PAGE_SIZE);
+        Integer theSkip = skip.orElse(DEFAULT_PAGE_NUMBER);
         Page<Book> books = bookService.findAllBooks(theLimit, theSkip);
 
         return new ResponseEntity<>(books.getContent(), HttpStatus.OK);
@@ -46,9 +49,7 @@ public class BookController {
     }
 
     @PostMapping("/{id}/reviews")
-    public ResponseEntity<Review> createBookReview(HttpServletRequest request,  @PathVariable String id, @RequestBody ReviewRequest reviewRequest, @RequestHeader("Authorization") String authorizationHeader) {
-        User loggedInUser = (User) request.getAttribute("loggedInUser");
-
+    public ResponseEntity<Review> createBookReview(@ModelAttribute("loggedInUser") User loggedInUser, @PathVariable String id, @RequestBody ReviewRequest reviewRequest, @RequestHeader("Authorization") String authorizationHeader) {
         return new ResponseEntity<>(reviewService.createReview(id, reviewRequest, loggedInUser), HttpStatus.CREATED);
     }
 

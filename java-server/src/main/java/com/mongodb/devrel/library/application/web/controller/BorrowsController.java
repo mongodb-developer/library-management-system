@@ -1,74 +1,61 @@
 package com.mongodb.devrel.library.application.web.controller;
 
+import com.mongodb.devrel.library.application.web.controller.response.BorrowedBookResponse;
 import com.mongodb.devrel.library.domain.model.IssueDetail;
 import com.mongodb.devrel.library.domain.model.User;
 import com.mongodb.devrel.library.domain.service.IssueDetailsService;
-import com.mongodb.devrel.library.domain.service.TokenService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
+import static com.mongodb.devrel.library.application.web.controller.util.Constants.BOOK_RETURNED_SUCCESSFULLY;
+
 @RestController
 @RequestMapping("/borrow")
-public class BorrowsController {
+@Slf4j
+public class BorrowsController extends BaseController{
 
     private final IssueDetailsService issueDetailsService;
-    private final TokenService tokenService;
 
     BorrowsController(
-            IssueDetailsService issueDetailsService,
-            TokenService tokenService) {
+            IssueDetailsService issueDetailsService) {
         this.issueDetailsService = issueDetailsService;
-        this.tokenService = tokenService;
     }
 
     @GetMapping
-    public List<IssueDetail> getBorrowedBooksForCurrentUser(@RequestHeader("Authorization") String authorizationHeader) {
-        User loggedInUser = tokenService.extractUserFromHeader(authorizationHeader);
-
-        return issueDetailsService.findAllBorrowedBooksForCurrentUser(loggedInUser);
-    }
-
-    @Data
-    @AllArgsConstructor
-    private static class BorrowedBooksResponse {
-        List<IssueDetail> data;
+    public ResponseEntity<List<IssueDetail>> getBorrowedBooksForCurrentUser(@ModelAttribute("loggedInUser") User loggedInUser) {
+        return ResponseEntity.ok(issueDetailsService.findAllBorrowedBooksForCurrentUser(loggedInUser));
     }
 
      @GetMapping("/page")
-     public BorrowedBooksResponse getPageOfBorrowedBooks(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Optional<Integer> limit, @RequestParam Optional<Integer> skip) {
-         User loggedInUser = tokenService.extractUserFromHeader(authorizationHeader);
-
-         // only admins can see all borrowed books
+     public ResponseEntity<BorrowedBookResponse> getPageOfBorrowedBooks(@ModelAttribute("loggedInUser") User loggedInUser, @RequestParam Optional<Integer> limit, @RequestParam Optional<Integer> skip) {
         if (!loggedInUser.isAdmin()) {
-            return null;
+            return ResponseEntity.status(403).build();
         }
 
         Integer theLimit = limit.orElse(10);
         Integer theSkip = skip.orElse(0);
         Page<IssueDetail> books = issueDetailsService.findAllBorrowedBooks(theLimit, theSkip);
-        return new BorrowedBooksResponse(books.getContent());
+        return ResponseEntity.ok(new BorrowedBookResponse(books.getContent()));
      }
 
      @PostMapping("{bookId}/{userId}")
+     @ResponseStatus(HttpStatus.NO_CONTENT)
      void lendBookToUser(@PathVariable String bookId, @PathVariable String userId) {
-        issueDetailsService.lendBookTouser(bookId, userId);
+         issueDetailsService.lendBookToUser(bookId, userId);
+         log.info("Book {} lend to userId {}", bookId, userId);
      }
 
      @PostMapping("{bookId}/{userId}/return")
-     String returnBook(@PathVariable String bookId, @PathVariable String userId) {
-         Integer updated = issueDetailsService.userReturnsBook(bookId, userId);
-
-         return "{\n" + //
-                          "    \"acknowledged\": true,\n" + //
-                          "    \"modifiedCount\": 1,\n" + //
-                          "    \"upsertedId\": null,\n" + //
-                          "    \"upsertedCount\": 0,\n" + //
-                          "    \"matchedCount\": 1\n" + //
-                          "}";
+     @ResponseStatus(HttpStatus.NO_CONTENT)
+     public ResponseEntity<String> returnBook(@PathVariable String bookId, @PathVariable String userId) {
+         issueDetailsService.userReturnsBook(bookId, userId);
+         return ResponseEntity.ok(BOOK_RETURNED_SUCCESSFULLY);
      }
 }
