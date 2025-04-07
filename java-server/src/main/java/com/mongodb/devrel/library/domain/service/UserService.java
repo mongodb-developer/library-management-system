@@ -28,14 +28,8 @@ public class UserService {
     public User createNewUser() {
         // generate User Name using ramdom strings
         String[] adjectives = {"Abrasive", "Brash", "Callous", "Daft", "Eccentric", "Fiesty", "Golden", "Holy", "Ignominious", "Joltin", "Killer", "Luscious", "Mushy", "Nasty", "OldSchool", "Pompous", "Quiet", "Rowdy", "Sneaky", "Tawdry"};
-        String[] animals = {"Alligator", "Barracuda", "Cheetah", "Dingo", "Elephant", "Falcon", "Gorilla", "Hyena", "Iguana", "Jaguar", "Koala", "Lemur", "Mongoose", "Narwhal", "Orangutan", "Platypus", "Quetzal", "Rhino", "Scorpion", "Tarantula"};
-        
-        Random random = new Random();
-        String randomAdjective = adjectives[random.nextInt(adjectives.length)];
-        String randomAnimal = animals[random.nextInt(animals.length)];
-        
-        String userName = randomAdjective + " " + randomAnimal;
-        
+        String userName = getString(adjectives);
+
         // create and insert the newly created user
         User newUser = new User();
         newUser.setName(userName);
@@ -44,6 +38,16 @@ public class UserService {
         newUser = userRepository.insert(newUser);
     
         return newUser;
+    }
+
+    private static String getString(String[] adjectives) {
+        String[] animals = {"Alligator", "Barracuda", "Cheetah", "Dingo", "Elephant", "Falcon", "Gorilla", "Hyena", "Iguana", "Jaguar", "Koala", "Lemur", "Mongoose", "Narwhal", "Orangutan", "Platypus", "Quetzal", "Rhino", "Scorpion", "Tarantula"};
+
+        Random random = new Random();
+        String randomAdjective = adjectives[random.nextInt(adjectives.length)];
+        String randomAnimal = animals[random.nextInt(animals.length)];
+
+        return randomAdjective + " " + randomAnimal;
     }
 
     public Optional<User> userById(ObjectId id) {
