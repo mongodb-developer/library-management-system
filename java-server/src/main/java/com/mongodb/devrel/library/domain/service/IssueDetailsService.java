@@ -54,7 +54,7 @@ public class IssueDetailsService {
 
         IssueDetail insertedIssue = issueDetailsRepository.insert(issueDetail);
 
-        Integer updatedBooks = bookRepository.decreaseAvailableAmountByOne(book.get_id());
+        Integer updatedBooks = bookRepository.decreaseAvailableAmountByOne(book.getId());
 
         return insertedIssue;
     }

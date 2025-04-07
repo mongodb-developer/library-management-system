@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface BookRepository extends MongoRepository<Book, String> {
     // we need to return our book.id as book._id per the JavaScript client and to be on par with the Node server
-    Optional<Book> findBookBy_id(String id);
+    Optional<Book> findBookById(String id);
 
     /**
      * Search books by title or author's name, using a RegExp

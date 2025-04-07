@@ -76,7 +76,7 @@ public class IssueDetail {
             BookExtRef bookExtRef = new IssueDetail.BookExtRef();
 
             bookExtRef.setTitle(book.getTitle());
-            bookExtRef.set_id(book.get_id());
+            bookExtRef.set_id(book.getId());
 
             return bookExtRef;
         }

@@ -1,8 +1,12 @@
 package com.mongodb.devrel.library.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.util.List;
@@ -12,8 +16,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Book {
-    @MongoId
-    private String _id;
+
+    @Id
+    @JsonProperty("_id")
+    private String id;
 
     private String title;
 
@@ -30,6 +36,8 @@ public class Book {
     private String cover;
 
     private List<Attribute> attributes;
+
+    private String isbn;
 
     /**
      * Number of books in total.

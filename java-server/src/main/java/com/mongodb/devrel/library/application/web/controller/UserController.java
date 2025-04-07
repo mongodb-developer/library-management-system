@@ -4,8 +4,8 @@ import java.util.Optional;
 
 import com.mongodb.devrel.library.domain.model.User;
 import com.mongodb.devrel.library.domain.service.UserService;
-import com.mongodb.devrel.library.infrastructure.config.JWTConfig;
 import com.mongodb.devrel.library.domain.util.LoggedInUser;
+import com.mongodb.devrel.library.infrastructure.config.JWTConfig;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,7 +37,7 @@ public class UserController {
         JWTResponse response = new JWTResponse();
         response.jwt = result;
 
-        return new ResponseEntity<JWTResponse>(response, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Data

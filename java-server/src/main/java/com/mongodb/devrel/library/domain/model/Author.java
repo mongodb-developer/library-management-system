@@ -1,13 +1,12 @@
 package com.mongodb.devrel.library.domain.model;
 
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.util.List;
 
@@ -16,9 +15,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Author {
-    @Id
-    @Field("_id")
-    private ObjectId id;
+
+    @MongoId(FieldType.OBJECT_ID)
+    @JsonProperty("_id")
+    private String id;
 
     private String name;
 
@@ -26,7 +26,7 @@ public class Author {
 
     private String bio;
 
-    private List<String> books;
+    private List<Book> books;
 
     private List<String> aliases;
 }

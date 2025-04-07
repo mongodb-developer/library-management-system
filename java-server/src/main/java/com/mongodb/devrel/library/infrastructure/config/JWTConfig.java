@@ -1,4 +1,16 @@
-package com.mongodb.devrel.library.infrastructure.config;
+package com.mongodb.devrel.library.infrastructure.config;/*
+ * Copyright (c) 2025 MongoDB, Inc.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at:
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0 *
+ *
+ * Contributors:
+ * - Ricardo Mello
+ */
+
+
 
 import com.mongodb.devrel.library.domain.model.User;
 import io.jsonwebtoken.Claims;
@@ -16,7 +28,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-
 @Slf4j
 @Component
 public class JWTConfig {
@@ -29,17 +40,14 @@ public class JWTConfig {
     }
 
     public String fromUser(User user) {
-        // Replace with actual values
         String userId = user.get_id().toString();
         String userName = user.getName();
-        boolean isAdmin = true; // Replace with user.isAdmin
+        boolean isAdmin = true;
 
-        // Define issued at and expiration times
         long nowMillis = System.currentTimeMillis();
         Date issuedAt = new Date(nowMillis);
         Date expiration = new Date(nowMillis + (1000L * 60 * 60 * 24 * 365)); // 1 year
 
-        // Create the claims (payload)
         Map<String, Object> claims = new HashMap<>();
         claims.put("sub", userId);
         claims.put("name", userName);
@@ -47,7 +55,6 @@ public class JWTConfig {
         claims.put("iat", issuedAt.getTime() / 1000); // Unix timestamp
 
         SecretKey key = getSecretKey();
-        // Generate the JWT
         String jwt = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(issuedAt)
@@ -63,14 +70,12 @@ public class JWTConfig {
         User user = null;
 
         try {
-            // Parse the JWT
             SecretKey key = getSecretKey();
             Jws<Claims> claimsJws = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(jwt);
 
-            // Extract the claims
             Claims claims = claimsJws.getBody();
 
             user = new User(
@@ -87,4 +92,3 @@ public class JWTConfig {
     }
 
 }
-

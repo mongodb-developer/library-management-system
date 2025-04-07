@@ -8,7 +8,6 @@ import com.mongodb.devrel.library.domain.model.IssueDetail;
 import com.mongodb.devrel.library.domain.model.User;
 import com.mongodb.devrel.library.domain.service.BookService;
 import com.mongodb.devrel.library.domain.service.IssueDetailsService;
-import com.mongodb.devrel.library.infrastructure.config.JWTConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.DeleteMapping;
