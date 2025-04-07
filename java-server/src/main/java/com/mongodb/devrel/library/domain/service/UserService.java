@@ -20,9 +20,8 @@ public class UserService {
 
     public User loginUser(String userName) {
         Optional<User> user = userRepository.findUserByName(userName);
-        User loggedInUser = user.orElse(createNewUser());
 
-        return loggedInUser;
+        return user.orElse(createNewUser());
     }
 
     public User createNewUser() {

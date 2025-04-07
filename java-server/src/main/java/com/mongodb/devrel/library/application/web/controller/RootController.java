@@ -10,6 +10,6 @@ public class RootController {
     
     @GetMapping
     public String getRoot() {
-        return "OK Boomer";
+        return "Root Controller";
     }
 }

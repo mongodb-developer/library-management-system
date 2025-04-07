@@ -35,7 +35,7 @@ public class IssueDetailsService {
     }
 
     public List<IssueDetail> findAllBorrowedBooksForCurrentUser(User user) {
-       return issueDetailsRepository.findBorrowedBooksForUserId(user.get_id().toHexString());
+       return issueDetailsRepository.findBorrowedBooksForUserId(user.get_id());
     }
 
     public Page<IssueDetail> findAllReservedBooks(Integer limit, Integer skip) {
@@ -63,10 +63,8 @@ public class IssueDetailsService {
         issueDetailsRepository.cancelReservation(bookId, userId);
     }
 
-    public Integer lendBookTouser(String bookId, String userId) {
-        Integer updatedBooks = issueDetailsRepository.lendBookToUser(bookId, userId, LocalDateTime.now(), LocalDateTime.now().plusHours(12));
-
-        return updatedBooks;
+    public void lendBookToUser(String bookId, String userId) {
+        issueDetailsRepository.lendBookToUser(bookId, userId, LocalDateTime.now(), LocalDateTime.now().plusHours(12));
     }
 
     public Integer userReturnsBook(String bookId, String userId) {
