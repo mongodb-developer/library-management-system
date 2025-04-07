@@ -21,9 +21,6 @@ public class BookService {
 
     public Page<Book> findAllBooks(Integer limit, Integer skip) {
         PageRequest request = PageRequest.of(skip, limit, Sort.unsorted());
-
-        // findAll(Pageable) from PagingAndSortingRepository
-
         return bookRepository.findAll(request);
     }
 

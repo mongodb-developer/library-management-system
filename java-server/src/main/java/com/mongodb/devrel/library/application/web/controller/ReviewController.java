@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -27,8 +28,4 @@ public class ReviewController {
         return new ResponseEntity<>(reviewService.allReviews(), HttpStatus.OK);
     }
 
-    // @PostMapping
-    // public ResponseEntity<Review> createReview(@RequestBody Map<String, String> payload) {
-    //     return new ResponseEntity<Review>(reviewService.createReview(payload.get("reviewBody"), payload.get("imdbId")), HttpStatus.CREATED);
-    // }
 }

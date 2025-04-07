@@ -81,8 +81,7 @@ public class ReservationsController {
     }
 
     @PostMapping("/{bookId}")
-    public ReservationResponse reserveBook(HttpServletRequest request, @RequestHeader("Authorization") String authorizationHeader, @PathVariable String bookId) {
-//        User loggedInUser = jwtConfig.loggedInUserFromBearerAuthenticationHeader(authorizationHeader);
+    public ReservationResponse reserveBook(HttpServletRequest request, @PathVariable String bookId) {
         User loggedInUser = (User) request.getAttribute("loggedInUser");
 
         Optional<Book> book = bookService.bookById(bookId);
