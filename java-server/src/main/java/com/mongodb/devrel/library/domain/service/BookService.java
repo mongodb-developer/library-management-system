@@ -28,7 +28,7 @@ public class BookService {
     }
 
     public Optional<Book> bookById(String id) {
-        return bookRepository.findBookBy_id(id);
+        return bookRepository.findBookById(id);
     }
 
     public Page<Book> searchBooks(String theTerm) {

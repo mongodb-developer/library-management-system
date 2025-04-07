@@ -1,24 +1,40 @@
 package com.mongodb.devrel.library.domain.service;
 
 import com.mongodb.devrel.library.domain.model.Author;
-import com.mongodb.devrel.library.infrastructure.repository.AuthorRepository;
-import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
-
 import java.util.Optional;
+
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @Service
 public class AuthorService {
 
-    private final AuthorRepository authorRepository;
+    private final MongoOperations mongoOperations;
 
-    AuthorService(AuthorRepository authorRepository) {
-        this.authorRepository = authorRepository;
+    AuthorService(MongoOperations mongoOperations) {
+        this.mongoOperations = mongoOperations;
     }
 
-    public Optional<Author> authorById(ObjectId id) {
-        System.out.println(id);
-        return authorRepository.findAuthorById(id);
+    public Optional<Author> authorById(String id) {
+
+        Aggregation agg = newAggregation(
+                match(Criteria.where("_id").is(id)),
+                lookup()
+                        .from("books")
+                        .localField("books")
+                        .foreignField("_id")
+                        .pipeline(
+                                project()
+                                        .and("_id").as("isbn")
+                                        .andInclude("title", "cover")
+                        )
+                        .as("books")
+        );
+
+        return Optional.ofNullable(mongoOperations.aggregate(agg, "authors", Author.class).getMappedResults().getFirst());
     }
 }
