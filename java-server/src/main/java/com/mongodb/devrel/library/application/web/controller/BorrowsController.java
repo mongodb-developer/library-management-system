@@ -4,7 +4,6 @@ import com.mongodb.devrel.library.application.web.controller.response.BorrowedBo
 import com.mongodb.devrel.library.domain.model.IssueDetail;
 import com.mongodb.devrel.library.domain.model.User;
 import com.mongodb.devrel.library.domain.service.IssueDetailsService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

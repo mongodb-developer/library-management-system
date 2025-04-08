@@ -67,11 +67,9 @@ public class IssueDetailsService {
         issueDetailsRepository.lendBookToUser(bookId, userId, LocalDateTime.now(), LocalDateTime.now().plusHours(12));
     }
 
-    public Integer userReturnsBook(String bookId, String userId) {
-        Integer updatedBooks = issueDetailsRepository.userReturnsBook(bookId, userId, LocalDateTime.now());
-
+    public void userReturnsBook(String bookId, String userId) {
+        issueDetailsRepository.userReturnsBook(bookId, userId, LocalDateTime.now());
         bookRepository.increaseAvailableAmountByOne(bookId);
 
-        return updatedBooks;
     }
 }

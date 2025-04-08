@@ -1,11 +1,11 @@
 package com.mongodb.devrel.library.application.web.controller;
+
 import com.mongodb.devrel.library.application.web.controller.response.ReservationResponse;
 import com.mongodb.devrel.library.application.web.controller.response.ReservedBooksResponse;
 import com.mongodb.devrel.library.domain.model.IssueDetail;
 import com.mongodb.devrel.library.domain.model.User;
 import com.mongodb.devrel.library.domain.service.BookService;
 import com.mongodb.devrel.library.domain.service.IssueDetailsService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -16,19 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.mongodb.devrel.library.application.web.controller.util.Constants.*;
-
-/*
- * Copyright (c) 2025 MongoDB, Inc.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
- *
- *     http://www.apache.org/licenses/LICENSE-2.0 *
- *
- * Contributors:
- * - Ricardo Mello
- */
-
 
 @Slf4j
 @RestController
