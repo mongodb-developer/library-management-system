@@ -10,8 +10,6 @@ package com.mongodb.devrel.library.infrastructure.config;/*
  * - Ricardo Mello
  */
 
-
-
 import com.mongodb.devrel.library.domain.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -19,7 +17,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -66,8 +63,9 @@ public class JWTConfig {
         return jwt;
     }
 
-    public User toUser(String jwt) {
-        User user = null;
+    public Claims extractClaimsFromJwt(String jwt) {
+
+        Claims claims = null;
 
         try {
             SecretKey key = getSecretKey();
@@ -76,19 +74,13 @@ public class JWTConfig {
                     .build()
                     .parseClaimsJws(jwt);
 
-            Claims claims = claimsJws.getBody();
-
-            user = new User(
-                    new ObjectId(claims.get("sub", String.class)),
-                    claims.get("name", String.class),
-                    claims.get("isAdmin", Boolean.class)
-            );
+            claims = claimsJws.getBody();
 
         } catch (Exception e) {
-            log.error("Invalid JWT: ()", e.getMessage());
+            log.error("Invalid JWT: {}", e.getMessage());
         }
 
-        return user;
+        return claims;
     }
 
 }

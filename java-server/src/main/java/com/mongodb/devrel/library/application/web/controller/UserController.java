@@ -2,6 +2,7 @@ package com.mongodb.devrel.library.application.web.controller;
 
 import com.mongodb.devrel.library.application.web.controller.response.JWTResponse;
 import com.mongodb.devrel.library.domain.model.User;
+import com.mongodb.devrel.library.domain.service.TokenService;
 import com.mongodb.devrel.library.domain.service.UserService;
 import com.mongodb.devrel.library.domain.util.LoggedInUser;
 import com.mongodb.devrel.library.infrastructure.config.JWTConfig;
@@ -18,20 +19,16 @@ import java.util.Optional;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserService userService;
-    private final JWTConfig jwtConfig;
 
-    UserController(UserService userService, JWTConfig jwtConfig) {
-        this.userService = userService;
-        this.jwtConfig = jwtConfig;
+    private final TokenService tokenService;
+
+    UserController(TokenService tokenService) {
+        this.tokenService = tokenService;
     }
 
     @GetMapping("/login")
     public ResponseEntity<JWTResponse> login(@RequestParam Optional<String> userName) {
-        User user = userService.loginUser(userName.orElse(""));
-        LoggedInUser.user = user;
-        String result = jwtConfig.fromUser(user);
-        return new ResponseEntity<>(new JWTResponse(result), HttpStatus.OK);
+        return new ResponseEntity<>(new JWTResponse(tokenService.loginUser(userName)), HttpStatus.OK);
     }
 
 }
