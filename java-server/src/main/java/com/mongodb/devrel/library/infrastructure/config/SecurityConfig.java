@@ -1,11 +1,10 @@
 package com.mongodb.devrel.library.infrastructure.config;
 
+import com.mongodb.lang.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import com.mongodb.lang.NonNull;
 
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
