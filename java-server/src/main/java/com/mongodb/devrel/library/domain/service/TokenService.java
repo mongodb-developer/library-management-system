@@ -1,15 +1,4 @@
-package com.mongodb.devrel.library.domain.service;/*
- * Copyright (c) 2025 MongoDB, Inc.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at:
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *
- * Contributors:
- * - Ricardo Mello
- */
+package com.mongodb.devrel.library.domain.service;
 
 import com.mongodb.devrel.library.domain.model.User;
 import com.mongodb.devrel.library.domain.util.LoggedInUser;
@@ -17,8 +6,6 @@ import com.mongodb.devrel.library.infrastructure.config.JWTConfig;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

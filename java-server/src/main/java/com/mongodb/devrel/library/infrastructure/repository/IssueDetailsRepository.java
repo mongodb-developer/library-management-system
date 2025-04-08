@@ -1,18 +1,17 @@
 package com.mongodb.devrel.library.infrastructure.repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import com.mongodb.devrel.library.domain.model.IssueDetail;
-import org.springframework.data.domain.Pageable;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.DeleteQuery;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface IssueDetailsRepository extends MongoRepository<IssueDetail, String> {
@@ -30,7 +29,7 @@ public interface IssueDetailsRepository extends MongoRepository<IssueDetail, Str
     List<IssueDetail> findReservedBooksForUserId(ObjectId userId);
 
     @DeleteQuery("{ 'book._id' : ?0, 'user._id': new ObjectId('?1') }")
-    Integer cancelReservation(String bookId, ObjectId userId);
+    void cancelReservation(String bookId, ObjectId userId);
 
     @Query("{ 'book._id' : ?0, 'user._id': new ObjectId('?1') }")
     @Update("""
@@ -43,7 +42,7 @@ public interface IssueDetailsRepository extends MongoRepository<IssueDetail, Str
             }
         }
     """)
-    Integer lendBookToUser(String bookId, String userId, LocalDateTime currentDate, LocalDateTime dueDate);
+    void lendBookToUser(String bookId, String userId, LocalDateTime currentDate, LocalDateTime dueDate);
 
     @Query("{ 'book._id' : ?0, 'user._id': new ObjectId('?1') }")
     @Update("""

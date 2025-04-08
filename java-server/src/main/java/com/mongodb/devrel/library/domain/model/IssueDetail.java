@@ -1,17 +1,16 @@
 package com.mongodb.devrel.library.domain.model;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Document(collection = "issueDetails")
 @Data

@@ -1,11 +1,7 @@
 package com.mongodb.devrel.library.application.web.controller;
 
 import com.mongodb.devrel.library.application.web.controller.response.JWTResponse;
-import com.mongodb.devrel.library.domain.model.User;
 import com.mongodb.devrel.library.domain.service.TokenService;
-import com.mongodb.devrel.library.domain.service.UserService;
-import com.mongodb.devrel.library.domain.util.LoggedInUser;
-import com.mongodb.devrel.library.infrastructure.config.JWTConfig;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
