@@ -1,0 +1,26 @@
+spring:
+  data:
+    mongodb:
+      uri: ${MONGO_DB_URI}
+      database: library
+  security:
+    user:
+      password: password
+  mvc:
+    log-request-details: true
+  application:
+    name: libraryapp
+
+server:
+  port: 5000
+
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+        data:
+          mongodb: DEBUG
+
+jwt:
+  secret: mySuperSecretKeyWithEn

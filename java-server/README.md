@@ -23,6 +23,11 @@ For further reference, please consider the following sections:
 * [Spring Data MongoDB](https://docs.spring.io/spring-boot/3.4.1/reference/data/nosql.html#data.nosql.mongodb)
 * [Spring Boot DevTools](https://docs.spring.io/spring-boot/3.4.1/reference/using/devtools.html)
 
+### Running the application
+Open the root folder and run:
+
+`MONGO_DB_URI=<YOUR_CONNECTION_STRING> mvn spring-boot:run`
+
 ### Guides
 The following guides illustrate how to use some features concretely:
 
