@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.List;
 
@@ -60,7 +59,5 @@ public class Book {
 
     private List<Review> reviews;
 
-    // inserts references in Movie, creates an array ob ObjectIds
-    @DocumentReference
     private List<Review> reviewIds;
 }
