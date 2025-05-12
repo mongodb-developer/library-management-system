@@ -1,0 +1,50 @@
+services:
+  server:
+    image: node:23-alpine3.20
+    volumes:
+      - ../..:/workspaces:cached
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+
+    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    network_mode: service:mongodb
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongodb/mongodb-atlas-local:8.0
+    environment:
+      - MONGODB_INITDB_ROOT_USERNAME=admin
+      - MONGODB_INITDB_ROOT_PASSWORD=mongodb
+      - MONGO_INITDB_DATABASE=library
+    restart: unless-stopped
+    volumes:
+      - mongodb-data:/data/db
+      - ../..:/workspaces:cached
+    ports:
+      - 27017:27017
+    # To connect to library: from inside the container:
+    # mongosh mongodb://localhost/library --username admin --password mongodb --authenticationDatabase=admin
+    # From MongoDB extension:
+    # mongodb://admin:mongodb@localhost:27017/?directConnection=true
+    
+    # command overrides the default command declared by the container image, for example by Dockerfile's CMD.
+    # Unlike the CMD instruction in a Dockerfile, the command field doesn't automatically run within the context of the SHELL instruction defined in the image. 
+    # If your command relies on shell-specific features, such as environment variable expansion, you need to explicitly run it within a shell.
+    # that's why the /bin/bash -c
+    # we start the MongoDB server with /usr/local/bin/runner server in the background
+    # wait 5 seconds for the startup
+    # then run a healthcheck to see if mongod is running
+    # if that's the case, we import the library db
+    command: /bin/bash -c "/usr/local/bin/runner server & sleep 5 && /usr/local/bin/runner healthcheck && cd /workspaces/library-management-system/.devcontainer/data/library && cat xa* > books.bson.gz && gzip -d *.gz && rm xa* && cd .. && mongorestore --uri mongodb://localhost/library --drop library --username admin --password mongodb --authenticationDatabase=admin && sleep infinity"
+    # command: /bin/bash -c "mongod --bind_ip_all & sleep 5 && /usr/local/bin/runner healthcheck && cd /workspaces/library-management-system/.devcontainer/data && mongorestore --uri mongodb://localhost/library --drop library --username admin --password mongodb --authenticationDatabase=admin && sleep infinity"
+
+    # Add "forwardPorts": ["27017"] to **devcontainer.json** to forward MongoDB locally.
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+
+volumes:
+  mongodb-data:
