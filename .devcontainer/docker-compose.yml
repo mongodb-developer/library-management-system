@@ -40,8 +40,11 @@ services:
     # wait 5 seconds for the startup
     # then run a healthcheck to see if mongod is running
     # if that's the case, we import the library db
+
+    # some files in the DB are > 100 MB, Github does not allow files this big, so we've used split 
+    # split -b 5m books.bson.gz
+    # we join the generated files using cat
     command: /bin/bash -c "/usr/local/bin/runner server & sleep 5 && /usr/local/bin/runner healthcheck && cd /workspaces/library-management-system/.devcontainer/data/library && cat xa* > books.bson.gz && gzip -d *.gz && rm xa* && cd .. && mongorestore --uri mongodb://localhost/library --drop library --username admin --password mongodb --authenticationDatabase=admin && sleep infinity"
-    # command: /bin/bash -c "mongod --bind_ip_all & sleep 5 && /usr/local/bin/runner healthcheck && cd /workspaces/library-management-system/.devcontainer/data && mongorestore --uri mongodb://localhost/library --drop library --username admin --password mongodb --authenticationDatabase=admin && sleep infinity"
 
     # Add "forwardPorts": ["27017"] to **devcontainer.json** to forward MongoDB locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
