@@ -1,0 +1,8 @@
+{
+    "mdb.presetConnections": [
+        {
+            "name": "Library DB",
+            "connectionString": "mongodb://admin:mongodb@localhost:27017"
+        }
+    ]
+}
