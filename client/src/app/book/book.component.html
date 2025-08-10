@@ -66,6 +66,39 @@
         </mat-card-content>
     </mat-card>
 
+  <mat-card class="book-recs">
+    <h3>Similar Books</h3>
+    <div class="book-recs-content" *ngIf="similarBooks | async; else noRecs">
+      <mat-card *ngFor="let book of similarBooks | async" class="book-card">
+        <img class="img-link cropped book-thumbnail"
+             onerror="this.onerror=null; this.src='http://lgimages.s3.amazonaws.com/gc-md.gif'"
+             [routerLink]="['/books', book.isbn]"
+             mat-card-image [src]="book.cover" [alt]="book.title" />
+
+        <mat-card-header class="book-card-header">
+          <mat-card-title class="book-card-title">
+            <h5 class="book-title"><a [routerLink]="['/books', book.isbn]">{{ book.title }}</a></h5>
+            <span class="book-authors">by
+                    <span *ngFor="let author of book.authors; let last = last">
+                      <a [routerLink]="['/authors', author._id]">{{ author.name }}</a>
+                      <span *ngIf="!last">, </span>
+                    </span>
+                  </span>
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content class="book-card-content">
+          <div>
+            <p class="book-description" [innerHTML]="book.synopsis"></p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <ng-template #noRecs>
+      <p>No similar books found. </p>
+    </ng-template>
+  </mat-card>
+
     <mat-card class="book-reviews">
         <h3>Reviews from Readers</h3>
 
