@@ -12,7 +12,6 @@ import java.util.Optional;
 @Service
 public class BookService {
 
-
     private final BookRepository bookRepository;
 
     BookService(BookRepository bookRepository) {
@@ -32,5 +31,9 @@ public class BookService {
         PageRequest request = PageRequest.of(0, 10, Sort.unsorted());
 
         return bookRepository.searchByText(theTerm, request);
+    }
+
+    public void incrementBookInventory(String reservationId) {
+        bookRepository.increaseAvailableAmountByOne(reservationId);
     }
 }

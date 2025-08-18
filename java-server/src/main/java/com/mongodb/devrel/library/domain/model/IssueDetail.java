@@ -1,88 +1,66 @@
 package com.mongodb.devrel.library.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 @Document(collection = "issueDetails")
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class IssueDetail {
+public record IssueDetail(
 
+        @MongoId(FieldType.OBJECT_ID)
+        @JsonProperty("_id")
+        String id,
+
+        BookExtRef book,
+
+        LocalDateTime borrowDate,
+
+        LocalDateTime dueDate,
+
+        LocalDateTime expirationDate,
+
+        String recordType,
+
+        boolean returned,
+
+        LocalDateTime returnedDate,
+
+        UserExtRef user
+) {
     public static final String RESERVED = "reservation";
-    public static final String BORROWED = "borrowedBook";
 
-    @MongoId(FieldType.OBJECT_ID)
-    @JsonProperty("_id")
-    String id;
-
-    private BookExtRef book;
-
-    private LocalDateTime borrowDate;
-
-    private LocalDateTime dueDate;
-    
-    private LocalDateTime expirationDate;
-
-    private String recordType;
-
-    private boolean returned;
-
-    private LocalDateTime returnedDate;
-
-    private UserExtRef user;
-
-    public IssueDetail(Book book, User user) {
-        this();
-
-        this.book = BookExtRef.from(book);
-        this.user = UserExtRef.from(user);
-        this.expirationDate = LocalDateTime.now().plus(12, ChronoUnit.HOURS);
-        recordType = "";
+    public IssueDetail(Book book, User user, String recordType) {
+        this(
+                null,
+                BookExtRef.from(book),
+                null,
+                null, // dueDate
+                LocalDateTime.now().plusHours(12),
+                recordType,
+                false,
+                null,
+                UserExtRef.from(user)
+        );
     }
 
     // Extended Reference Pattern
-    @Data
-    public static class UserExtRef {
-        private ObjectId _id;
-        private String name;
-
+    public record UserExtRef(ObjectId _id, String name) {
         public String get_id() {
             return _id != null ? _id.toHexString() : null;
         }
 
         public static UserExtRef from(User user) {
-            UserExtRef userExtRef = new UserExtRef();
-
-            userExtRef.set_id(user.get_id());
-            userExtRef.setName(user.getName());
-
-            return userExtRef;
+            return new UserExtRef(user._id(), user.name());
         }
     }
 
-    @Data
-    public static class BookExtRef {
-        private String _id;
-        private String title;
-
+    public record BookExtRef(String _id, String title) {
         public static BookExtRef from(Book book) {
-            BookExtRef bookExtRef = new IssueDetail.BookExtRef();
-
-            bookExtRef.setTitle(book.getTitle());
-            bookExtRef.set_id(book.getId());
-
-            return bookExtRef;
+            return new BookExtRef(book.id(), book.title());
         }
     }
 }
-
