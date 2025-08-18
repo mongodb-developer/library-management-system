@@ -4,20 +4,22 @@ import com.mongodb.devrel.library.domain.model.User;
 import com.mongodb.devrel.library.domain.util.LoggedInUser;
 import com.mongodb.devrel.library.infrastructure.config.JWTConfig;
 import io.jsonwebtoken.Claims;
-import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-@Slf4j
-public class TokenService {
+public class TokenJWTService {
+
+    private static final Logger log = LoggerFactory.getLogger(TokenJWTService.class);
 
     private final JWTConfig jwtConfig;
     private final UserService userService;
 
-    TokenService(JWTConfig jwtConfig, UserService userService) {
+        public TokenJWTService(JWTConfig jwtConfig, UserService userService) {
         this.jwtConfig = jwtConfig;
         this.userService = userService;
     }
@@ -38,7 +40,7 @@ public class TokenService {
         );
 
         log.debug("Token: {}", token);
-        log.debug("Name: {}", user.getName());
+        log.debug("Name: {}", user.name());
 
         return user;
     }

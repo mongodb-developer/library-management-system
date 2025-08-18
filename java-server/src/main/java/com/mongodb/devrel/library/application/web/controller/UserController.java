@@ -1,7 +1,7 @@
 package com.mongodb.devrel.library.application.web.controller;
 
 import com.mongodb.devrel.library.application.web.controller.response.JWTResponse;
-import com.mongodb.devrel.library.domain.service.TokenService;
+import com.mongodb.devrel.library.domain.service.TokenJWTService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,15 +16,15 @@ import java.util.Optional;
 public class UserController {
 
 
-    private final TokenService tokenService;
+    private final TokenJWTService tokenJWTService;
 
-    UserController(TokenService tokenService) {
-        this.tokenService = tokenService;
+    UserController(TokenJWTService tokenJWTService) {
+        this.tokenJWTService = tokenJWTService;
     }
 
     @GetMapping("/login")
     public ResponseEntity<JWTResponse> login(@RequestParam Optional<String> userName) {
-        return new ResponseEntity<>(new JWTResponse(tokenService.loginUser(userName)), HttpStatus.OK);
+        return new ResponseEntity<>(new JWTResponse(tokenJWTService.loginUser(userName)), HttpStatus.OK);
     }
 
 }
