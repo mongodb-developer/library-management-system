@@ -6,21 +6,32 @@ import com.mongodb.devrel.library.domain.model.IssueDetail;
 import com.mongodb.devrel.library.domain.model.User;
 import com.mongodb.devrel.library.domain.service.BookService;
 import com.mongodb.devrel.library.domain.service.IssueDetailsService;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
 
 import static com.mongodb.devrel.library.application.web.controller.util.Constants.*;
 
-@Slf4j
 @RestController
 @RequestMapping("/reservations")
 public class ReservationController extends BaseController{
+
+    private static final Logger log = LoggerFactory.getLogger(ReservationController.class);
+
 
     private final IssueDetailsService issueDetailsService;
     private final BookService bookService;
@@ -50,8 +61,8 @@ public class ReservationController extends BaseController{
         return bookService.bookById(bookId)
                 .map(book -> {
                     IssueDetail reservedBook = issueDetailsService.reserveBookForUser(book, loggedInUser);
-                    log.info("User {} reserved book {}", loggedInUser.getName(), bookId);
-                    return ResponseEntity.ok(new ReservationResponse(RESERVATION_CREATED, reservedBook.getId()));
+                    log.info("User {} reserved book {}", loggedInUser.name(), bookId);
+                    return ResponseEntity.ok(new ReservationResponse(RESERVATION_CREATED, reservedBook.id()));
                 })
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
@@ -59,7 +70,9 @@ public class ReservationController extends BaseController{
     @DeleteMapping("/{reservationId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancelReservation(@ModelAttribute("loggedInUser") User loggedInUser, @PathVariable String reservationId) {
-        issueDetailsService.cancelReservation(reservationId, loggedInUser.get_id());
-        log.info("User {} canceled reservation id {}", loggedInUser.getName(), reservationId);
+        issueDetailsService.cancelReservation(reservationId, loggedInUser._id());
+        bookService.incrementBookInventory(reservationId);
+
+        log.info("User {} canceled reservation id {}", loggedInUser.name(), reservationId);
     }
 }

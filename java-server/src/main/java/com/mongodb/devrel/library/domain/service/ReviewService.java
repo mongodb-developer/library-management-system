@@ -17,7 +17,6 @@ import java.util.List;
 @Service
 public class ReviewService {
 
-
     private final ReviewRepository reviewRepository;
     private final MongoOperations mongoOperation;
 
@@ -26,13 +25,12 @@ public class ReviewService {
         this.mongoOperation = mongoOperation;
     }
 
-
     public List<Review> allReviews() {
         return reviewRepository.findAll();
     }
 
      public Review createReview(String bookId, ReviewRequest reviewRequest, User loggedInUser) {
-         Review review = new Review(null, reviewRequest.text(), reviewRequest.rating(), loggedInUser.getName(), new Date(), bookId);
+         Review review = new Review(null, reviewRequest.text(), reviewRequest.rating(), loggedInUser.name(), new Date(), bookId);
 
          reviewRepository.insert(review);
 
