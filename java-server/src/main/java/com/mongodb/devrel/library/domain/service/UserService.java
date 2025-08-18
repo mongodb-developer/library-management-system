@@ -29,10 +29,7 @@ public class UserService {
         String userName = getString(adjectives);
 
         // create and insert the newly created user
-        User newUser = new User();
-        newUser.setName(userName);
-        newUser.setAdmin(true);
-
+        User newUser = new User(null, userName, true);
         newUser = userRepository.insert(newUser);
     
         return newUser;
