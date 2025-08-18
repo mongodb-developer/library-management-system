@@ -17,9 +17,7 @@ import java.util.List;
 @Service
 public class IssueDetailsService {
 
-
     private final IssueDetailsRepository issueDetailsRepository;
-
 
     private final BookRepository bookRepository;
 
@@ -35,7 +33,7 @@ public class IssueDetailsService {
     }
 
     public List<IssueDetail> findAllBorrowedBooksForCurrentUser(User user) {
-       return issueDetailsRepository.findBorrowedBooksForUserId(user.get_id());
+       return issueDetailsRepository.findBorrowedBooksForUserId(user._id());
     }
 
     public Page<IssueDetail> findAllReservedBooks(Integer limit, Integer skip) {
@@ -45,16 +43,14 @@ public class IssueDetailsService {
     }
 
     public List<IssueDetail> findAllReservedBooksForCurrentUser(User user) {
-        return issueDetailsRepository.findReservedBooksForUserId(user.get_id());
+        return issueDetailsRepository.findReservedBooksForUserId(user._id());
     }
 
     public IssueDetail reserveBookForUser(Book book, User user) {
-        IssueDetail issueDetail = new IssueDetail(book, user);
-        issueDetail.setRecordType(IssueDetail.RESERVED);
+        IssueDetail issueDetail = new IssueDetail(book, user, IssueDetail.RESERVED);
 
         IssueDetail insertedIssue = issueDetailsRepository.insert(issueDetail);
-
-        Integer updatedBooks = bookRepository.decreaseAvailableAmountByOne(book.getId());
+        bookRepository.decreaseAvailableAmountByOne(book.id());
 
         return insertedIssue;
     }
