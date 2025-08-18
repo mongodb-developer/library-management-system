@@ -33,6 +33,6 @@ public interface BookRepository extends MongoRepository<Book, String> {
 
     @Query("{'_id' : ?0}")
     @Update("{'$inc': {'available': 1}}")
-    Integer increaseAvailableAmountByOne(String bookId);
+    void increaseAvailableAmountByOne(String bookId);
 }
 

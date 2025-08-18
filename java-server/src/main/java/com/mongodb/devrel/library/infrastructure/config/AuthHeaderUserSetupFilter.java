@@ -1,12 +1,13 @@
 package com.mongodb.devrel.library.infrastructure.config;
 
 import com.mongodb.devrel.library.domain.model.User;
-import com.mongodb.devrel.library.domain.service.TokenService;
+import com.mongodb.devrel.library.domain.service.TokenJWTService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -14,13 +15,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-@Slf4j
 public class AuthHeaderUserSetupFilter extends OncePerRequestFilter {
 
-    private final TokenService tokenService;
+    private static final Logger log = LoggerFactory.getLogger(AuthHeaderUserSetupFilter.class);
+    private final TokenJWTService tokenJWTService;
 
-    public AuthHeaderUserSetupFilter(TokenService tokenService) {
-        this.tokenService = tokenService;
+    public AuthHeaderUserSetupFilter(TokenJWTService tokenJWTService) {
+        this.tokenJWTService = tokenJWTService;
     }
 
     @Override
@@ -29,10 +30,10 @@ public class AuthHeaderUserSetupFilter extends OncePerRequestFilter {
 
         String authorizationHeader = request.getHeader("Authorization");
         if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
-            User loggedInUser = tokenService.extractUserFromHeader(authorizationHeader);
+            User loggedInUser = tokenJWTService.extractUserFromHeader(authorizationHeader);
             request.setAttribute("loggedInUser", loggedInUser);
 
-            log.debug("Name: {}", loggedInUser.getName());
+            log.debug("Name: {}", loggedInUser.name());
         }
 
         chain.doFilter(request, response);

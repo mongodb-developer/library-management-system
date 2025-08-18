@@ -1,63 +1,50 @@
 package com.mongodb.devrel.library.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
 @Document(collection = "books")
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class Book {
+public record Book(
 
     @Id
     @JsonProperty("_id")
-    private String id;
+    String id,
 
-    private String title;
+    String title,
 
-    private List<Author> authors;
+    List<Author> authors,
 
-    private List<String> genres;
+    List<String> genres,
 
-    private int pages;
+    Integer pages,
 
-    private int year;
+    Integer year,
 
-    private String synopsis;
+    String synopsis,
 
-    private String cover;
+    String cover,
 
-    private List<Attribute> attributes;
+    List<Attribute> attributes,
 
-    private String isbn;
+    String isbn,
 
-    /**
-     * Number of books in total.
-     */
-    private int totalInventory;
+    Integer totalInventory,
 
-    /**
-     * Number of books currently available.
-     * This field is computed. See
-     * https://www.mongodb.com/blog/post/building-with-patterns-the-computed-pattern.
-     */
-    private int available;
+    Integer available,
 
-    private String binding;
+    String binding,
 
-    private String language;
+    String language,
 
-    private String publisher;
+    String publisher,
 
-    private String longTitle;
+    String longTitle,
 
-    private List<Review> reviews;
+    List<Review> reviews,
 
-    private List<Review> reviewIds;
+    List<Review> reviewIds) {
+
 }
