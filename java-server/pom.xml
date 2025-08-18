@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.1</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<version>3.4.5</version>
+		<relativePath/>
 	</parent>
 	<groupId>com.mongodb.devrel</groupId>
 	<artifactId>libraryapp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>movies</name>
+	<name>Library Management System</name>
 	<description>Library app for Developer Days</description>
 	<url/>
 	<licenses>
@@ -51,13 +51,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- To Override security defaults and allow CORS  -->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
-		<!-- To generate JWT -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
@@ -87,5 +86,7 @@
 			</plugin>
 		</plugins>
 	</build>
+
+
 
 </project>
