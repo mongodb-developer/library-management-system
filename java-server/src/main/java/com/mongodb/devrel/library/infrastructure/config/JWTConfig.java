@@ -6,7 +6,8 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,9 +16,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 @Component
 public class JWTConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(JWTConfig.class);
 
     @Value("${jwt.secret}")
     private String secret;
@@ -27,8 +29,8 @@ public class JWTConfig {
     }
 
     public String fromUser(User user) {
-        String userId = user.get_id().toString();
-        String userName = user.getName();
+        String userId = user._id().toString();
+        String userName = user.name();
         boolean isAdmin = true;
 
         long nowMillis = System.currentTimeMillis();
