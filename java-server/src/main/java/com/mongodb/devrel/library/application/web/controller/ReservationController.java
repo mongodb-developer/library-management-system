@@ -58,7 +58,7 @@ public class ReservationController extends BaseController{
 
     @PostMapping("/{bookId}")
     public ResponseEntity<ReservationResponse> reserveBook(@ModelAttribute("loggedInUser") User loggedInUser, @PathVariable String bookId) {
-        return bookService.bookById(bookId)
+        return bookService.getBook(bookId)
                 .map(book -> {
                     IssueDetail reservedBook = issueDetailsService.reserveBookForUser(book, loggedInUser);
                     log.info("User {} reserved book {}", loggedInUser.name(), bookId);
