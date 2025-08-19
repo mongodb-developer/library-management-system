@@ -49,7 +49,7 @@ public class BookController extends BaseController{
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Book>> getBook(@PathVariable String id) {
-        return new ResponseEntity<>(bookService.bookById(id), HttpStatus.OK);
+        return new ResponseEntity<>(bookService.getBook(id), HttpStatus.OK);
     }
 
     @PostMapping("/{id}/reviews")
