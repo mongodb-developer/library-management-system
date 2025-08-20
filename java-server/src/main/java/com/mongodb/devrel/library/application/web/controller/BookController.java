@@ -59,11 +59,8 @@ public class BookController extends BaseController{
 
     @GetMapping("/search")
     public ResponseEntity<List<Book>> searchBooks(@RequestParam Optional<String> term) {
-
         String theTerm = term.orElse("");
-        Page<Book> books = bookService.searchBooks(theTerm);
-
-        return new ResponseEntity<>(books.getContent(), HttpStatus.OK);
+        return new ResponseEntity<>(bookService.searchBooks(theTerm), HttpStatus.OK);
     }
 
 }

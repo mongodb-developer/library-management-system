@@ -1,13 +1,13 @@
 package com.mongodb.devrel.library.infrastructure.repository;
 
 import com.mongodb.devrel.library.domain.model.Book;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -21,10 +21,10 @@ public interface BookRepository extends MongoRepository<Book, String> {
      * 
      * @param searchText - text to search, case insensitive
      * @param pageable   - to paginate responses
-     * @return a Page of {@link Book} that matches the searchText
+     * @return a List of {@link Book} that matches the searchText
      */
     @Query("{$or:[ {title: {$regex: new RegExp(?0, 'i')}}, {'authors.name': {$regex: new RegExp(?0, 'i')}},] }")
-    Page<Book> searchByText(String searchText, Pageable pageable);
+    List<Book> searchByText(String searchText, Pageable pageable);
 
 
     @Query("{'_id' : ?0}")
