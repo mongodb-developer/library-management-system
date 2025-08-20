@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-
 @Repository
 public interface BookRepository extends MongoRepository<Book, String> {
     // we need to return our book.id as book._id per the JavaScript client and to be on par with the Node server
