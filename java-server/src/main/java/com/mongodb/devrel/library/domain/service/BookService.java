@@ -32,7 +32,7 @@ public class BookService {
         return bookRepository.findAll(request);
     }
 
-    public Optional<Book> bookById(String id) {
+    public Optional<Book> getBook(String id) {
         Aggregation aggregation = Aggregation.newAggregation(
                 Aggregation.match(Criteria.where("_id").is(id)),
                 LookupOperation.newLookup()
