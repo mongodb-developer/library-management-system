@@ -14,7 +14,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
