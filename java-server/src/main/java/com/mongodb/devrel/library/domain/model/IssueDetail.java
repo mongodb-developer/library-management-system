@@ -2,6 +2,7 @@ package com.mongodb.devrel.library.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
