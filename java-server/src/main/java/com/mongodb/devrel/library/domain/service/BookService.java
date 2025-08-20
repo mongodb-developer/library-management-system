@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -58,7 +59,7 @@ public class BookService {
         return results.getMappedResults().stream().findFirst();
     }
 
-    public Page<Book> searchBooks(String theTerm) {
+    public List<Book> searchBooks(String theTerm) {
         PageRequest request = PageRequest.of(0, 10, Sort.unsorted());
 
         return bookRepository.searchByText(theTerm, request);
