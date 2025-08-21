@@ -15,11 +15,16 @@ public class LibraryApplication implements CommandLineRunner {
 
 
 	public static void main(String[] args) {
-		
+		String envUri = System.getenv("MONGODB_URI");
+
 		try {
+			if (envUri == null || envUri.isBlank())
+				throw new IllegalArgumentException("Missing MongoDB URI");
+
 			SpringApplication.run(LibraryApplication.class, args);
-		} catch (org.springframework.beans.factory.UnsatisfiedDependencyException e) {
+		} catch (IllegalArgumentException e) {
 			log.error(ErrorMessage.noDB);
+			System.exit(1);
 		}
 	}
 	

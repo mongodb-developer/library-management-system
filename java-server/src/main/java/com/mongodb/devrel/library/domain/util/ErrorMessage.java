@@ -10,7 +10,14 @@ public class ErrorMessage {
         #       #   #   #   #   #     # #   #   
         #       #    #  #    #  #     # #    #  
         ####### #     # #     # ####### #     # 
+        
+        Missing database connection string!
+                
+        To fix this, set the environment variable before starting the app:
+                
+        export MONGODB_URI="<YOUR_CONNECTION_STRING>"
+                
+        Then run your application again.             
 
-        Missing database connection string! Open the application.properties file and add your MongoDB connection string to the spring.data.mongodb.uri variable.
-    """; 
+    """;
 }
