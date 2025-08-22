@@ -35,5 +35,15 @@
     "ghcr.io/devcontainers/features/node:1": {
       "version": "latest"
     }
+  },
+  "customizations": {
+    "codespaces": {
+      "openFiles": []
+    },
+    "vscode": {
+      "extensions": [
+        "mongodb.mongodb-vscode"
+      ]
+    }
   }
 }
