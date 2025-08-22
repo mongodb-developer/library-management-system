@@ -21,6 +21,17 @@ logging:
         web: DEBUG
         data:
           mongodb: DEBUG
-
 jwt:
   secret: mySuperSecretKeyWithEnoughLength!
+
+embeddings:
+  source: <googleVertex | openai >
+openai:
+  base-url: https://api.openai.com
+  model: text-embedding-3-small
+  api-key: <OPENAI_KEY>
+vertex:
+  base-url: https://us-central1-aiplatform.googleapis.com
+  model: multimodalembedding@001
+  project-id: <PROJECT_ID>
+  api-key: <VERTEX_KEY>
