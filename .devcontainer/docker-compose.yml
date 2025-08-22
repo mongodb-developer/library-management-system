@@ -27,10 +27,6 @@ services:
       - ../..:/workspaces:cached
     ports:
       - 27017:27017
-    # To connect to library: from inside the container:
-    # mongosh mongodb://localhost/library --username admin --password mongodb --authenticationDatabase=admin
-    # From MongoDB extension:
-    # mongodb://admin:mongodb@localhost:27017/?directConnection=true
     
     # Add "forwardPorts": ["27017"] to **devcontainer.json** to forward MongoDB locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
