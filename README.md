@@ -21,7 +21,7 @@ This is a library management system built with the MEAN (MongoDB, Express, Angul
 
     **library/server/.env**
     ```
-    PORT="50000"
+    PORT="5000"
     DATABASE_URI="mongodb+srv://<username>:<password>@m0.kwqkoewm.mongodb.net"
     DATABASE_NAME="library"
     SECRET="secret"
