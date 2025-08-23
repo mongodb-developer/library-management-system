@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class OpenAIFeignConfig {
+public class OpenAIFeignInterceptor {
 
     @Value("${openai.api-key}")
     private String apiKey;

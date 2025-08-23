@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(
     name = "openai-embeddings",
     url = "${openai.base-url}",
-    configuration = OpenAIFeignConfig.class
+    configuration = OpenAIFeignInterceptor.class
 )
-public interface OpenAIEmbeddingsClient {
+public interface OpenAIEmbeddingClient {
 
     @PostMapping(value = "/v1/embeddings", consumes = "application/json", produces = "application/json")
-    OpenAIEmbeddingsResponse createEmbeddings(@RequestBody OpenAIEmbeddingsRequest request);
+    OpenAIEmbeddingResponse createEmbeddings(@RequestBody OpenAIEmbeddingRequest request);
 }

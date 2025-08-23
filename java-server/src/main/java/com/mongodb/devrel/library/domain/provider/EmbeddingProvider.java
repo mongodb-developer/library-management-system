@@ -2,7 +2,7 @@ package com.mongodb.devrel.library.domain.provider;
 
 import java.util.List;
 
-public interface EmbeddedProvider {
+public interface EmbeddingProvider {
     List<Double> getEmbeddings(String text);
     String name();
 }

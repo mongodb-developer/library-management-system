@@ -1,18 +1,20 @@
 package com.mongodb.devrel.library.domain.service;
 
 import com.mongodb.devrel.library.domain.model.Book;
+import com.mongodb.devrel.library.domain.provider.EmbeddingProvider;
 import com.mongodb.devrel.library.infrastructure.repository.BookRepository;
 import org.bson.Document;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.LookupOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,10 +25,13 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final MongoTemplate mongoTemplate;
+    private final EmbeddingProvider embeddingProvider;
 
-    BookService(BookRepository bookRepository, MongoTemplate mongoTemplate) {
+    BookService(BookRepository bookRepository, MongoTemplate mongoTemplate,
+                EmbeddingProvider embeddingProvider) {
         this.bookRepository = bookRepository;
         this.mongoTemplate = mongoTemplate;
+        this.embeddingProvider = embeddingProvider;
     }
 
     public Page<Book> findAllBooks(Integer limit, Integer skip) {
@@ -69,3 +74,5 @@ public class BookService {
         bookRepository.increaseAvailableAmountByOne(reservationId);
     }
 }
+
+
