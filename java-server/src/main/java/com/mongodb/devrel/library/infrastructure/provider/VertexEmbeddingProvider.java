@@ -1,6 +1,5 @@
 package com.mongodb.devrel.library.infrastructure.provider;
 
-import com.mongodb.devrel.library.application.web.controller.BorrowsController;
 import com.mongodb.devrel.library.domain.provider.EmbeddingProvider;
 import com.mongodb.devrel.library.infrastructure.embeddings.vertex.VertexEmbeddingClient;
 import com.mongodb.devrel.library.infrastructure.embeddings.vertex.VertexEmbeddingRequest;
