@@ -35,3 +35,8 @@ vertex:
   model: multimodalembedding@001
   project-id: ${VERTEX_PROJECT_ID:yourProjectId}
   api-key: ${VERTEX_KEY:yourKey}
+voyage:
+  base-url: https://api.voyageai.com/v1
+  model: voyage-3-large
+  output-dimension: 2048
+  api-key: ${VOYAGE_KEY:yourKey}
