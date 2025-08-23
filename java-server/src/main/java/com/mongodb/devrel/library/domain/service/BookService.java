@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.LookupOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 
 import java.util.Arrays;
 import java.util.List;
