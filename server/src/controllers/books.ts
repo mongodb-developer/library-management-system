@@ -93,6 +93,31 @@ class BookController {
         return books;
     }
 
+    public async findSimilarBooks(id: string): Promise<Book[]> {
+        const book = await collections?.books?.findOne({_id: id});
+
+        const aggregationPipeline = [
+            {
+                $vectorSearch: {
+                    queryVector:  book.embeddings,
+                    path: 'embeddings',
+                    numCandidates: 100,
+                    index: 'vectorsearch',
+                    limit: 5,
+                    filter: {
+                        $and: [
+                            { _id: {$ne: id }},
+                            { available: { $gt: 0 } }
+                        ]
+                    }
+                }
+            }
+        ];
+        const books = await collections?.books?.aggregate(aggregationPipeline).toArray() as Book[];
+        return books;
+
+    }
+
     public async createBook(book: Book): Promise<InsertOneResult> {
         const result = await collections?.books?.insertOne(book);
 
