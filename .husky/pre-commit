@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+(cd .devcontainer && docker compose up) &
+sleep 5
 (cd server && npm run lint)
 (cd server && npm test)
 
