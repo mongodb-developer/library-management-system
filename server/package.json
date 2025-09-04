@@ -36,7 +36,7 @@
     "@typescript-eslint/eslint-plugin": "^6.2.1",
     "@typescript-eslint/parser": "^6.2.1",
     "assert": "^2.0.0",
-    "eslint": "^8.46.0",
+    "eslint": "^8.57.1",
     "mocha": "^10.2.0",
     "morgan": "^1.10.0",
     "nodemon": "^3.0.1",

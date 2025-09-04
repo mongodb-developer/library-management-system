@@ -36,4 +36,14 @@ export class BookService {
 
     return this.http.get<Book[]>(`${URL}/books/search?term=${query}`);
   }
+
+  similar(isbn: string, limit = 5): Observable<BookView[]> {
+    if (limit > 100) {
+      limit = 100;
+    }
+
+    return this.http.get<Book[]>(`${URL}/books/similar?isbn=${isbn}`).pipe(
+      map((books:Book[]) => books.map((book:Book) => new BookView(book)))
+    );
+  }
 }
