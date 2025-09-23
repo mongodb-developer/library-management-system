@@ -14,6 +14,11 @@
       "openFiles": [
         "server/.env"
       ]
+    },
+    "vscode": {
+      "extensions": [
+        "mongodb.mongodb-vscode"
+      ]
     }
   },
   "portsAttributes": {
@@ -21,9 +26,17 @@
       "label": "Client",
       "onAutoForward": "openPreview"
     },
-    "5000": {
+    "50000": {
       "label": "Server"
+    },
+    "27017": {
+      "label": "MongoDB Atlas"
     }
   },
-  "forwardPorts": [4200, 5000]
+  "forwardPorts": [
+    4200, 
+    50000, 
+    27017
+  ],
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
 }
