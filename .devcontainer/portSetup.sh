@@ -16,4 +16,4 @@ echo "Installing GH"
 && sudo apt install gh -y
 
 echo "Exposing ports"
-gh codespace ports visibility 4200:public 27017:public 50000:public -c $CODESPACE_NAME
+gh codespace ports visibility 4200:public 27017:public 5400:public -c $CODESPACE_NAME

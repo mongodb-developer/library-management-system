@@ -26,7 +26,7 @@
       "label": "Client",
       "onAutoForward": "openPreview"
     },
-    "50000": {
+    "5400": {
       "label": "Server"
     },
     "27017": {
@@ -35,7 +35,7 @@
   },
   "forwardPorts": [
     4200, 
-    50000, 
+    5400, 
     27017
   ],
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
