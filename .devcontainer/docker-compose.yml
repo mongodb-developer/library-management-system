@@ -17,10 +17,6 @@ services:
 
   mongodb:
     image: mongodb/mongodb-atlas-local:8.0.3-20250506T093411Z
-    environment:
-      - MONGODB_INITDB_ROOT_USERNAME=admin
-      - MONGODB_INITDB_ROOT_PASSWORD=mongodb
-      - MONGO_INITDB_DATABASE=library
     restart: unless-stopped
     volumes:
       - mongodb-data:/data/db

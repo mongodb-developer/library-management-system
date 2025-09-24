@@ -2,7 +2,7 @@
     "mdb.presetConnections": [
         {
             "name": "Library DB",
-            "connectionString": "mongodb://admin:mongodb@localhost:27017"
+            "connectionString": "mongodb://localhost:27017/?directConnection=true"
         }
     ],
     "mdb.showOverviewPageAfterInstall": false
