@@ -1,17 +1,23 @@
 {
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
-  "waitFor": "onCreateCommand",
-  "updateContentCommand": "/bin/bash .devcontainer/updateContent.sh",
-  "postCreateCommand": "",
+  "name": "MongoDB Library Sample App - Nodejs version",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "server", // container defined in docker-compose
+  "updateContentCommand": "bash .devcontainer/install-mongodb-db-tools.sh && bash .devcontainer/import.sh && bash .devcontainer/updateContent.sh", // included in prebuilt
+  // this will open 3 bash sessions, each one running the specified command
   "postAttachCommand": {
     "server": "cd server && npm start",
     "client": "export NG_CLI_ANALYTICS=\"false\"; cd client && npm start",
-    "portSetup": "/bin/bash .devcontainer/portSetup.sh"
+    "portSetup": "sleep 5 && .devcontainer/portSetup.sh"
   },
   "customizations": {
     "codespaces": {
       "openFiles": [
         "server/.env"
+      ]
+    },
+    "vscode": {
+      "extensions": [
+        "mongodb.mongodb-vscode"
       ]
     }
   },
@@ -20,9 +26,17 @@
       "label": "Client",
       "onAutoForward": "openPreview"
     },
-    "5000": {
+    "5400": {
       "label": "Server"
+    },
+    "27017": {
+      "label": "MongoDB Atlas"
     }
   },
-  "forwardPorts": [4200, 5000]
+  "forwardPorts": [
+    4200, 
+    5400, 
+    27017
+  ],
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
 }
