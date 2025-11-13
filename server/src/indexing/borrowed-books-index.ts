@@ -9,6 +9,8 @@ console.log('Connecting to MongoDB Atlas...');
 const client = await connectToDatabase(DATABASE_URI);
 console.log('Connected!\n');
 
+await collections?.issueDetails?.dropIndexes();
+
 console.log('BEFORE creating the index\n');
 await explainBorrowedBooksQuery();
 
@@ -34,7 +36,6 @@ console.log('\n-----------------------------\n');
 console.log('AFTER creating the index\n');
 await explainBorrowedBooksQuery();
 
-await collections?.issueDetails?.dropIndexes();
 await client.close();
 process.exit();
 
