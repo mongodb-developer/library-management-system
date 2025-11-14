@@ -48,8 +48,7 @@ results.push(resultUsers);
 //             description: 'must be a string and is required'
 //         },
 //         // TODO: Add the missing validation rules for the authorSchema
-//         // Hint: Look at the 'library.authors' collection in
-//         // the MongoDB Atlas UI
+//         // Hint: Look at the 'library.authors' collection in database
 //     }
 // };
 
