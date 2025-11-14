@@ -12,7 +12,7 @@ spring:
     name: libraryapp
 
 server:
-  port: 5000
+  port: 5400
 
 logging:
   level:
