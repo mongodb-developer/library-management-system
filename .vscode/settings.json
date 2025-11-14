@@ -1,5 +1,11 @@
 {
   "java.configuration.updateBuildConfiguration": "interactive",
   "java.compile.nullAnalysis.mode": "automatic",
+  "mdb.presetConnections": [
+    {
+      "name": "Library DB",
+      "connectionString": "mongodb://localhost:27017"
+    }
+  ],
   "mdb.showOverviewPageAfterInstall": false
 }
