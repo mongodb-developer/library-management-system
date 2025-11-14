@@ -1,57 +1,41 @@
 # Library Management System
 
-This is a library management system built with the MEAN (MongoDB, Express, Angular, Node.js) stack. 
+This is a library management system built with the Spring and Angular.
 
 ## Running the project
 
 1. Clone the repository.
 
     ```
-    git clone git@github.com:mongodb-developer/library-management-system.git library
+    git clone git@github.com:mongodb-developer/library-management-system.git -b java-server library
     ```
 
-1. Install the dependencies in the root level of the project.
+1. Set the MongoDB connection string as an environment variable.
 
-    **library/**
+    On Linux/Mac:
     ```
-    npm install
-    ```
-
-1.  Set your [Atlas URI connection string](https://docs.atlas.mongodb.com/getting-started/), database name and server port in `server/.env`. Make sure you replace the username and password placeholders with your own credentials.
-
-    **library/server/.env**
-    ```
-    PORT="5400"
-    DATABASE_URI="mongodb+srv://<username>:<password>@m0.kwqkoewm.mongodb.net"
-    DATABASE_NAME="library"
-    SECRET="secret"
+    export MONGODB_URI="<YOUR_CONNECTION_STRING>"
     ```
 
-
-1. Start the **server** application.
-
-    **library/server/**
+    On Windows:
     ```
-    npm install && npm start
+    $env:MONGODB_URI="<YOUR_CONNECTION_STRING>"
     ```
 
-1. Open a new terminal window and start the **client** application.
+1. Run the Java server.
 
-    **library/client/**
     ```
-    npm install && npm start
+    cd java-server
+    mvn spring-boot:run
     ```
 
-1. When both applications are built and running, open your browser on http://localhost:4200/.
+1. Run the client
 
-## Executing the tests
+    ```
+    (cd ../client && npm install && npm start)
+    ```
 
-Currently, the project has only API tests implemented with [`supertest`](https://www.npmjs.com/package/supertest) and [`mocha`](https://www.npmjs.com/package/mocha). To execute them, navigate to the `server/` directory and run:
-
-**library/server/**
-```
-npm test
-```
+You now have the client running on http://localhost:4200 and the server running on http://localhost:5400.
 
 ## Pre-commit hook
 
