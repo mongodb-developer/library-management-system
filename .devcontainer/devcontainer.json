@@ -13,7 +13,9 @@
   "customizations": {
     "codespaces": {
       "openFiles": [
-        "java-server/src/main/java/com/mongodb/devrel/library/infrastructure/config/SchemaValidationConfig.java"
+        "java-server/src/main/java/com/mongodb/devrel/library/infrastructure/config/SchemaValidationConfig.java",
+        "java-server/src/main/java/com/mongodb/devrel/library/domain/model/IssueDetail.java",
+        "java-server/src/main/java/com/mongodb/devrel/library/domain/service/BookService.java"
       ]
     },
     "vscode": {

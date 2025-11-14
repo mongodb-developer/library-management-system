@@ -3,6 +3,6 @@ cd client
 npm install
 
 cd ../server
-./mvnw clean install -DskipTests
+mvn clean install
 
 cd ..
