@@ -2,12 +2,13 @@
   "name": "MongoDB Library Sample App - Java version",
   "dockerComposeFile": "docker-compose.yml",
   "service": "server", // container defined in docker-compose
-  "updateContentCommand": "bash .devcontainer/install-mongodb-db-tools.sh && bash .devcontainer/import.sh && bash .devcontainer/updateContent.sh", // included in prebuilt
+  // this is executed in the prebuilt image
+  "updateContentCommand": "bash .devcontainer/install-mongodb-db-tools.sh && bash .devcontainer/import.sh && bash .devcontainer/install-dependencies.sh",
   // this will open 3 bash sessions, each one running the specified command
   "postAttachCommand": {
     "server": "export MONGODB_URI=\"mongodb://localhost:27017\"; cd java-server; mvn spring-boot:run",
     "client": "export NG_CLI_ANALYTICS=\"false\"; npm start --prefix client",
-    "portSetup": "sleep 5 && .devcontainer/portSetup.sh"
+    "portSetup": "sleep 5 && .devcontainer/set-up-port.sh"
   },
   "customizations": {
     "codespaces": {
