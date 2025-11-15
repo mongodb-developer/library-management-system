@@ -8,7 +8,7 @@
   "postAttachCommand": {
     "server": "export MONGODB_URI=\"mongodb://localhost:27017\"; cd java-server; mvn spring-boot:run",
     "client": "export NG_CLI_ANALYTICS=\"false\"; npm start --prefix client",
-    "portSetup": "sleep 5 && .devcontainer/set-up-port.sh"
+    "portSetup": "sleep 10 && .devcontainer/set-up-port.sh"
   },
   "customizations": {
     "codespaces": {
