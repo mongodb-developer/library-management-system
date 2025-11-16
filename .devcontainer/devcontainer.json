@@ -8,13 +8,14 @@
   "postAttachCommand": {
     "server": "export MONGODB_URI=\"mongodb://localhost:27017\"; cd java-server; mvn spring-boot:run",
     "client": "export NG_CLI_ANALYTICS=\"false\"; npm start --prefix client",
-    "portSetup": "sleep 5 && .devcontainer/set-up-port.sh"
+    "portSetup": "sleep 5 && .devcontainer/expose-ports.sh"
   },
   "customizations": {
     "codespaces": {
       "openFiles": [
         "java-server/src/main/java/com/mongodb/devrel/library/infrastructure/config/SchemaValidationConfig.java",
         "java-server/src/main/java/com/mongodb/devrel/library/domain/model/IssueDetail.java",
+        "java-server/src/main/resources/application.yml",
         "java-server/src/main/java/com/mongodb/devrel/library/domain/service/BookService.java"
       ]
     },
