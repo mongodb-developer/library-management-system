@@ -1,9 +1,18 @@
 <div class="form-wrapper">
     <form [formGroup]="searchForm" class="search-form">
-        <mat-form-field class="field-full-width" appearance="outline">
-            <mat-label>Find books...</mat-label>
-            <input matInput formControlName="query">
-            <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
+      <mat-form-field class="field-full-width" appearance="outline">
+        <mat-label>Find books...</mat-label>
+        <input matInput formControlName="query">
+        <mat-icon matSuffix>search</mat-icon>
+        <mat-button-toggle-group
+          matSuffix
+          formControlName="searchType"
+          class="search-type-toggle"
+        >
+          <mat-button-toggle value="keyword">Keyword</mat-button-toggle>
+          <mat-button-toggle value="semantic">Semantic</mat-button-toggle>
+        </mat-button-toggle-group>
+      </mat-form-field>
     </form>
-</div>
+  </div>
+  

@@ -15,6 +15,7 @@ export class SearchBarComponent {
 
   searchForm = this.fb.group({
     query: ['', Validators.required],
+    searchType: ['keyword'],
   });
 
   constructor(
@@ -33,7 +34,10 @@ export class SearchBarComponent {
       filter(text => text!.length > 1),
       debounceTime(700),
       distinctUntilChanged(),
-      switchMap(searchTerm => this.bookService.search(searchTerm!)),
+      switchMap(searchTerm => {
+        const searchType = this.searchForm.controls.searchType.value;
+        return this.bookService.search(searchTerm!, searchType);
+      }),
     );
   }
 }

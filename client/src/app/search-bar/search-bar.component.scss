@@ -14,3 +14,22 @@
 .field-full-width {
     width: 100%;
 }
+
+::ng-deep .field-full-width {
+
+    .mat-mdc-form-field-flex {
+        align-items: center;
+    }
+
+    .mat-mdc-form-field-infix {
+        display: flex;
+        align-items: center;
+    }
+
+    .mat-mdc-form-field-icon-suffix {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        padding: 0;
+    }
+}

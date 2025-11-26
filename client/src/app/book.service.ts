@@ -29,11 +29,12 @@ export class BookService {
       );
   }
 
-  search(query: string, limit = 12): Observable<Book[]> {
+  search(query: string, searchType: string | null = 'keyword', limit = 12): Observable<Book[]> {
     if (limit > 100) {
       limit = 100;
     }
 
-    return this.http.get<Book[]>(`${URL}/books/search?term=${query}`);
+    const type = searchType || 'keyword';
+    return this.http.get<Book[]>(`${URL}/books/search?term=${query}&type=${type}`);
   }
 }
