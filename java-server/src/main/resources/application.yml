@@ -10,6 +10,20 @@ spring:
     log-request-details: true
   application:
     name: libraryapp
+  ai:
+    openai:
+      api-key: ${OPENAI_KEY:yourKey}
+      embedding:
+        options:
+          encoding-format: float
+          dimensions: 1536
+          model: text-embedding-3-small
+    vectorstore:
+      mongodb:
+        initialize-schema: true
+        collection-name: books_embedded
+        index-name: vector_index
+        path-name: embedding
 
 server:
   port: 5400

@@ -2,6 +2,7 @@ package com.mongodb.devrel.library.application.web.controller;
 
 
 import com.mongodb.devrel.library.application.web.controller.request.ReviewRequest;
+import com.mongodb.devrel.library.application.web.controller.util.SearchType;
 import com.mongodb.devrel.library.domain.model.Book;
 import com.mongodb.devrel.library.domain.model.Review;
 import com.mongodb.devrel.library.domain.model.User;
@@ -38,11 +39,13 @@ public class BookController extends BaseController{
     }
 
     @GetMapping
-    public ResponseEntity<List<Book>> getAllBooks(@RequestParam Optional<Integer> limit, @RequestParam Optional<Integer> skip) {
+    public ResponseEntity<List<Book>> getAllBooks(
+            @RequestParam Optional<Integer> limit,
+            @RequestParam Optional<Integer> page) {
 
-        Integer theLimit = limit.orElse(DEFAULT_PAGE_SIZE);
-        Integer theSkip = skip.orElse(DEFAULT_PAGE_NUMBER);
-        Page<Book> books = bookService.findAllBooks(theLimit, theSkip);
+        Integer size = limit.orElse(DEFAULT_PAGE_SIZE);
+        Integer pageNumber = page.orElse(DEFAULT_PAGE_NUMBER);
+        Page<Book> books = bookService.findAllBooks(size, pageNumber);
 
         return new ResponseEntity<>(books.getContent(), HttpStatus.OK);
     }
@@ -58,9 +61,24 @@ public class BookController extends BaseController{
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Book>> searchBooks(@RequestParam Optional<String> term) {
+    public ResponseEntity<List<Book>> searchBooks(
+            @RequestParam Optional<String> term,
+            @RequestParam Optional<String> searchType) {
         String theTerm = term.orElse("");
-        return new ResponseEntity<>(bookService.searchBooks(theTerm), HttpStatus.OK);
+
+        SearchType type = searchType
+                .map(s -> {
+                    try {
+                        return SearchType.valueOf(s.trim().toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        return SearchType.KEYWORD;
+                    }
+                }).orElse(SearchType.KEYWORD);
+
+        return new ResponseEntity<>(
+                bookService.searchBooks(theTerm, type),
+                HttpStatus.OK
+        );
     }
 
 }
