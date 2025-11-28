@@ -1,11 +1,8 @@
 package com.mongodb.devrel.library.infrastructure.config;
 
-import com.mongodb.devrel.library.domain.model.Author;
 import com.mongodb.devrel.library.domain.model.Book;
 import com.mongodb.devrel.library.domain.service.BookEmbeddingService;
 import com.mongodb.devrel.library.domain.service.BookService;
-import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
