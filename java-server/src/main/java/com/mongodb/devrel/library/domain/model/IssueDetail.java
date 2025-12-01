@@ -26,7 +26,7 @@ public record IssueDetail(
 
         String recordType,
 
-        boolean returned,
+        Boolean returned,
 
         LocalDateTime returnedDate,
 

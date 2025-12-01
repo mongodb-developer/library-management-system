@@ -21,16 +21,17 @@ public class BookEmbeddingService {
     public void storeBooksWithSynopsisEmbedded(List<Book> booksToEmbed) {
 
         List<Document> docs = booksToEmbed.stream()
+                .filter(book -> book.synopsis() != null && !book.synopsis().isBlank())  // Skip books without synopsis
                 .map(book -> new Document(
                         book.synopsis(),
                         Map.of(
-                                "id", book.id(),
-                                "title", book.title(),
-                                "genres", book.genres(),
-                                "authors", book.authors()
-                                        .stream()
-                                        .map(Author::name)
-                                        .toList()
+                                "id", book.id() != null ? book.id() : "",
+                                "title", book.title() != null ? book.title() : "Unknown",
+                                "genres", book.genres() != null ? book.genres() : List.of(),
+                                "authors", book.authors() != null ?
+                                        book.authors().stream()
+                                                .map(Author::name)
+                                                .toList() : List.of()
                         )
                 ))
                 .toList();

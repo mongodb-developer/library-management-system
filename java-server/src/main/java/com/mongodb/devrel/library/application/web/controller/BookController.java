@@ -41,11 +41,14 @@ public class BookController extends BaseController{
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks(
             @RequestParam Optional<Integer> limit,
-            @RequestParam Optional<Integer> page) {
+            @RequestParam Optional<Integer> skip) {  // Changed from 'page' to 'skip'
 
         Integer size = limit.orElse(DEFAULT_PAGE_SIZE);
-        Integer pageNumber = page.orElse(DEFAULT_PAGE_NUMBER);
-        Page<Book> books = bookService.findAllBooks(size, pageNumber);
+        Integer skipAmount = skip.orElse(0);
+
+        Integer pageNumber = skipAmount / size;
+
+        Page<Book> books = bookService.findAllBooks(pageNumber, size);  // Fixed order!
 
         return new ResponseEntity<>(books.getContent(), HttpStatus.OK);
     }
@@ -63,10 +66,12 @@ public class BookController extends BaseController{
     @GetMapping("/search")
     public ResponseEntity<List<Book>> searchBooks(
             @RequestParam Optional<String> term,
-            @RequestParam Optional<String> searchType) {
+            @RequestParam Optional<String> type) {
         String theTerm = term.orElse("");
 
-        SearchType type = searchType
+        System.out.println(type);
+
+        SearchType searchType = type
                 .map(s -> {
                     try {
                         return SearchType.valueOf(s.trim().toUpperCase());
@@ -75,8 +80,9 @@ public class BookController extends BaseController{
                     }
                 }).orElse(SearchType.KEYWORD);
 
+
         return new ResponseEntity<>(
-                bookService.searchBooks(theTerm, type),
+                bookService.searchBooks(theTerm, searchType),
                 HttpStatus.OK
         );
     }

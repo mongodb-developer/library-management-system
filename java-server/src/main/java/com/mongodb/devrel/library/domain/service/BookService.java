@@ -28,7 +28,6 @@ public class BookService {
     private final BookRepository bookRepository;
     private final MongoTemplate mongoTemplate;
     private final VectorStore vectorStore;
-    // private final EmbeddingProvider embeddingProvider; removing this as we will use the Spring AI integration
 
     BookService(BookRepository bookRepository, MongoTemplate mongoTemplate, VectorStore vectorStore) {
         this.bookRepository = bookRepository;
@@ -68,6 +67,9 @@ public class BookService {
     }
 
     public List<Book> searchBooks(String theTerm, SearchType searchType) {
+
+        System.out.println(searchType);
+
         if (searchType == SearchType.KEYWORD) {
             PageRequest request = PageRequest.of(0, 10);
             return bookRepository.searchByText(theTerm, request);
@@ -76,7 +78,7 @@ public class BookService {
                     semanticallySearchBooks(theTerm);
 
             List<String> ids = results.stream()
-                    .map(d -> d.getMetadata().get("bookId").toString())
+                    .map(d -> d.getMetadata().get("id").toString())
                     .toList();
 
             List<Book> found = bookRepository.findAllById(ids);
