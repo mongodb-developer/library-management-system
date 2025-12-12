@@ -68,8 +68,6 @@ public class BookService {
 
     public List<Book> searchBooks(String theTerm, SearchType searchType) {
 
-        System.out.println(searchType);
-
         if (searchType == SearchType.KEYWORD) {
             PageRequest request = PageRequest.of(0, 10);
             return bookRepository.searchByText(theTerm, request);
