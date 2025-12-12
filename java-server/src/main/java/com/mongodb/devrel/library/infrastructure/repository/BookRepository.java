@@ -2,7 +2,6 @@ package com.mongodb.devrel.library.infrastructure.repository;
 
 import com.mongodb.devrel.library.domain.model.Book;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BookRepository extends MongoRepository<Book, String> {
+public interface BookRepository extends MongoRepository<Book, String>, BookRepositoryCustom {
     // we need to return our book.id as book._id per the JavaScript client and to be on par with the Node server
     Optional<Book> findBookById(String id);
 
