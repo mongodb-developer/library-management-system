@@ -18,9 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -28,11 +26,13 @@ public class BookService {
     private final BookRepository bookRepository;
     private final MongoTemplate mongoTemplate;
     private final VectorStore vectorStore;
+    private final BookLookupService bookLookupService;
 
-    BookService(BookRepository bookRepository, MongoTemplate mongoTemplate, VectorStore vectorStore) {
+    BookService(BookRepository bookRepository, MongoTemplate mongoTemplate, VectorStore vectorStore, BookLookupService bookLookupService) {
         this.bookRepository = bookRepository;
         this.mongoTemplate = mongoTemplate;
         this.vectorStore = vectorStore;
+        this.bookLookupService = bookLookupService;
     }
 
     public Page<Book> findAllBooks(Integer pageNumber, Integer size) {
@@ -75,17 +75,7 @@ public class BookService {
             List<org.springframework.ai.document.Document> results =
                     semanticallySearchBooks(theTerm);
 
-            List<String> ids = results.stream()
-                    .map(d -> d.getMetadata().get("id").toString())
-                    .toList();
-
-            List<Book> found = bookRepository.findAllById(ids);
-
-            // preserve vector search order
-            Map<String, Book> byId =
-                    found.stream().collect(Collectors.toMap(Book::id, b -> b));
-
-            return ids.stream().map(byId::get).toList();
+            return bookLookupService.resolveRankedBooks(results);
         }
     }
 

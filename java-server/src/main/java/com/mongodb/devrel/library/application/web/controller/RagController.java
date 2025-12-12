@@ -1,7 +1,6 @@
 package com.mongodb.devrel.library.application.web.controller;
 
 import com.mongodb.devrel.library.application.web.controller.response.RagResponse;
-import com.mongodb.devrel.library.domain.model.Book;
 import com.mongodb.devrel.library.domain.service.LibraryAssistant;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
