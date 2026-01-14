@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Book } from './models/book';
 import { Observable, map } from 'rxjs';
 import { BookView } from './models/book-view';
+import { RagResponse } from './models/rag-response';
 import { URL } from './config';
 
 @Injectable({
@@ -37,4 +38,15 @@ export class BookService {
     const type = searchType || 'keyword';
     return this.http.get<Book[]>(`${URL}/books/search?term=${query}&type=${type}`);
   }
+
+  askLibrary(query: string) {
+    return this.http.post<RagResponse>(
+      `${URL}/assistant/query`,
+      null,
+      {
+        params: { query }
+      }
+    );
+  }
+  
 }

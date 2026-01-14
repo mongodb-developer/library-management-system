@@ -20,7 +20,6 @@ public class RagConfig {
         this.vectorStore = vectorStore;
     }
 
-    // Shared retriever used by your service AND by the advisor
     @Bean
     public DocumentRetriever documentRetriever() {
         return VectorStoreDocumentRetriever.builder()
@@ -69,7 +68,6 @@ public class RagConfig {
                 .build();
     }
 
-    // Single RAG advisor using the same retriever
     @Bean
     public Advisor ragAdvisor(DocumentRetriever retriever) {
         return RetrievalAugmentationAdvisor.builder()

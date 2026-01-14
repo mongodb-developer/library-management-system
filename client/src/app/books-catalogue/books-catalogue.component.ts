@@ -4,6 +4,7 @@ import { Observable, map, of } from 'rxjs';
 import { Book } from '../models/book';
 import { BookView } from '../models/book-view';
 import { Router } from '@angular/router';
+import { RagResponse } from '../models/rag-response';
 
 @Component({
   selector: 'lms-books-catalogue',
@@ -12,6 +13,8 @@ import { Router } from '@angular/router';
 })
 export class BooksCatalogueComponent implements OnInit {
   books$: Observable<BookView[]>;
+  ragResponse: RagResponse | null = null;
+  ragBooks$: Observable<BookView[]> | null = null;
 
   constructor(
     private bookService: BookService,
@@ -32,5 +35,16 @@ export class BooksCatalogueComponent implements OnInit {
 
   goToBook(book: BookView) {
     this.router.navigate(['/books', book.isbn]);
+  }
+
+  onRagAnswer(response: RagResponse) {
+    this.ragResponse = response;
+
+    const books = response.books ?? [];
+    this.ragBooks$ = of(books).pipe(
+      map(bs => bs.map(b => new BookView(b)))
+    );
+
+    this.books$ = of([]);
   }
 }

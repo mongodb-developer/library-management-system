@@ -1,6 +1,5 @@
 package com.mongodb.devrel.library.application.web.controller;
 
-
 import com.mongodb.devrel.library.application.web.controller.request.ReviewRequest;
 import com.mongodb.devrel.library.application.web.controller.util.SearchType;
 import com.mongodb.devrel.library.domain.model.Book;
