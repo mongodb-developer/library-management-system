@@ -15,7 +15,7 @@ const collection = collections?.books;
  * However, they take up more space compared to static mappings.
  */
 await collection.createSearchIndex({
-    name: 'default',
+    name: 'fulltextsearch',
     definition: {
         mappings: {
             dynamic: true
