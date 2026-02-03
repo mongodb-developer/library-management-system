@@ -16,6 +16,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { CommonModule } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatMenuModule } from '@angular/material/menu';
+
 
 import { BooksCatalogueComponent } from './books-catalogue/books-catalogue.component';
 import { SearchBarComponent } from './search-bar/search-bar.component';
@@ -72,6 +76,13 @@ const allowedDomain = URL.replace(/.*?\:\/\//, "").split(/[\/?]/)[0];
     MatTooltipModule,
     MatPaginatorModule,
     MatTableModule,
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
+    MatMenuModule,
     JwtModule.forRoot({
       config: {
         tokenGetter,

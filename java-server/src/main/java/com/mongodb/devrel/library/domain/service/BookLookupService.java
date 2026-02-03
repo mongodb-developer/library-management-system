@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,7 +46,6 @@ public class BookLookupService {
                 .collect(Collectors.toMap(Book::id, b -> b));
 
         // preserve vector ranking order
-
         return ids.stream()
                 .map(byId::get)
                 .toList();

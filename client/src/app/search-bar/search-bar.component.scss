@@ -1,39 +1,55 @@
-.form-wrapper {
+.search-type-native {
+    width: 170px;
+    height: auto;
+    margin-left: 8px;
+    padding: 0 32px 0 12px; /* room for arrow */
+    font: inherit;
+  
+    /* Button look */
+    background-color: transparent;
+    border-color: #151c45; /* Material primary */
+    box-shadow: 0 0 0 1px rgba(94, 92, 92, 0.8);
+    border-radius: 5px;
+    cursor: pointer;
+  
+    /* Remove native styling quirks */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  
+    /* Vertical centering */
+    line-height: 30px;
+  }
+  
+  /* Custom dropdown arrow (Material-ish) */
+  .search-type-native {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' width='24' fill='rgba(0,0,0,0.6)'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 18px;
+  }
+  
+  /* Hover + focus states */
+  .search-type-native:hover {
+    border-color: rgba(0, 0, 0, 0.6);
+  }
+  
+  .search-type-native:focus {
+    outline: none;
+    border-color: #3f51b5; /* Material primary */
+    box-shadow: 0 0 0 1px rgba(63, 81, 181, 0.4);
+  }
+  
+  /* Disabled state (if you ever add it) */
+  .search-type-native:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+  
+  /* Align suffix containers cleanly */
+  ::ng-deep .field-full-width .mat-mdc-form-field-text-suffix,
+  ::ng-deep .field-full-width .mat-mdc-form-field-icon-suffix {
     display: flex;
     align-items: center;
-    justify-content: center;
-}
-
-.search-form {
-    min-width: 150px;
-    max-width: 900px;
-    width: 100%;
-    margin-bottom: 30px;
-}
-
-.field-full-width {
-    width: 100%;
-}
-
-.search-type-toggle {
-    margin-right: 3px;
-}
-
-::ng-deep .field-full-width {
-
-    .mat-mdc-form-field-flex {
-        align-items: center;
-    }
-
-    .mat-mdc-form-field-infix {
-        display: flex;
-        align-items: center;
-    }
-
-    .mat-mdc-form-field-icon-suffix {
-        display: flex;
-        align-items: center;
-        height: 100%;
-        padding: 0;
-    }
-}
+  }
+  

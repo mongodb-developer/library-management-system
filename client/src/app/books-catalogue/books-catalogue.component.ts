@@ -27,24 +27,33 @@ export class BooksCatalogueComponent implements OnInit {
   }
 
   updateItems(items: Book[]) {
-    this.books$ = of(items)
-      .pipe(
-        map(books => books.map(book => new BookView(book)))
-      );
+    this.ragResponse = null;
+    this.ragBooks$ = null;
+  
+    this.books$ = of(items).pipe(
+      map(books => books.map(book => new BookView(book)))
+    );
   }
+  
 
   goToBook(book: BookView) {
     this.router.navigate(['/books', book.isbn]);
   }
 
-  onRagAnswer(response: RagResponse) {
+  onRagAnswer(response: RagResponse | null) {
     this.ragResponse = response;
-
+  
+    if (!response) {
+      this.ragBooks$ = null;
+      return;
+    }
+  
     const books = response.books ?? [];
     this.ragBooks$ = of(books).pipe(
       map(bs => bs.map(b => new BookView(b)))
     );
-
+  
     this.books$ = of([]);
   }
+  
 }

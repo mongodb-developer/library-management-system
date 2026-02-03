@@ -1,90 +1,75 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import {
-  Observable,
-  Subject,
-  combineLatest,
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  merge,
-  startWith,
-  switchMap
-} from 'rxjs';
-import { withLatestFrom } from 'rxjs/operators';
+import { Observable, Subject, EMPTY, filter, map, switchMap, takeUntil } from 'rxjs';
 
 import { Book } from '../models/book';
 import { RagResponse } from '../models/rag-response';
 import { BookService } from '../book.service';
+
+type SearchType = 'keyword' | 'semantic' | 'rag';
 
 @Component({
   selector: 'lms-search-bar',
   templateUrl: './search-bar.component.html',
   styleUrls: ['./search-bar.component.scss']
 })
-export class SearchBarComponent {
-
+export class SearchBarComponent implements OnDestroy {
   @Output() itemsFound = new EventEmitter<Book[]>();
-  @Output() ragAnswer = new EventEmitter<RagResponse>();
+  @Output() ragAnswer = new EventEmitter<RagResponse | null>();
 
-  private ragSubmit$ = new Subject<void>();
+  private submit$ = new Subject<void>();
+  private destroy$ = new Subject<void>();
 
   searchForm = this.fb.group({
-    query: ['', Validators.required],
-    searchType: ['keyword']
+    query: this.fb.control('', { validators: [Validators.required], nonNullable: true }),
+    searchType: this.fb.control<SearchType>('keyword', { nonNullable: true })
   });
 
   constructor(
     private bookService: BookService,
     private fb: FormBuilder
   ) {
-    this.search().subscribe(result => {
-      if ('answer' in result) {
-        this.itemsFound.emit([]);
-        this.ragAnswer.emit(result);
-      } else {
-        this.itemsFound.emit(result);
-      }
-    });
+    this.search()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(result => {
+        if ('answer' in result) {
+          this.itemsFound.emit([]);
+          this.ragAnswer.emit(result);
+        } else {
+          this.itemsFound.emit(result);
+          this.ragAnswer.emit(null);
+        }
+      });
   }
 
-  onEnter() {
-    if (this.searchForm.controls.searchType.value === 'rag') {
-      this.ragSubmit$.next();
-    }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  onSearch(): void {
+    this.submit$.next();
+  }
+
+  onEnter(event: Event): void {
+    event.preventDefault();
+    this.onSearch();
   }
 
   private search(): Observable<Book[] | RagResponse> {
-
-    const query$ = this.searchForm.controls.query.valueChanges.pipe(
-      startWith(this.searchForm.controls.query.value),
-      filter((q): q is string => !!q && q.length > 1)
+    return this.submit$.pipe(
+      map(() => {
+        const query = this.searchForm.controls.query.value.trim();
+        const type = this.searchForm.controls.searchType.value;
+        return { query, type };
+      }),
+      filter(({ query }) => query.length > 1),
+      switchMap(({ query, type }) => {
+        if (type === 'rag') {
+          return this.bookService.askLibrary(query);
+        }
+        return this.bookService.search(query, type);
+      })
     );
-
-    const searchType$ = this.searchForm.controls.searchType.valueChanges.pipe(
-      startWith(this.searchForm.controls.searchType.value)
-    );
-
-    // Keyword + Semantic (reactive, debounced)
-    const normalSearch$ = combineLatest([query$, searchType$]).pipe(
-      filter(([_, type]) => type !== 'rag'),
-      debounceTime(700),
-      distinctUntilChanged(
-        (a, b) => a[0] === b[0] && a[1] === b[1]
-      ),
-      switchMap(([query, type]) =>
-        this.bookService.search(query, type)
-      )
-    );
-
-    // RAG (explicit Enter only)
-    const ragSearch$ = this.ragSubmit$.pipe(
-      withLatestFrom(query$),
-      switchMap(([_, query]) =>
-        this.bookService.askLibrary(query)
-      )
-    );
-
-    return merge(normalSearch$, ragSearch$);
   }
 }
