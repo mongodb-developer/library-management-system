@@ -2,7 +2,7 @@ import getOpenAiEmbeddings from './openai.js';
 import getVertexEmbeddings from './googleVertex.js';
 import getServerlessEndpointEmbeddings from './serverlessEndpoint.js';
 
-const EMBEDDINGS_SOURCE = process.env.EMBEDDINGS_SOURCE || 'openai';
+const EMBEDDINGS_SOURCE = process.env.EMBEDDINGS_SOURCE || 'serverlessEndpoint';
 
 async function getTermEmbeddings(query) {
     switch (EMBEDDINGS_SOURCE) {
