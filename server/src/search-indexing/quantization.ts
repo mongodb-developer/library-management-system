@@ -8,7 +8,6 @@ console.log('Connected!\n');
 
 const collection = collections?.books;
 
-
 await collection.updateSearchIndex(
     'vectorsearch',
     {
@@ -17,15 +16,16 @@ await collection.updateSearchIndex(
                 type: 'vector',
                 path: 'embeddings',
                 numDimensions: 1408,
-                similarity: 'cosine'
+                similarity: 'cosine',
+                quantization: 'scalar'
             },
             {
                 type: 'filter',
-                path: '<REPLACE_WITH_YEAR_FIELD_NAME>'
+                path: 'year'
             },
             {
                 type: 'filter',
-                path: '<REPLACE_WITH_LANGUAGE_FIELD_NAME>'
+                path: 'language'
             }
         ],
 
