@@ -16,12 +16,12 @@ const collection = collections?.books;
  */
 await collection.createSearchIndex({
     name: 'vectorsearch',
-    type: 'vectorSearch',
+    type: '<REPLACE_WITH_INDEX_TYPE>',
     definition: {
         fields: [
             {
                 type: 'vector',
-                path: 'embeddings',
+                path: '<REPLACE_WITH_PATH_TO_VECTOR_FIELD_IN_DOCUMENT>',
                 numDimensions: 1408,
                 similarity: 'cosine'
             }
