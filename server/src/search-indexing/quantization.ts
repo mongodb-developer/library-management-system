@@ -7,17 +7,25 @@ const client = await connectToDatabase(DATABASE_URI);
 console.log('Connected!\n');
 
 const collection = collections?.books;
+await collection.dropSearchIndex('vectorsearch');
 
-await collection.updateSearchIndex(
-    'vectorsearch',
-    {
+/**
+ * Create the Vector Search index with scalar quantization.
+ */
+await collection.createSearchIndex({
+    name: 'vectorsearch',
+    type: 'vectorSearch',
+    definition: {
         fields: [
             {
                 type: 'vector',
                 path: 'embeddings',
                 numDimensions: 1408,
                 similarity: 'cosine',
-                quantization: 'scalar'
+// -----------------------------------------------------------------------------------------------
+// <----------- REPLACE THE PLACEHOLDER BELOW WITH TYPE OF QUANTIZATION TO USE ------------------>
+// -----------------------------------------------------------------------------------------------
+                quantization: '<TYPE_OF_QUANTIZATION_TO_USE>'
             },
             {
                 type: 'filter',
@@ -27,10 +35,9 @@ await collection.updateSearchIndex(
                 type: 'filter',
                 path: 'language'
             }
-        ],
-
+        ]
     }
-);
+});
 
 const result = await collection.listSearchIndexes().toArray();
 console.log('Search indexes on the books collection:');
