@@ -17,12 +17,18 @@ await collection.dropSearchIndex('vectorsearch');
  */
 await collection.createSearchIndex({
     name: 'vectorsearch',
-    type: 'vectorSearch',
+// -----------------------------------------------------------------------------------------------
+// <----------- REPLACE THE PLACEHOLDER BELOW WITH THE CORRECT INDEX TYPE ----------------------->
+// -----------------------------------------------------------------------------------------------
+    type: '<REPLACE_WITH_INDEX_TYPE>',
     definition: {
         fields: [
             {
                 type: 'vector',
-                path: 'embeddings',
+// -----------------------------------------------------------------------------------------------
+// <----------- REPLACE THE PLACEHOLDER BELOW WITH PATH TO THE VECTOR FIELD --------------------->
+// -----------------------------------------------------------------------------------------------
+                path: '<REPLACE_WITH_PATH_TO_VECTOR_FIELD>',
                 numDimensions: 1408,
                 similarity: 'cosine'
             }
