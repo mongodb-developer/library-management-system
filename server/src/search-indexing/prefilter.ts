@@ -7,13 +7,12 @@ const client = await connectToDatabase(DATABASE_URI);
 console.log('Connected!\n');
 
 const collection = collections?.books;
-await collection.dropSearchIndex('vectorsearch');
 
 /**
  * Create the Vector Search index with prefiltering fields.
  */
 await collection.createSearchIndex({
-    name: 'vectorsearch',
+    name: 'vectorsearch-prefilter',
     type: 'vectorSearch',
     definition: {
         fields: [
