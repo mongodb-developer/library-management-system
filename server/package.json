@@ -8,7 +8,7 @@
     "start": "npm run start:dev",
     "start:dev": "nodemon --config nodemon.json",
     "start:prod": "npm run build && node dist/server.js",
-    "build": "tsc",
+    "build": "tsc src/",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "api-test": "mocha",
