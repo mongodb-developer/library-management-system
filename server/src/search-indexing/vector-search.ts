@@ -9,7 +9,7 @@ console.log('Connected!\n');
 const collection = collections?.books;
 
 /**
- * Create the Vector Search index.
+ * Create the MongoDB Vector Search index.
  * The index definition specifies the field that contains the vector embeddings,
  * the number of dimensions in the vectors
  * and the similarity metric to use for searching.

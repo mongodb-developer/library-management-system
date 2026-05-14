@@ -9,9 +9,8 @@ console.log('Connected!\n');
 const collection = collections?.books;
 
 /**
- * Create the Atlas Search index with dynamic mappings.
- * Atlas will automatically infer the field types based on the data in the documents.
- * Dynamic mappings are useful when you're just getting started with Atlas Search or if your schema changes regularly.
+ * Create the MongoDB Search index with dynamic mappings.
+ * Dynamic mappings are useful when your schema changes regularly or when getting started.
  * However, they take up more space compared to static mappings.
  */
 await collection.createSearchIndex({
