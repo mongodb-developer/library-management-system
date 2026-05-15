@@ -9,7 +9,7 @@ console.log('Connected!\n');
 const collection = collections?.books;
 
 /**
- * Create the Vector Search index with prefiltering fields.
+ * Create the MongoDB Vector Search index with prefiltering fields.
  */
 await collection.createSearchIndex({
     name: 'vectorsearch-prefilter',

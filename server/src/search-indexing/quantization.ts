@@ -9,7 +9,7 @@ console.log('Connected!\n');
 const collection = collections?.books;
 
 /**
- * Create the Vector Search index with scalar quantization.
+ * Create the MongoDB Vector Search index with scalar quantization.
  */
 await collection.createSearchIndex({
     name: 'vectorsearch-quantized',
