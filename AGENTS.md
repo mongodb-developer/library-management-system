@@ -55,7 +55,8 @@ server/src/
 client/src/app/         # Angular components, services, routing
 migrations/             # One-off data migration scripts (run manually with Node)
 .devcontainer/          # Codespaces/Dev Containers setup: local Atlas container,
-                         # sample data import, port forwarding
+                         # sample data import, port forwarding, best-effort
+                         # created/started lifecycle telemetry (track.sh)
 ```
 
 Notable files:
