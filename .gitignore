@@ -2,6 +2,9 @@
 .env
 credentials.json
 
+# Claude Code local overrides
+.claude/settings.local.json
+
 # Compiled output
 dist/
 

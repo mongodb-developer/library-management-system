@@ -32,7 +32,7 @@ export async function connectToDatabase(uri?: string) {
     `);
     }
 
-    const client = new mongodb.MongoClient(uri, { appName: 'devrel.workshop.devday' });
+    const client = new mongodb.MongoClient(uri, { appName: 'devrel-workshop-node-angular-library' });
     await client.connect();
 
     const db = client.db(process.env.DATABASE_NAME);
