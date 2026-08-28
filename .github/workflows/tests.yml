@@ -1,0 +1,53 @@
+name: "Tests"
+
+on:
+  pull_request:
+    branches:
+      - "main"
+  push:
+    branches:
+      - "main"
+
+jobs:
+  server:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+    env:
+      DATABASE_URI: mongodb://localhost:27017
+      SECRET: secret
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - name: Install dependencies
+        working-directory: server
+        run: npm ci
+      - name: Lint
+        working-directory: server
+        run: npm run lint
+      - name: Run API tests
+        working-directory: server
+        run: npm test
+
+  client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - name: Install dependencies
+        working-directory: client
+        run: npm ci
+      - name: Build
+        working-directory: client
+        run: npm run build
