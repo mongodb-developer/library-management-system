@@ -49,7 +49,7 @@ server/src/
   utils/               # Auth middleware, shared test helpers
   embeddings/           # Pluggable embedding providers (OpenAI, Google Vertex, a
                          # serverless endpoint) selected via EMBEDDINGS_SOURCE
-  search-indexing/      # Standalone scripts that create/update Atlas Search and
+  search-indexing/      # Standalone scripts that create/update MongoDB Search and
                          # Vector Search indexes on the books collection (workshop labs)
   indexing/             # Standalone script demonstrating a compound index via .explain()
 client/src/app/         # Angular components, services, routing
@@ -69,7 +69,7 @@ Notable files:
   distinguished by `recordType`.
 - [server/src/search-indexing/*.ts](server/src/search-indexing) — each file is a
   runnable workshop step (`node --loader ts-node/esm src/search-indexing/<file>.ts`
-  after building) that creates one Atlas Search/Vector Search index variant. Several
+  after building) that creates one MongoDB Search/MongoDB Vector Search index variant. Several
   contain `<REPLACE_WITH_...>` placeholders left in on purpose for the workshop
   exercise — do not "fix" them as bugs.
 

@@ -46,7 +46,7 @@ One book per ISBN. Combines several documented MongoDB schema patterns (comments
 
 No indexes beyond `_id` in the base seed; the search-indexing lab scripts add
 `fulltextsearch` / `vectorsearch` / `vectorsearch-prefilter` / `vectorsearch-quantized`
-Atlas Search indexes on demand.
+MongoDB Search indexes on demand.
 
 ## authors
 

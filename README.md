@@ -5,7 +5,7 @@
 A full-stack library app — browse a catalog, borrow and reserve books, leave reviews —
 built on the MEAN stack (MongoDB, Express, Angular, Node.js). It's the sample app used
 in MongoDB Developer Days hands-on labs, so the codebase intentionally shows off
-several MongoDB schema design patterns and Atlas Search / Vector Search side by side,
+several MongoDB schema design patterns and MongoDB Search / MongoDB Vector Search side by side,
 not just CRUD.
 
 ## Capabilities
@@ -102,9 +102,9 @@ Open http://localhost:4200 — you should see the book catalog load.
   [Single Collection Pattern](https://www.mongodb.com/blog/post/building-with-patterns-the-single-collection-pattern?utm_campaign=devrel&utm_source=github&utm_medium=referral&utm_content=library_management_system&utm_term=learning.fuel)
   keeps them together and discriminates with a `recordType` field.
 - **Search and recommendations without a second database.**
-  [Atlas Search](https://www.mongodb.com/docs/atlas/atlas-search/?utm_campaign=devrel&utm_source=github&utm_medium=referral&utm_content=library_management_system&utm_term=learning.fuel)
+  [MongoDB Search](https://www.mongodb.com/docs/atlas/atlas-search/?utm_campaign=devrel&utm_source=github&utm_medium=referral&utm_content=library_management_system&utm_term=learning.fuel)
   and
-  [Atlas Vector Search](https://www.mongodb.com/docs/atlas/atlas-vector-search/?utm_campaign=devrel&utm_source=github&utm_medium=referral&utm_content=library_management_system&utm_term=learning.fuel)
+  [MongoDB Vector Search](https://www.mongodb.com/docs/atlas/atlas-vector-search/?utm_campaign=devrel&utm_source=github&utm_medium=referral&utm_content=library_management_system&utm_term=learning.fuel)
   run against the same `books` collection the app already reads and writes — no
   separate search cluster to keep in sync.
 
