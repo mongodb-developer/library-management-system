@@ -1,0 +1,9 @@
+node_modules
+dist
+.tsbuildinfo
+
+# Supplied by Cloud Run (DATABASE_URI, DATABASE_NAME, SECRET, PORT);
+# keep the committed local .env out of the image.
+.env
+
+.git

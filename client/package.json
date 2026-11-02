@@ -1,6 +1,9 @@
 {
   "name": "library-management-system",
   "version": "0.0.0",
+  "engines": {
+    "node": ">=24.22.1 <25.0.0"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --disable-host-check",
