@@ -4,6 +4,9 @@
   "description": "",
   "main": "dist/server.js",
   "type": "module",
+  "engines": {
+    "node": ">=24.22.1 <25.0.0"
+  },
   "scripts": {
     "build:watch": "tsc --watch",
     "serve": "nodemon dist/server.js",

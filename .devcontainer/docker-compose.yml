@@ -1,6 +1,6 @@
 services:
   server:
-    image: mcr.microsoft.com/vscode/devcontainers/javascript-node:dev-16-bullseye
+    image: mcr.microsoft.com/devcontainers/javascript-node:24-bookworm
     volumes:
       - ../..:/workspaces:cached
 
