@@ -1,5 +1,6 @@
 import '../load-env-vars.js';
 import { connectToDatabase, collections } from '../database.js';
+import { waitForSearchIndex } from './wait-for-search-index.js';
 const { DATABASE_URI } = process.env;
 
 console.log('Connecting to MongoDB Atlas...');
@@ -33,11 +34,5 @@ await collection.createSearchIndex({
             }
         ]
     }
-});
-
-const result = await collection.listSearchIndexes().toArray();
-console.log('Search indexes on the books collection:');
-console.log(result);
-
-await client.close();
-process.exit();
+}).then(name => waitForSearchIndex(collection, name))
+    .finally(() => client.close());

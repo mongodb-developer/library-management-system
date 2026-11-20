@@ -1,5 +1,6 @@
 import '../load-env-vars.js';
 import { connectToDatabase, collections } from '../database.js';
+import { readSearchIndexVersion, waitForSearchIndex } from './wait-for-search-index.js';
 const { DATABASE_URI } = process.env;
 
 console.log('Connecting to MongoDB Atlas...');
@@ -7,10 +8,11 @@ const client = await connectToDatabase(DATABASE_URI);
 console.log('Connected!\n');
 
 const collection = collections?.books;
+const name = 'fulltextsearch';
 
-await collection.updateSearchIndex(
-    'fulltextsearch',
-    {
+try {
+    const afterVersion = await readSearchIndexVersion(collection, name);
+    await collection.updateSearchIndex(name, {
         'mappings': {
             'dynamic': false,
             'fields': {
@@ -30,12 +32,8 @@ await collection.updateSearchIndex(
                 }
             }
         }
-    }
-);
-
-const result = await collection.listSearchIndexes().toArray();
-console.log('Search indexes on the books collection:');
-console.log(result);
-
-await client.close();
-process.exit();
+    });
+    await waitForSearchIndex(collection, name, { afterVersion });
+} finally {
+    await client.close();
+}
