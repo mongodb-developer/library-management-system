@@ -20,6 +20,8 @@ export interface Book {
     longTitle?: string;
     language?: string;
     binding?: string;
+    embeddings?: number[];
+    embeddingModel?: string;
 
     /**
      * Number of books in total.
