@@ -50,6 +50,10 @@ class ReviewsController {
     }
 
     public async getReview(bookId: string, reviewId: string): Promise<Review> {
+        if (!ObjectId.isValid(reviewId)) {
+            return null;
+        }
+
         const review = await collections?.reviews?.findOne({ _id: new ObjectId(reviewId), bookId: bookId });
         return review;
     }
