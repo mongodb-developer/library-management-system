@@ -28,7 +28,7 @@ await collection.createSearchIndex({
 // <----------- REPLACE THE PLACEHOLDER BELOW WITH PATH TO THE VECTOR FIELD --------------------->
 // -----------------------------------------------------------------------------------------------
                 path: '<REPLACE_WITH_PATH_TO_VECTOR_FIELD>',
-                numDimensions: 1408,
+                numDimensions: 1024,
                 similarity: 'cosine'
             }
         ]

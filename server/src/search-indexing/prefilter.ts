@@ -19,7 +19,7 @@ await collection.createSearchIndex({
             {
                 type: 'vector',
                 path: 'embeddings',
-                numDimensions: 1408,
+                numDimensions: 1024,
                 similarity: 'cosine'
             },
             {
